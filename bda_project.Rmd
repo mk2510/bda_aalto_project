@@ -1,0 +1,24 @@
+---
+title: "BDA - Assignment 9"
+author: "Anonymous"
+header-includes:
+   - \usepackage{listings}
+output: 
+  pdf_document: 
+    toc: yes
+    toc_depth: 1
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+# This chunk sets echo = TRUE as default, that is print all code.
+# knitr::opts_chunk$set can be used to set other notebook generation options, too.
+# include=FALSE inside curly brackets makes this block not be included in the pdf.
+knitr::opts_chunk$set(echo = TRUE)
+library(aaltobda)
+library(rstan)
+library(loo)
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write = TRUE)
+```
+
