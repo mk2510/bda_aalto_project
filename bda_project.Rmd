@@ -76,6 +76,13 @@ generated quantities {
 ```
 
 
+```{r}
+print(getwd())
+data <- read.csv("Nepal_output.csv")
+print(data)
+```
+
+
 ```{r, results='hide', error=FALSE}
 hierarchical_model = "
 data {
