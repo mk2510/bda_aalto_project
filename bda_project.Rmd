@@ -40,9 +40,21 @@ $$
 We will first try to build a standart stand alone model to see, how t works:
 ```{r}
 standart_model <- "
+functions {
+  real[] logit_transform(real[] x, real k, real x0) {
+    int N = size(x);
+    real xtemp[N];
+    for (i in 1:N){
+      xtemp[i] = 1 / (1 + exp(-k * (x[i] - x0)));
+    }
+     return xtemp;
+  }
+}
+
 data {
+    int<lower=0> J;
     int<lower=0> N; // number of data points
-    vector[N] x; // observation year
+    real x[N]; // observation year
     vector[N] y; // observation number of drowned
     real xpred;  // prediction year
 }
@@ -50,19 +62,11 @@ data {
 parameters { 
   real alpha;
   real beta;
-  real gamma;
-  real delta;
   real<lower=0> sigma; // changed from upper to lower
 }
 
-functions {
-  real logit_transform(real x, real A, real B, real C, real D) {
-    return (((A-D)/(1.0+((x/C)**B))) + D)
-  }
-}
-
 transformed parameters {
-  vector[N] mu = logit_transform(x,alpha, beta, gamma, delta)
+  real mu[N] = logit_transform(x,alpha, beta);
 }
 
 model {
@@ -70,16 +74,22 @@ model {
 }
 
 generated quantities {
-  real ypred = normal_rng(logit_transform(x_pred,alpha, beta, gamma, delta), sigma); // here changed to trainings data instead of mu
+  real ypred[J];
+  real t[1];
+  for (i in 1:J){
+    t[1] = xpred;
+    ypred[i] = normal_rng(logit_transform(t,alpha, beta)[1], sigma);
+  }
 }
+
 "
 ```
 
 
 ```{r}
-print(getwd())
+setwd("/Users/max/Documents/UniMac/Aalto/BDA/bda_aalto_project/data")
 data <- read.csv("Nepal_output.csv")
-print(data)
+data$X0.0.1
 ```
 
 
