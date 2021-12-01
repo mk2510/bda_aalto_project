@@ -13,10 +13,10 @@ urlcolor: blue
 # This chunk sets echo = TRUE as default, that is print all code.
 # knitr::opts_chunk$set can be used to set other notebook generation options, too.
 # include=FALSE inside curly brackets makes this block not be included in the pdf.
-install.packages("remotes")
-remotes::install_github("avehtari/BDA_course_Aalto",
-         subdir = "rpackage", upgrade="never")
-install.packages("aaltobda")
+# install.packages("remotes")
+# remotes::install_github("avehtari/BDA_course_Aalto",
+#         subdir = "rpackage", upgrade="never")
+# install.packages("aaltobda")
 knitr::opts_chunk$set(echo = TRUE)
 library(aaltobda)
 library(rstan)
@@ -74,6 +74,8 @@ transformed parameters {
 }
 
 model {
+  alpha ~ normal(0.28179193548,0.0001);
+  beta ~ normal(0.5, 0.0001);
   y ~ normal(mu, sigma); // add here a semicolon
 }
 
@@ -91,7 +93,7 @@ generated quantities {
 
 ```{r}
 # setwd("/Users/max/Documents/UniMac/Aalto/BDA/bda_aalto_project/data")
-data <- read.csv("Nepal_output.csv")
+data <- read.csv("data/Germany_output.csv")
 data$X0.0.1
 ```
 
@@ -124,7 +126,7 @@ model {
 ```
 
 ```{r, results='hide', error=FALSE}
-hm <- rstan::stan_model(file = "standart.stan")
+hm <- rstan::stan_model(model_code = standart_model)
 stan_data <- list(
     J = 1,
     N = length(data$X0.0.1),
@@ -133,6 +135,6 @@ stan_data <- list(
     xpred = 1.1,
     sigma = 0.0001
   )
-model_hirachical <- rstan::sampling(hm, data = stan_data)
+model_hirachical <- rstan::sampling(hm, data = stan_data, warmup=3000, iter=4000)
 fit_hm <- extract(model_hirachical, permuted = TRUE)
 ```
