@@ -74,7 +74,7 @@ transformed parameters {
 }
 
 model {
-  alpha ~ normal(0.28179193548,0.0001);
+  alpha ~ normal(0.717949915905815,0.0001);
   beta ~ normal(0.5, 0.0001);
   y ~ normal(mu, sigma); // add here a semicolon
 }
@@ -88,14 +88,123 @@ generated quantities {
 }
 
 "
+
+
+seperated_model <- "
+functions {
+  real[] logit_transform(real[] x, real k, real x0) {
+    int N = size(x);
+    real xtemp[N];
+    for (i in 1:N){
+      xtemp[i] = 1 / (1 + exp(-k * (x[i] - x0)));
+    }
+     return xtemp;
+  }
+}
+
+data {
+    int<lower=0> J;
+    int<lower=1> M;
+    int<lower=0> N; // number of data points
+    real x[M,N]; // observation year
+    real y[M,N]; // observation number of drowned
+    real xpred;  // prediction year
+    vector[M] muAlpha;
+    vector[M] muBeta;
+    vector[M] sigmaAlpha;
+    vector[M] sigmaBeta;
+    real sigma;
+}
+
+parameters { 
+  real alpha[M];
+  real beta[M];
+}
+
+transformed parameters {
+  real mu[M,N];
+  for (i in 1:M){
+    mu[i,] = logit_transform(x[i,],alpha[i], beta[i]);
+  }
+}
+
+model {
+  for (i in 1:M){
+    alpha[i] ~ normal(muAlpha[i], sigmaAlpha[i]);
+    beta[i] ~ normal(muBeta[i], sigmaBeta[i]);
+  }
+  for (i in 1:M){
+    y[i,] ~ normal(mu[i,], sigma); // add here a semicolon
+  }
+}
+
+generated quantities {
+  real ypred[M];
+  real t[1];
+  t[1] = xpred;
+  for (i in 1:M){
+    ypred[i] = normal_rng(logit_transform(t,alpha[i], beta[i])[1], sigma);
+  }
+
+}
+
+"
 ```
 
 
 ```{r}
 # setwd("/Users/max/Documents/UniMac/Aalto/BDA/bda_aalto_project/data")
-data <- read.csv("data/United States_output.csv")
+data1 <- read.csv("data/Finland_output.csv")
+data2 <- read.csv("data/Germany_output.csv")
+data3 <- read.csv("data/Japan_output.csv")
+data4 <- read.csv("data/Hong Kong_output.csv")
+data5 <- read.csv("data/Portugal_output.csv")
 ```
 
+```{r, results='hide', error=FALSE}
+# mualpha is the gradient of the data -> 
+muAlpha <- c(tail(data1$Y, n=1) - data1$Y[1],tail(data2$Y, n=1) - data2$Y[1],tail(data3$Y, n=1) - data3$Y[1],tail(data4$Y, n=1) - data4$Y[1],tail(data5$Y, n=1) - data5$Y[1])
+
+# mubeta is the middel of our data -> 0.5
+muBeta <- c(0.5,0.5,0.5,0.5,0.5)
+xData <- rbind(data1$X,data2$X,data3$X,data4$X,data5$X)
+#dim(xData) <- c(5,222)
+
+yData <-rbind(data1$Y,data2$Y,data3$Y,data4$Y,data5$Y)
+#dim(yData) <- c(5,222)
+
+sigmaAlpha <- c(0.01, 0.01, 0.01, 0.01, 0.01)
+sigmaBeta <- c(0.01, 0.01, 0.01, 0.01, 0.01)
+```
+
+```{r, results='hide', error=FALSE}
+hm <- rstan::stan_model(model_code = seperated_model)
+stan_data <- list(
+    J = 1,
+    N = length(data1$Y),
+    M = 5,
+    y = yData,
+    x = xData,
+    xpred = 1.1,
+    sigma = 0.01,
+    muAlpha = muAlpha,
+    muBeta = muBeta,
+    sigmaAlpha = sigmaAlpha,
+    sigmaBeta = sigmaBeta
+  )
+model_hirachical <- rstan::sampling(hm, data = stan_data, warmup=3000, iter=4000, chains=8)
+fit_hm <- extract(model_hirachical, permuted = TRUE, inc_warmup = FALSE)
+```
+```{r}
+### PLOTS
+
+plot(fit_hm$ypred[,1])
+plot(fit_hm$ypred[,2])
+plot(fit_hm$ypred[,3])
+plot(fit_hm$ypred[,4])
+plot(fit_hm$ypred[,5])
+
+```
 
 ```{r, results='hide', error=FALSE}
 hierarchical_model = "
