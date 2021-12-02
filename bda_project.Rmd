@@ -13,10 +13,10 @@ urlcolor: blue
 # This chunk sets echo = TRUE as default, that is print all code.
 # knitr::opts_chunk$set can be used to set other notebook generation options, too.
 # include=FALSE inside curly brackets makes this block not be included in the pdf.
-# install.packages("remotes")
-# remotes::install_github("avehtari/BDA_course_Aalto",
-#         subdir = "rpackage", upgrade="never")
-# install.packages("aaltobda")
+install.packages("remotes")
+remotes::install_github("avehtari/BDA_course_Aalto",
+        subdir = "rpackage", upgrade="never")
+install.packages("aaltobda")
 knitr::opts_chunk$set(echo = TRUE)
 library(aaltobda)
 library(rstan)
@@ -108,7 +108,7 @@ data {
     int<lower=1> M;
     int<lower=0> N; // number of data points
     real x[N,M]; // observation year
-    vector[N,M] y; // observation number of drowned
+    real y[N,M]; // observation number of drowned
     real xpred;  // prediction year
     real sigma;
     vector[M] muAlpha;
@@ -122,9 +122,9 @@ parameters {
 }
 
 transformed parameters {
-  real mu[N,M]
+  real mu[N,M];
   for (i in 1:M){
-    mu[,i] = logit_transform(x,alpha[i], beta[i]);
+    mu[,i] = logit_transform(x[,i],alpha[i], beta[i]);
   }
   
 }
@@ -132,7 +132,10 @@ transformed parameters {
 model {
   alpha ~ normal(muAlpha,0.0001);
   beta ~ normal(muBeta, 0.0001);
-  y ~ normal(mu, sigma); // add here a semicolon
+  for (i in 1:M){
+    y[,i] ~ normal(mu[,i], sigma); // add here a semicolon
+  }
+ 
 }
 
 generated quantities {
@@ -153,18 +156,38 @@ generated quantities {
 # setwd("/Users/max/Documents/UniMac/Aalto/BDA/bda_aalto_project/data")
 data1 <- read.csv("data/Finland_output.csv")
 data2 <- read.csv("data/Germany_output.csv")
+data3 <- read.csv("data/Portugal_output.csv")
+data4 <- read.csv("data/Hong Kong_output.csv")
+data5 <- read.csv("data/Japan_output.csv")
+```
 
+```{r}
+plot(data5$Y)
 ```
 
 ```{r, results='hide', error=FALSE}
-hm <- rstan::stan_model(model_code = standart_model)
+# mualpha is the gradient of the data -> 
+muAlpha <- c(tail(data1$Y, n=1) - data1$Y[1],tail(data2$Y, n=1) - data2$Y[1],tail(data3$Y, n=1) - data3$Y[1],tail(data4$Y, n=1) - data4$Y[1],tail(data5$Y, n=1) - data5$Y[1])
+
+# mubeta is the middel of our data -> 0.5
+muBeta <- c(0.5,0.5,0.5,0.5,0.5)
+xData <- c(data1$X,data2$X,data3$X,data4$X,data5$X)
+dim(xData) <- c(222,5)
+
+yData <-c(data1$Y,data2$Y,data3$Y,data4$Y,data5$Y)
+dim(yData) <- c(222,5)
+
+hm <- rstan::stan_model(model_code = seperated_model)
 stan_data <- list(
     J = 1,
-    N = length(data$Y),
-    y = data$Y,
-    x = data$X,
-    xpred = 1.1,
-    sigma = 0.0001
+    N = length(data1$Y),
+    M = 5,
+    y = yData,
+    x = xData,
+    xpred = 1.01,
+    sigma = 0.0001,
+    muAlpha = muAlpha,
+    muBeta = muBeta
   )
 model_hirachical <- rstan::sampling(hm, data = stan_data, warmup=4000, iter=4500)
 fit_hm <- extract(model_hirachical, permuted = TRUE)
