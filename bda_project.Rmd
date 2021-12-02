@@ -93,8 +93,7 @@ generated quantities {
 
 ```{r}
 # setwd("/Users/max/Documents/UniMac/Aalto/BDA/bda_aalto_project/data")
-data <- read.csv("data/Germany_output.csv")
-data$X0.0.1
+data <- read.csv("data/United States_output.csv")
 ```
 
 
@@ -129,9 +128,9 @@ model {
 hm <- rstan::stan_model(model_code = standart_model)
 stan_data <- list(
     J = 1,
-    N = length(data$X0.0.1),
-    y = data$X0.0.1,
-    x = data$X0.0,
+    N = length(data$Y),
+    y = data$Y,
+    x = data$X,
     xpred = 1.1,
     sigma = 0.0001
   )
