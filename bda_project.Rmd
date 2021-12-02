@@ -116,7 +116,7 @@ data {
     real sigma;
 }
 
-parameters { 
+parameters {
   real alpha[M];
   real beta[M];
 }
@@ -162,7 +162,7 @@ data5 <- read.csv("data/Portugal_output.csv")
 ```
 
 ```{r, results='hide', error=FALSE}
-# mualpha is the gradient of the data -> 
+# mualpha is the gradient of the data ->
 muAlpha <- c(tail(data1$Y, n=1) - data1$Y[1],tail(data2$Y, n=1) - data2$Y[1],tail(data3$Y, n=1) - data3$Y[1],tail(data4$Y, n=1) - data4$Y[1],tail(data5$Y, n=1) - data5$Y[1])
 
 # mubeta is the middel of our data -> 0.5
