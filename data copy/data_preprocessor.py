@@ -1,14 +1,14 @@
 import csv
 from random import choices
 
-countries = ["Finland", "Germany", "Hong Kong", "Japan", "Portugal"]
+countries = ["Finland", "Germany", "South Korea", "Nepal", "United States"]
 
 population = {
     "Finland": 5528737,
     "Germany": 83240000,
-    "Hong Kong": 7482000,
-    "Japan": 125800000,
-    "Portugal": 10310000,
+    "South Korea": 51780000,
+    "Nepal": 29140000,
+    "United States": 329500000,
 }
 
 our_data = {}
@@ -27,7 +27,7 @@ with open("cumulative-covid-vaccinations.csv", newline="") as csvfile:
 # cleaning our data so it has the  same length
 m = 100000000000
 for c in our_data:
-    m = min(m, len(our_data[c]))
+    m = min(m, len(c))
 
 for i in range(len(our_data)):
     temp = choices(our_data[countries[i]], k = m)
@@ -40,10 +40,7 @@ for c in countries:
         spamwriter = csv.writer(outputfile, delimiter=",")
         size = len(our_data[c])
         i = 0
-        temp = our_data[c]
-        temp = [int(x) for x in temp]
-        temp.sort()
-        for x in temp:
+        for x in our_data[c]:
             r = [c, i / size, int(x) / (2 * population[c])]
             spamwriter.writerow(r)
             i = i + 1
