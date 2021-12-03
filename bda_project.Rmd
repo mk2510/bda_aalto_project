@@ -229,10 +229,19 @@ For both models we choose to use weakly informative priors.
 ## Prior choice of the seperated model
 
 For the seperated model, the $\alpha$ prior needed to fullfill two criteria. First it needed to be a positive number, as we can expect from the vaccination, that the rate is rising and not dropping. Also, as the vaccination should follow roughly a logit function, as it can be observed from the data, we can expect to have a gradient, which is more likely around $1$ than bigger than $50$. Hence the prior of $\operatorname{Inv}-\chi^{2}(1) $ was choosen.
-
+ 
 For our $\beta$ prior estimation we know, that it should be in the range of $[0,1]$, as this is the range of our x-Data. Therefore we choose $N(0.5,1)$. 
 
 The variance of our y-sampling should be a positive number. As we can also expect it to be quite small, as we want our model following the line quite tightly, we choose here as well $\operatorname{Inv}-\chi^{2}(1) $.
+
+## Prior choices of the hirachical model
+
+The hirachical model has the following priors. The $\alpha$- prior still has the same distribution function: $\operatorname{Inv}-\chi^{2}(\cdot) $, with the same reasoning as for the seperated model. Here however, the parameter for the function gets sampled as well. With the same reasoning about the order of magnitude of our parameter we choose $\operatorname{Inv}-\chi^{2}(1)$ as a suitable weakly informative prior. 
+![inverse chi sqare](invchisqrt1.png)
+As we can see here, the PDF of the probability distribution has nearly all amount of its mass in the interval of $[0,10]$
+
+The $\beta$ prior is again, like in the seperated model a normal distribution $N(\cdot,\cdot)$. For the first argument, we choose a normal distribution of $N(0,1)$, with the reasoning, that we expect it to be located somewhere in the interval of $[0,1]$, as this is the range of the data. 
+The prior of the variance is given by a $\operatorname{Inv}-\chi^{2}(1)$, as here as well we want to have a variance, which is not much larger, than our expected interval.
 
 ```{r}
 # setwd("/Users/max/Documents/UniMac/Aalto/BDA/bda_aalto_project/data")
