@@ -82,145 +82,32 @@ ggplot(data = total, aes(x = X, y = Y, color = Country)) +
 
 # Mathematical Models
 
-## Hierarchical
+## Seperated Model
 
 $$
 \begin{aligned}
-y_n & \sim Bernoulli(logit^{-1}(x \times \beta_n))\\
-\mu_{j} & \sim Normal(0, 100) \\
-\sigma_{j} & \sim U(0,\infty) \\
-\beta_{i,j} & \sim Normal(\mu_j, \sigma_j) \\
+y_{i j} \mid \alpha_i,\beta_i, \sigma &\sim \operatorname{Normal}\left(\operatorname{logit} (\alpha_i, \beta_i), \sigma\right) \\
+\alpha_i &\sim \text{inv}\chi^2(1) \\
+\beta_i &\sim N(0.5,1) \\
+\sigma &\sim \text{inv}\chi^2(1)
 \end{aligned}
 $$
 
-We will first try to build a standart stand alone model to see, how t works:
-```{r}
-standart_model <- "
-functions {
-  real[] logit_transform(real[] x, real k, real x0) {
-    int N = size(x);
-    real xtemp[N];
-    for (i in 1:N){
-      xtemp[i] = 1 / (1 + exp(-k * (x[i] - x0)));
-    }
-     return xtemp;
-  }
-}
+## Hirachical Model
 
-data {
-    int<lower=0> J;
-    int<lower=0> N; // number of data points
-    real x[N]; // observation year
-    vector[N] y; // observation number of drowned
-    real xpred;  // prediction year
-    real sigma;
-}
+$$
+\begin{aligned}
+y_{i j} \mid \alpha_i,\beta_i, \sigma &\sim \operatorname{Normal}\left(\operatorname{logit} (\alpha_i, \beta_i), \sigma\right) \\
+\beta_{j}\mid \mu_0, \theta &\sim \operatorname{Normal}(\mu_0, \theta)\\
+\alpha_{j} \mid \sigma_{0} & \sim \operatorname{Inv}-\chi^{2}\left(\sigma_{0}\right) \\
+\sigma & \sim \operatorname{Inv}-\chi^{2}(1) \\
+\theta & \sim \operatorname{Inv}-\chi^{2}(1) \\
+\sigma_{0} & \sim \operatorname{Inv}-\chi^{2}(1) \\
+\mu_{0} & \sim \operatorname{Normal}(0,1)
+\end{aligned}
+$$
 
-parameters { 
-  real alpha;
-  real beta;
-  //real<lower=0> sigma; // changed from upper to lower
-}
-
-transformed parameters {
-  real mu[N] = logit_transform(x,alpha, beta);
-}
-
-model {
-  alpha ~ normal(0.7476352194,0.0001);
-  beta ~ normal(0.5, 0.0001);
-  y ~ normal(mu, sigma); // add here a semicolon
-}
-
-generated quantities {
-  real ypred;
-  real t[1];
-  t[1] = xpred;
-  ypred = normal_rng(logit_transform(t,alpha, beta)[1], sigma);
-
-}
-
-"
-```
-
-```{r}
-hirachical_model <- "
-functions {
-  real[] logit_transform(real[] x, real k, real x0) {
-    int N = size(x);
-    real xtemp[N];
-    for (i in 1:N){
-      xtemp[i] = 1 / (1 + exp(-k * (x[i] - x0)));
-    }
-     return xtemp;
-  }
-}
-
-data {
-    int<lower=0> J;
-    int<lower=1> M;
-    int<lower=0> N; // number of data points
-    real x[M,N]; // observation year
-    real y[M,N]; // observation number of drowned
-    real xpred;  // prediction year
-    real sigma;
-    
-}
-
-parameters { 
-  real alpha[M];
-  real beta[M];
-  vector[M] muAlpha;
-  vector[M] muBeta;
-  real[M] sigma
-  real sigmaAlpha;
-  real sigmaBeta
-}
-
-transformed parameters {
-  real mu[M,N];
-  for (i in 1:M){
-    mu[i,] = logit_transform(x[i,],alpha[i], beta[i]);
-  }
-  
-}
-
-model {
-  
-  for (i in 1:M){
-    muAlpha[i] ~ normal(0.5, 0.001);
-    muBeta[i] ~ normal(0.5, 0.001);
-  }
-  for (i in 1:M){
-        sigma[i] ~ inv_chi_sqrt(50);
-  }
-  sigmaAlpha ~ inv_chi_sqrt(60);
-  sigmaBeta ~ inv_chi_sqrt(60);
-
-  
-    alpha ~ normal(muAlpha,0.0001);
-    beta ~ normal(muBeta, 0.0001);
-
-    
-  for (i in 1:M){
-    y[i,] ~ normal(mu[i,], sigma[i]); // add here a semicolon
-    
-  }
- 
-}
-
-generated quantities {
-  real ypred[M];
-  real t[1];
-  t[1] = xpred;
-  for (i in 1:M){
-    ypred[i] = normal_rng(logit_transform(t,alpha[i], beta[i])[1], sigma);
-  }
-
-}
-
-"
-```
+We will first try to build the seperated model in stan
 
 
 ```{r}
@@ -262,7 +149,6 @@ model {
   for (i in 1:M){
     // as prior we will change it to the same values
     alpha[i] ~ inv_chi_square(1);
-    //alpha[i] ~ normal(0,100);
     beta[i] ~ normal(0.5,1);
   }
   
@@ -285,7 +171,95 @@ generated quantities {
 "
 ```
 
+Now we will build the hirachical model in stan:
+```{r}
+hirachical_model <- "
+functions {
+  real[] logit_transform(real[] x, real k, real x0) {
+    int N = size(x);
+    real xtemp[N];
+    for (i in 1:N){
+      xtemp[i] = 1 / (1 + exp(-k * (x[i] - x0)));
+    }
+     return xtemp;
+  }
+}
 
+data {
+    int<lower=0> J;
+    int<lower=1> M;
+    int<lower=0> N; // number of data points
+    real x[M,N]; // observation year
+    real y[M,N]; // observation number of drowned
+    real xpred;  // prediction year
+}
+
+parameters {
+  real alpha[M];
+  real beta[M];
+  real<lower = 0> sigma;
+  real<lower = 0> hyper_sigma;
+  real hyper_mu;
+  real<lower = 0> hyper_alpha;
+}
+
+transformed parameters {
+  real mu[M,N];
+  for (i in 1:M){
+    mu[i,] = logit_transform(x[i,],alpha[i], beta[i]);
+  }
+}
+
+model {
+    hyper_mu ~ normal(0, 1);
+    hyper_sigma ~ inv_chi_square(10);
+    hyper_alpha ~ inv_chi_square(10);
+    
+  for (i in 1:M){
+    // as prior we will change it to the same values
+    alpha[i] ~ inv_chi_square(hyper_alpha);
+    beta[i] ~ normal(hyper_mu,hyper_sigma);
+  }
+  
+  sigma ~ inv_chi_square(1);
+  for (i in 1:M){
+    y[i,] ~ normal(mu[i,], sigma); 
+  }
+}
+
+generated quantities {
+  real ypred[M];
+  real t[1];
+  t[1] = xpred;
+  for (i in 1:M){
+    ypred[i] = normal_rng(logit_transform(t,alpha[i], beta[i])[1], sigma);
+  }
+
+}
+
+"
+```
+
+# Prior selection
+
+For both models we choose to use weakly informative priors. 
+
+## Prior choice of the seperated model
+
+For the seperated model, the $\alpha$ prior needed to fullfill two criteria. First it needed to be a positive number, as we can expect from the vaccination, that the rate is rising and not dropping. Also, as the vaccination should follow roughly a logit function, as it can be observed from the data, we can expect to have a gradient, which is more likely around $1$ than bigger than $50$. Hence the prior of $\operatorname{Inv}-\chi^{2}(1) $ was choosen.
+ 
+For our $\beta$ prior estimation we know, that it should be in the range of $[0,1]$, as this is the range of our x-Data. Therefore we choose $N(0.5,1)$. 
+
+The variance of our y-sampling should be a positive number. As we can also expect it to be quite small, as we want our model following the line quite tightly, we choose here as well $\operatorname{Inv}-\chi^{2}(1) $.
+
+## Prior choices of the hirachical model
+
+The hirachical model has the following priors. The $\alpha$- prior still has the same distribution function: $\operatorname{Inv}-\chi^{2}(\cdot) $, with the same reasoning as for the seperated model. Here however, the parameter for the function gets sampled as well. With the same reasoning about the order of magnitude of our parameter we choose $\operatorname{Inv}-\chi^{2}(1)$ as a suitable weakly informative prior. 
+![inverse chi sqare](invchisqrt1.png)
+As we can see here, the PDF of the probability distribution has nearly all amount of its mass in the interval of $[0,10]$
+
+The $\beta$ prior is again, like in the seperated model a normal distribution $N(\cdot,\cdot)$. For the first argument, we choose a normal distribution of $N(0,1)$, with the reasoning, that we expect it to be located somewhere in the interval of $[0,1]$, as this is the range of the data. 
+The prior of the variance is given by a $\operatorname{Inv}-\chi^{2}(1)$, as here as well we want to have a variance, which is not much larger, than our expected interval.
 
 ```{r}
 # setwd("/Users/max/Documents/UniMac/Aalto/BDA/bda_aalto_project/data")
@@ -307,7 +281,7 @@ xData <- rbind(data1$X,data2$X,data3$X,data4$X,data5$X)
 yData <-rbind(data1$Y,data2$Y,data3$Y,data4$Y,data5$Y)
 #dim(yData) <- c(5,222)
 
-hm <- rstan::stan_model(model_code = seperated_model)
+hm <- rstan::stan_model(model_code = hirachical_model)
 stan_data <- list(
     J = 1,
     N = length(data1$Y),
