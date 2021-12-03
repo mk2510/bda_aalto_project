@@ -110,14 +110,12 @@ data {
     real x[M,N]; // observation year
     real y[M,N]; // observation number of drowned
     real xpred;  // prediction year
-    real sigma;
-    vector[M] muAlpha;
-    vector[M] muBeta;
 }
 
-parameters { 
+parameters {
   real alpha[M];
   real beta[M];
+  real<lower = 0> sigma;
 }
 
 transformed parameters {
@@ -125,17 +123,19 @@ transformed parameters {
   for (i in 1:M){
     mu[i,] = logit_transform(x[i,],alpha[i], beta[i]);
   }
-  
 }
 
 model {
   for (i in 1:M){
-    alpha[i] ~ normal(muAlpha[i],0.0001);
-    beta[i] ~ normal(muBeta[i], 0.0001);
-    y[i,] ~ normal(mu[i,], sigma); // add here a semicolon
-    
+    // as prior we will change it to the same values
+    alpha[i] ~ gamma(1.2, 0.1);
+    beta[i] ~ normal(0.1, 0.1);
   }
- 
+  
+  sigma ~ inv_chi_squared(1);
+  for (i in 1:M){
+    y[i,] ~ normal(mu[i,], sigma); 
+  }
 }
 
 generated quantities {
