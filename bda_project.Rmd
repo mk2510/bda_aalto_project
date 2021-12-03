@@ -208,11 +208,12 @@ transformed parameters {
 model {
   for (i in 1:M){
     // as prior we will change it to the same values
-    alpha[i] ~ gamma(1.2, 0.1);
-    beta[i] ~ normal(0.1, 0.1);
+    alpha[i] ~ inv_chi_square(10);
+    //alpha[i] ~ normal(0,100);
+    beta[i] ~ normal(0,1);
   }
   
-  sigma ~ inv_chi_square(1);
+  sigma ~ inv_chi_square(10);
   for (i in 1:M){
     y[i,] ~ normal(mu[i,], sigma); 
   }
@@ -233,8 +234,6 @@ generated quantities {
 
 
 
-
-
 ```{r}
 # setwd("/Users/max/Documents/UniMac/Aalto/BDA/bda_aalto_project/data")
 data1 <- read.csv("data/Finland_output.csv")
@@ -249,11 +248,6 @@ plot(data5$Y)
 ```
 
 ```{r, results='hide', error=FALSE}
-# mualpha is the gradient of the data -> 
-muAlpha <- c(tail(data1$Y, n=1) - data1$Y[1],tail(data2$Y, n=1) - data2$Y[1],tail(data3$Y, n=1) - data3$Y[1],tail(data4$Y, n=1) - data4$Y[1],tail(data5$Y, n=1) - data5$Y[1])
-
-# mubeta is the middel of our data -> 0.5
-muBeta <- c(0.5,0.5,0.5,0.5,0.5)
 xData <- c(data1$X,data2$X,data3$X,data4$X,data5$X)
 dim(xData) <- c(5,222)
 
@@ -271,4 +265,5 @@ stan_data <- list(
 )
 model_hirachical <- rstan::sampling(hm, data = stan_data, warmup=3000, iter=4000)
 fit_hm <- extract(model_hirachical, permuted = TRUE, inc_warmup = FALSE)
+plot(fit_hm$mu[4000,1,])
 ```
