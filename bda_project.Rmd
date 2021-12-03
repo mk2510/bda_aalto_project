@@ -8,6 +8,7 @@ output:
     toc: yes
     toc_depth: 1
 urlcolor: blue
+bibliography: ["reference.bib"] 
 ---
 ```{r setup, include=FALSE}
 # This chunk sets echo = TRUE as default, that is print all code.
@@ -26,21 +27,38 @@ rstan_options(auto_write = TRUE)
 ```
 
 # 1. Introduction
-## Motivation
-It's been almost 2 years since the covid-19 started in December 2019. World vaccination has been started December 2020 but 
-## Problem
-## Main modeling idea
-## Showing some illustrative figure
+
+It's been almost 2 years since the covid-19 started in December 2019, and it's been 1 year since world vaccination has been started December 2020. Even though most of the countries rushing into vaccination and some countries are picking over 80% rate in vaccination, the pandemic seems unstoppable. One of the popular idea to stop the pandemic is that to achieve a 'herd-immunity threshold, which occurs when a large portion of a community (the herd) becomes immune to a disease, making the spread of disease from person to person unlikely. Immune individuals are unlikely to contribute to disease transmission, disrupting chains of infection, which stops or slows the spread of disease (wiki citation). 
+It is known that the herd-immunity threshold is achievable only with high vaccination rates, and many scientists had thought that once people started being immunized en masse, herd immunity would permit society to return to normal. Most estimates had placed the threshold at 60–70% of the population gaining immunity, either through vaccinations or past exposure to the virus(nature citation).
+Down below shows the graph of population fully vaccinated by countries.
+```{r}
+knitr::include_graphics("./image/share-people-fully-vaccinated-covid_world.png")
+```
+
+As the high vaccination rate is a big part of ending pandemic by achieving herd-immunity, our group was interested in predicting how much high vaccination rate that countries will achieve in future. As we expect the cumulative vaccination rate graph will follow logit function, we set our model as a logit function. We picked 5 countries,which are Finland, Portugal, Japan, Germany,and Hongkong for our data. The cumulative vaccination graphs in these countries roughly follow the logit function and our main modeling idea is to see find which model the data fits well (seperate model or hierarchical model) and to predict the future vaccination rate. 
+
+Down below shows the barplot of population rate who received at least one dose of covid19 vaccine by countries in our interest.
+```{r}
+knitr::include_graphics("./image/share-people-vaccinated-covid.png")
+```
+Down below shows the barplot of population rate of fully vaccinated against covid19 by countries in our interest.
+```{r}
+knitr::include_graphics("./image/share-people-fully-vaccinated-covid_bar.png")
+```
+Down below shows the barplot of fully vaccinated population rate by countries in our interest.
+```{r}
+knitr::include_graphics("./image/share-people-fully-vaccinated-covid_plot.png")
+```
 
 # 2. Dataset
 
 Datasets down below show cumulative covid vaccinations rate by countries( collected from [linked phrase](https://ourworldindata.org/covid-vaccinations)).Country  column shows the country of this data. X column is originally from the date when the country started vaccination to the recent date of vaccination. We normalized the date column by giving index 0 to number of date and deviding it with the number of date. As the time length of the vaccination differs by country, we uniformly picked the 222 datapoints from the datasets before normalize the X column. Y column shows the covid vaccination rate in the country. With the cumulative covid vaccination number, we devide it by 2 times population because most of the vaccines require 2 doses to be fully vaccinated. Therefore, dimension of all datasets are (222,3).
 
 ```{r}
-setwd('/Users/chuhyeongyeong/2021_period1/bayesian_data_analysis/project/bda_aalto_project-master')
+setwd('/Users/chuhyeongyeong/2021_period1/bayesian_data_analysis/bda_aalto_project')
 finland <- read.csv("data/Finland_output.csv")
 germany <- read.csv("data/Germany_output.csv")
-hongkong <- read.csv('data/HongKong_output.csv')
+hongkong <- read.csv('data/Hong Kong_output.csv')
 portugal <- read.csv('data/Portugal_output.csv')
 japan <- read.csv('data/Japan_output.csv')
 ```
