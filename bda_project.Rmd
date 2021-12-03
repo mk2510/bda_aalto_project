@@ -64,66 +64,33 @@ ggplot(data = total, aes(x = X, y = Y, color = Country)) +
 
 # Mathematical Models
 
-## Hierarchical
+## Seperated Model
 
 $$
 \begin{aligned}
-y_n & \sim Bernoulli(logit^{-1}(x \times \beta_n))\\
-\mu_{j} & \sim Normal(0, 100) \\
-\sigma_{j} & \sim U(0,\infty) \\
-\beta_{i,j} & \sim Normal(\mu_j, \sigma_j) \\
+y_{i j} \mid \alpha_i,\beta_i, \sigma &\sim \operatorname{Normal}\left(\operatorname{logit} (\alpha_i, \beta_i), \sigma\right) \\
+\alpha_i &\sim \text{inv}\chi^2(1) \\
+\beta_i &\sim N(0.5,1) \\
+\sigma &\sim \text{inv}\chi^2(1)
 \end{aligned}
 $$
 
-We will first try to build a standart stand alone model to see, how t works:
-```{r}
-standart_model <- "
-functions {
-  real[] logit_transform(real[] x, real k, real x0) {
-    int N = size(x);
-    real xtemp[N];
-    for (i in 1:N){
-      xtemp[i] = 1 / (1 + exp(-k * (x[i] - x0)));
-    }
-     return xtemp;
-  }
-}
+## Hirachical Model
 
-data {
-    int<lower=0> J;
-    int<lower=0> N; // number of data points
-    real x[N]; // observation year
-    vector[N] y; // observation number of drowned
-    real xpred;  // prediction year
-    real sigma;
-}
+$$
+\begin{aligned}
+y_{i j} \mid \alpha_i,\beta_i, \sigma &\sim \operatorname{Normal}\left(\operatorname{logit} (\alpha_i, \beta_i), \sigma\right) \\
+\beta_{j}\mid \mu_0, \theta &\sim \operatorname{Normal}(\mu_0, \theta)\\
+\alpha_{j} \mid \sigma_{0} & \sim \operatorname{Inv}-\chi^{2}\left(\sigma_{0}\right) \\
+\sigma & \sim \operatorname{Inv}-\chi^{2}(1) \\
+\theta & \sim \operatorname{Inv}-\chi^{2}(1) \\
+\sigma_{0} & \sim \operatorname{Inv}-\chi^{2}(1) \\
+\mu_{0} & \sim \operatorname{Normal}(0,1)
+\end{aligned}
+$$
 
-parameters { 
-  real alpha;
-  real beta;
-  //real<lower=0> sigma; // changed from upper to lower
-}
+We will first try to build the seperated model in stan
 
-transformed parameters {
-  real mu[N] = logit_transform(x,alpha, beta);
-}
-
-model {
-  alpha ~ normal(0.7476352194,0.0001);
-  beta ~ normal(0.5, 0.0001);
-  y ~ normal(mu, sigma); // add here a semicolon
-}
-
-generated quantities {
-  real ypred;
-  real t[1];
-  t[1] = xpred;
-  ypred = normal_rng(logit_transform(t,alpha, beta)[1], sigma);
-
-}
-
-"
-```
 
 ```{r}
 seperated_model <- "
@@ -164,7 +131,6 @@ model {
   for (i in 1:M){
     // as prior we will change it to the same values
     alpha[i] ~ inv_chi_square(1);
-    //alpha[i] ~ normal(0,100);
     beta[i] ~ normal(0.5,1);
   }
   
@@ -187,7 +153,7 @@ generated quantities {
 "
 ```
 
-
+Now we will build the hirachical model in stan:
 ```{r}
 hirachical_model <- "
 functions {
@@ -229,11 +195,11 @@ transformed parameters {
 model {
     hyper_mu ~ normal(0, 1);
     hyper_sigma ~ inv_chi_square(10);
-    hyper_alpha ~ gamma(2,0.6);
+    hyper_alpha ~ inv_chi_square(10);
     
   for (i in 1:M){
     // as prior we will change it to the same values
-    alpha[i] ~ inv_chi_square(1);
+    alpha[i] ~ inv_chi_square(hyper_alpha);
     beta[i] ~ normal(hyper_mu,hyper_sigma);
   }
   
@@ -256,7 +222,17 @@ generated quantities {
 "
 ```
 
+# Prior selection
 
+For both models we choose to use weakly informative priors. 
+
+## Prior choice of the seperated model
+
+For the seperated model, the $\alpha$ prior needed to fullfill two criteria. First it needed to be a positive number, as we can expect from the vaccination, that the rate is rising and not dropping. Also, as the vaccination should follow roughly a logit function, as it can be observed from the data, we can expect to have a gradient, which is more likely around $1$ than bigger than $50$. Hence the prior of $\operatorname{Inv}-\chi^{2}(1) $ was choosen.
+
+For our $\beta$ prior estimation we know, that it should be in the range of $[0,1]$, as this is the range of our x-Data. Therefore we choose $N(0.5,1)$. 
+
+The variance of our y-sampling should be a positive number. As we can also expect it to be quite small, as we want our model following the line quite tightly, we choose here as well $\operatorname{Inv}-\chi^{2}(1) $.
 
 ```{r}
 # setwd("/Users/max/Documents/UniMac/Aalto/BDA/bda_aalto_project/data")
