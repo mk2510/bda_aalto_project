@@ -91,68 +91,6 @@ generated quantities {
 ```
 
 ```{r}
-seperated_model <- "
-functions {
-  real[] logit_transform(real[] x, real k, real x0) {
-    int N = size(x);
-    real xtemp[N];
-    for (i in 1:N){
-      xtemp[i] = 1 / (1 + exp(-k * (x[i] - x0)));
-    }
-     return xtemp;
-  }
-}
-
-data {
-    int<lower=0> J;
-    int<lower=1> M;
-    int<lower=0> N; // number of data points
-    real x[M,N]; // observation year
-    real y[M,N]; // observation number of drowned
-    real xpred;  // prediction year
-}
-
-parameters {
-  real alpha[M];
-  real beta[M];
-  real<lower = 0> sigma;
-}
-
-transformed parameters {
-  real mu[M,N];
-  for (i in 1:M){
-    mu[i,] = logit_transform(x[i,],alpha[i], beta[i]);
-  }
-}
-
-model {
-  for (i in 1:M){
-    // as prior we will change it to the same values
-    alpha[i] ~ gamma(1.2, 0.1);
-    beta[i] ~ normal(0.1, 0.1);
-  }
-  
-  sigma ~ inv_chi_squared(1);
-  for (i in 1:M){
-    y[i,] ~ normal(mu[i,], sigma); 
-  }
-}
-
-generated quantities {
-  real ypred[M];
-  real t[1];
-  t[1] = xpred;
-  for (i in 1:M){
-    ypred[i] = normal_rng(logit_transform(t,alpha[i], beta[i])[1], sigma);
-  }
-
-}
-
-"
-```
-
-
-```{r}
 hirachical_model <- "
 functions {
   real[] logit_transform(real[] x, real k, real x0) {
@@ -233,6 +171,71 @@ generated quantities {
 
 
 ```{r}
+seperated_model <- "
+functions {
+  real[] logit_transform(real[] x, real k, real x0) {
+    int N = size(x);
+    real xtemp[N];
+    for (i in 1:N){
+      xtemp[i] = 1 / (1 + exp(-k * (x[i] - x0)));
+    }
+     return xtemp;
+  }
+}
+
+data {
+    int<lower=0> J;
+    int<lower=1> M;
+    int<lower=0> N; // number of data points
+    real x[M,N]; // observation year
+    real y[M,N]; // observation number of drowned
+    real xpred;  // prediction year
+}
+
+parameters {
+  real alpha[M];
+  real beta[M];
+  real<lower = 0> sigma;
+}
+
+transformed parameters {
+  real mu[M,N];
+  for (i in 1:M){
+    mu[i,] = logit_transform(x[i,],alpha[i], beta[i]);
+  }
+}
+
+model {
+  for (i in 1:M){
+    // as prior we will change it to the same values
+    alpha[i] ~ gamma(1.2, 0.1);
+    beta[i] ~ normal(0.1, 0.1);
+  }
+  
+  sigma ~ inv_chi_square(1);
+  for (i in 1:M){
+    y[i,] ~ normal(mu[i,], sigma); 
+  }
+}
+
+generated quantities {
+  real ypred[M];
+  real t[1];
+  t[1] = xpred;
+  for (i in 1:M){
+    ypred[i] = normal_rng(logit_transform(t,alpha[i], beta[i])[1], sigma);
+  }
+
+}
+
+"
+```
+
+
+
+
+
+```{r}
 # setwd("/Users/max/Documents/UniMac/Aalto/BDA/bda_aalto_project/data")
 data1 <- read.csv("data/Finland_output.csv")
 data2 <- read.csv("data/Germany_output.csv")
@@ -264,11 +267,8 @@ stan_data <- list(
     M = 5,
     y = yData,
     x = xData,
-    xpred = 1.1,
-    sigma = 0.0001,
-    muAlpha = muAlpha,
-    muBeta = muBeta
-  )
+    xpred = 1.1
+)
 model_hirachical <- rstan::sampling(hm, data = stan_data, warmup=3000, iter=4000)
 fit_hm <- extract(model_hirachical, permuted = TRUE, inc_warmup = FALSE)
 ```
