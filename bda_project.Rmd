@@ -229,7 +229,7 @@ transformed parameters {
 model {
     hyper_mu ~ normal(0, 1);
     hyper_sigma ~ inv_chi_square(10);
-    hyper_alpha ~ gamma(2,1);
+    hyper_alpha ~ gamma(2,0.6);
     
   for (i in 1:M){
     // as prior we will change it to the same values
@@ -278,7 +278,7 @@ xData <- rbind(data1$X,data2$X,data3$X,data4$X,data5$X)
 yData <-rbind(data1$Y,data2$Y,data3$Y,data4$Y,data5$Y)
 #dim(yData) <- c(5,222)
 
-hm <- rstan::stan_model(model_code = seperated_model)
+hm <- rstan::stan_model(model_code = hirachical_model)
 stan_data <- list(
     J = 1,
     N = length(data1$Y),
