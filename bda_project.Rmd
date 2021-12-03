@@ -25,7 +25,42 @@ options(mc.cores = parallel::detectCores())
 rstan_options(auto_write = TRUE)
 ```
 
+# 1. Introduction
+## Motivation
+It's been almost 2 years since the covid-19 started in December 2019. World vaccination has been started December 2020 but 
+## Problem
+## Main modeling idea
+## Showing some illustrative figure
 
+# 2. Dataset
+
+Datasets down below show cumulative covid vaccinations rate by countries( collected from [linked phrase](https://ourworldindata.org/covid-vaccinations)).Country  column shows the country of this data. X column is originally from the date when the country started vaccination to the recent date of vaccination. We normalized the date column by giving index 0 to number of date and deviding it with the number of date. As the time length of the vaccination differs by country, we uniformly picked the 222 datapoints from the datasets before normalize the X column. Y column shows the covid vaccination rate in the country. With the cumulative covid vaccination number, we devide it by 2 times population because most of the vaccines require 2 doses to be fully vaccinated. Therefore, dimension of all datasets are (222,3).
+
+```{r}
+setwd('/Users/chuhyeongyeong/2021_period1/bayesian_data_analysis/project/bda_aalto_project-master')
+finland <- read.csv("data/Finland_output.csv")
+germany <- read.csv("data/Germany_output.csv")
+hongkong <- read.csv('data/HongKong_output.csv')
+portugal <- read.csv('data/Portugal_output.csv')
+japan <- read.csv('data/Japan_output.csv')
+```
+
+```{r}
+cat('dimenstion of Finland dataset: ',dim(finland),'\n')
+cat('dimenstion of Germany dataset: ',dim(germany),'\n')
+cat('dimenstion of HongKong dataset: ',dim(hongkong),'\n')
+cat('dimenstion of Portugal dataset: ',dim(portugal),'\n')
+cat('dimenstion of Japan dataset: ',dim(japan),'\n')
+```
+
+
+```{r}
+total= rbind(finland,germany,hongkong,portugal,japan)
+ggplot(data = total, aes(x = X, y = Y, color = Country)) +
+    geom_line() +
+    ggtitle("Cumulative covid19 vaccination rate") +
+    xlab("time") + ylab("vaccination rate")
+```
 
 # Mathematical Models
 
