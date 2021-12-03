@@ -208,12 +208,12 @@ transformed parameters {
 model {
   for (i in 1:M){
     // as prior we will change it to the same values
-    alpha[i] ~ inv_chi_square(10);
+    alpha[i] ~ inv_chi_square(1);
     //alpha[i] ~ normal(0,100);
-    beta[i] ~ normal(0,1);
+    beta[i] ~ normal(0.5,1);
   }
   
-  sigma ~ inv_chi_square(10);
+  sigma ~ inv_chi_square(1);
   for (i in 1:M){
     y[i,] ~ normal(mu[i,], sigma); 
   }
@@ -265,4 +265,5 @@ stan_data <- list(
 )
 model_hirachical <- rstan::sampling(hm, data = stan_data, warmup=3000, iter=4000)
 fit_hm <- extract(model_hirachical, permuted = TRUE, inc_warmup = FALSE)
+plot(fit_hm$mu[3000,1,])
 ```
