@@ -475,4 +475,9 @@ hist(fit_hm$ypred[,5])
 cat("Mean of 4000 predictions for Japan: ", mean(fit_hm$ypred[,5]))
 ```
 
-We need to be very carefull about the prediction of the vaccination numbers. While it is nice having those predicitions, they are just usefull.  
+We can see, that a pointwise  prediction for those countries it not very meaningfull, as it might end up lower, than the current vaccination status, which is not reasonable to assume and also some predictions are above 1, which is also not reasonable to assume, as not more people can get vaccinated than the population of the country. 
+To minimise the effects of those outliers, we look at the mean values for the prediction. In general we can see, that those are much more reasonable looking, especially compared to those pointwise predictions. 
+
+However we need to be very carefull about the prediction of the vaccination numbers. While it is nice having those predicitions, they are just of limited usefullness for some countries. In the case of a high vacination rate and low covid case numbers like in Japan we can expect that those numbers will be fairly accuarate, as there are unlikely to happen anything societly or pollitically to suddenly increase the number of vaccines.
+
+On the other hand Germany has a comparatively low number of vaccinations, but recently a high number of now covid infections. Therefore the numbers might not just increase steadily, but maybe more rapidly as the gouverment might introduce some vacine policies, which will change those numbers drastically, as suddenly it is mandatory to get vaccinated.
