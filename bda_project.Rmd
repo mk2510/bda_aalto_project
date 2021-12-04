@@ -59,7 +59,7 @@ knitr::include_graphics("./image/share-people-fully-vaccinated-covid_plot.png")
 Datasets down below show cumulative covid vaccinations rate by countries( collected from [linked phrase](https://ourworldindata.org/covid-vaccinations)).Country  column shows the country of this data. X column is originally from the date when the country started vaccination to the recent date of vaccination. We normalized the date column by giving index 0 to number of date and deviding it with the number of date. As the time length of the vaccination differs by country, we uniformly picked the 222 datapoints from the datasets before normalize the X column. Y column shows the covid vaccination rate in the country. With the cumulative covid vaccination number, we devide it by 2 times population because most of the vaccines require 2 doses to be fully vaccinated. Therefore, dimension of all datasets are (222,3).
 
 ```{r}
-setwd('/Users/chuhyeongyeong/2021_period1/bayesian_data_analysis/bda_aalto_project')
+#setwd('/Users/chuhyeongyeong/2021_period1/bayesian_data_analysis/bda_aalto_project')
 finland <- read.csv("data/Finland_output.csv")
 germany <- read.csv("data/Germany_output.csv")
 hongkong <- read.csv('data/Hong Kong_output.csv')
@@ -187,7 +187,6 @@ y_{i j} \mid \mu_i, \sigma &\sim \operatorname{Normal}\left(\mu_i, \sigma\right)
 \mu_{\beta} & \sim \operatorname{Normal}(0,1)\\
 \sigma_{\beta} & \sim \operatorname{Inv}-\chi^{2}(1) \\
 \sigma_{\alpha} & \sim \operatorname{Inv}-\chi^{2}(1) \\
-
 \end{aligned}
 $$
 
@@ -294,15 +293,15 @@ plot(x, dnorm(x, 0, 1), ylim=c(0,1), type="l", main="Normal(0,1) PDF",
 
 ## Prior choice of the seperated model
 
-For the seperated model, the $\alpha$ prior needed to fullfill two criteria. First it needed to be a positive number, as we can expect from the vaccination, that the rate is rising and not dropping. Also, as the vaccination should follow roughly a logit function, as it can be observed from the data, we can expect to have a gradient, which is more likely around $1$ than bigger than $50$. Hence the prior of $\operatorname{Inv}-\chi^{2}(1) $ was choosen.
+For the seperated model, the $\alpha$ prior needed to fullfill two criteria. First it needed to be a positive number, as we can expect from the vaccination, that the rate is rising and not dropping. Also, as the vaccination should follow roughly a logit function, as it can be observed from the data, we can expect to have a gradient, which is more likely around $1$ than bigger than $50$. Hence the prior of $\operatorname{Inv}-\chi^{2}(1)$ was choosen.
 
 For our $\beta$ prior estimation we know, that it should be in the range of $[0,1]$, as this is the range of our x-Data. Therefore we choose $N(0.5,1)$.
 
-The variance of our y-sampling should be a positive number. As we can also expect it to be quite small, as we want our model following the line quite tightly, we choose here as well $\operatorname{Inv}-\chi^{2}(1) $.
+The variance of our y-sampling should be a positive number. As we can also expect it to be quite small, as we want our model following the line quite tightly, we choose here as well $\operatorname{Inv}-\chi^{2}(1)$.
 
 ## Prior choices of the hirachical model
 
-The hirachical model has the following priors. The $\alpha$- prior still has the same distribution function: $\operatorname{Inv}-\chi^{2}(\cdot) $, with the same reasoning as for the seperated model. Here however, the parameter for the function gets sampled as well. With the same reasoning about the order of magnitude of our parameter we choose $\operatorname{Inv}-\chi^{2}(1)$ as a suitable weakly informative prior.
+The hirachical model has the following priors. The $\alpha$- prior still has the same distribution function: $\operatorname{Inv}-\chi^{2}(\cdot)$, with the same reasoning as for the seperated model. Here however, the parameter for the function gets sampled as well. With the same reasoning about the order of magnitude of our parameter we choose $\operatorname{Inv}-\chi^{2}(1)$ as a suitable weakly informative prior.
 As we can see in the plot above, the PDF of the probability distribution has nearly all amount of its mass in the interval of $[0,10]$
 
 The $\beta$ prior is again, like in the seperated model a normal distribution $N(\cdot,\cdot)$. For the first argument, we choose a normal distribution of $N(0,1)$, with the reasoning, that we expect it to be located somewhere in the interval of $[0,1]$, as this is the range of the data.
@@ -336,7 +335,7 @@ yData <-rbind(finland$Y,germany$Y,portugal$Y,hongkong$Y,japan$Y)
 sm <- rstan::stan_model(model_code = seperated_model)
 stan_data <- list(
     J = 1,
-    N = length(data1$Y),
+    N = length(finland$Y),
     M = 5,
     y = yData,
     x = xData,
@@ -368,7 +367,7 @@ we create samples from the models. The given data are the datasets from section 
 
 We will use the build in tool from the stan library to analyse the convergence of our chains.
 ```{r}
-sum_seperate <- summary(model_standart)
+sum_seperate <- summary(model_separated)
 sum_hirachical <- summary(model_hirachical)
 cat("Rhat of seperate model: \n")
 sum_seperate$summary[1:11,10]
@@ -426,6 +425,7 @@ k_s <- loo_h$diagnostics$pareto_k
 plot(1:length(k_h),k_h,main="K-values in hierarchical model")
 ```
 
+# 11. Sensitivity analysis with respect to prior choices (i.e. checking whether the result changes a lot if prior is changed)
 
 # 10. Predictive performance assessment if applicable (e.g. classification accuracy) and evaluation of practical usefulness of the accuracy
 
