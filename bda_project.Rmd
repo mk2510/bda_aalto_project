@@ -18,9 +18,9 @@ bibliography: ["reference.bib"]
 #remotes::install_github("avehtari/BDA_course_Aalto",
 #        subdir = "rpackage", upgrade="never")
 #install.packages("aaltobda")
-#devtools::install_github("crsh/citr")
+devtools::install_github("crsh/citr")
 knitr::opts_chunk$set(echo = TRUE)
-#library(citr)
+library(citr)
 library(aaltobda)
 library(rstan)
 library(loo)
@@ -301,7 +301,7 @@ The variance of our y-sampling should be a positive number. As we can also expec
 
 ## Prior choices of the hirachical model
 
-The hirachical model has the following priors. The $\alpha$- prior still has the same distribution function: $\operatorname{Inv}-\chi^{2}(\cdot) $, with the same reasoning as for the seperated model. Here however, the parameter for the function gets sampled as well. With the same reasoning about the order of magnitude of our parameter we choose $\operatorname{Inv}-\chi^{2}(1)$ as a suitable weakly informative prior.
+The hirachical model has the following priors. The $\alpha$- prior still has the same distribution function: $\operatorname{Inv}-\chi^{2}(\cdot)$, with the same reasoning as for the seperated model. Here however, the parameter for the function gets sampled as well. With the same reasoning about the order of magnitude of our parameter we choose $\operatorname{Inv}-\chi^{2}(1)$ as a suitable weakly informative prior.
 As we can see in the plot above, the PDF of the probability distribution has nearly all amount of its mass in the interval of $[0,10]$
 
 The $\beta$ prior is again, like in the seperated model a normal distribution $N(\cdot,\cdot)$. For the first argument, we choose a normal distribution of $N(0,1)$, with the reasoning, that we expect it to be located somewhere in the interval of $[0,1]$, as this is the range of the data.
