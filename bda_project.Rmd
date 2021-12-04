@@ -281,6 +281,21 @@ xData <- rbind(data1$X,data2$X,data3$X,data4$X,data5$X)
 yData <-rbind(data1$Y,data2$Y,data3$Y,data4$Y,data5$Y)
 #dim(yData) <- c(5,222)
 
+sm <- rstan::stan_model(model_code = seperated_model)
+stan_data <- list(
+    J = 1,
+    N = length(data1$Y),
+    M = 5,
+    y = yData,
+    x = xData,
+    xpred = 1.1
+)
+model_standart <- rstan::sampling(sm, data = stan_data, warmup=3000, iter=4000)
+fit_hm <- extract(model_standart, permuted = TRUE, inc_warmup = FALSE)
+plot(fit_hm$mu[3000,1,])
+```
+
+```{r}
 hm <- rstan::stan_model(model_code = hirachical_model)
 stan_data <- list(
     J = 1,
@@ -293,4 +308,14 @@ stan_data <- list(
 model_hirachical <- rstan::sampling(hm, data = stan_data, warmup=3000, iter=4000)
 fit_hm <- extract(model_hirachical, permuted = TRUE, inc_warmup = FALSE)
 plot(fit_hm$mu[3000,1,])
+```
+
+
+# Rhat and ESS analysis
+We will use the build in tool from the stan library to analyse the convergence of our chains. 
+```{r}
+sum_seperate <- summary(model_standart)
+sum_hirachical <- summary(model_hirachical)
+cat("Rhat of seperate model: \n")
+sum_seperate$summary[1:11,10]
 ```
