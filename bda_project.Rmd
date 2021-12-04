@@ -61,7 +61,7 @@ Datasets down below show cumulative covid vaccinations rate by countries( collec
 
 ```{r}
 #setwd('/Users/chuhyeongyeong/2021_period1/bayesian_data_analysis/bda_aalto_project')
-#setwd("/home/chooh1/notebooks/BDA/project")
+setwd("/home/chooh1/notebooks/BDA/project")
 finland <- read.csv("data/Finland_output.csv")
 germany <- read.csv("data/Germany_output.csv")
 hongkong <- read.csv('data/Hong Kong_output.csv')
@@ -157,7 +157,6 @@ generated quantities {
   vector[N] log_lik[M];
   real ypred[M];
   real t[1];
-  real log_lik[M,N];
   t[1] = xpred;
   for (i in 1:M){
     ypred[i] = normal_rng(logit_transform(t,alpha[i], beta[i])[1], sigma);
@@ -255,7 +254,6 @@ model {
 generated quantities {
   vector[N] log_lik[M];
   real ypred[M];
-  real log_lik[M,N];
   real t[1];
   t[1] = xpred;
   for (i in 1:M){
@@ -346,8 +344,19 @@ stan_data <- list(
 )
 model_separated <- rstan::sampling(sm, data = stan_data, warmup=3000, iter=4000)
 fit_sm <- extract(model_separated, permuted = TRUE, inc_warmup = FALSE)
-plot(fit_sm$mu[3000,1,])
+#plot(fit_sm$mu[3000,1,])
 ```
+
+```{r}
+Y_s = c(fit_sm$mu[3000,1,],fit_sm$mu[3000,2,],fit_sm$mu[3000,3,],
+      fit_sm$mu[3000,4,],fit_sm$mu[3000,5,])
+result_s = data.frame(Country=total$Country,X=total$X,Y=Y_s)
+ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
+    geom_line() +
+    ggtitle("Sampled covid19 vaccination rate from the seperated model") +
+    xlab("time") + ylab("posterior vaccination rate")
+```
+
 
 ```{r}
 #hierarchical model run
@@ -362,6 +371,16 @@ stan_data <- list(
 model_hierarchical <- rstan::sampling(hm, data = stan_data, warmup=3000, iter=4000)
 fit_hm <- extract(model_hierarchical, permuted = TRUE, inc_warmup = FALSE)
 #plot(fit_hm$mu[3000,1,])
+```
+
+```{r}
+Y_h = c(fit_hm$mu[3000,1,],fit_hm$mu[3000,2,],fit_hm$mu[3000,3,],
+      fit_hm$mu[3000,4,],fit_hm$mu[3000,5,])
+result_h = data.frame(Country=total$Country,X=total$X,Y=Y_h)
+ggplot(data = result_h, aes(x =X, y = Y, color = Country)) +
+    geom_line() +
+    ggtitle("Sampled covid19 vaccination rate from the hierarchical model") +
+    xlab("time") + ylab("posterior vaccination rate")
 ```
 
 With the command ```rstan::stan_model``` we compile our stan models from a string vector and in the next step with ```rstan::sampling```
@@ -398,8 +417,42 @@ Here we can nicely see, that all ESS values are above 400, which indicates, that
 # 8. Posterior predictive checks and what was done to improve the model.
 
 ```{r}
-
+#the posterior expectation for parameter with a 90% credible interval
+mu_pred_interval<-function(data, prob){
+degree = length(data)-1
+mu = mean(data)
+sig = sqrt(var(data)*(1+1/length(data)))
+error = qt(prob+(1-prob)/2,degree)*sig
+lower = mu -error
+upper = mu +error
+interval = c(lower,upper)
+return(interval)
+}
 ```
+
+## Seperate model
+### The posterior expectations for alpha with a 90% credible interval
+```{r}
+a1 = mu_pred_interval(data = fit_sm$alpha[,1], prob = 0.90)
+a2 = mu_pred_interval(data = fit_sm$alpha[,2], prob = 0.90)
+a3 = mu_pred_interval(data = fit_sm$alpha[,3], prob = 0.90)
+a4 = mu_pred_interval(data = fit_sm$alpha[,4], prob = 0.90)
+a5 = mu_pred_interval(data = fit_sm$alpha[,5], prob = 0.90)
+cat()
+cat()
+```
+
+
+### the posterior expectation for betas with a 90% credible interval
+```{r}
+b1 = mu_pred_interval(data = fit_sm$beta[,1], prob = 0.90)
+b2 = mu_pred_interval(data = fit_sm$beta[,2], prob = 0.90)
+b3 = mu_pred_interval(data = fit_sm$beta[,3], prob = 0.90)
+b4 = mu_pred_interval(data = fit_sm$beta[,4], prob = 0.90)
+b5 = mu_pred_interval(data = fit_sm$beta[,5], prob = 0.90)
+```
+
+
 
 # 9.Model comparison (e.g. with LOO-CV)
 
@@ -452,56 +505,105 @@ cat("PSIS-LOO estimates in hierarchical model",elpd_h,'\n')
 
 According to the PSIS-LOO estimate, hierarchical model has slightly higher value for the PSIS-LOO estimate than seperate model,so we could choose hierarchical model but still seperate model also have nice score in PSIS-LOO estimate.
 
+
 # 10. Predictive performance assessment if applicable (e.g. classification accuracy) and evaluation of practical usefulness of the accuracy
 
+## Seperate model
 We can now evaluate the predictive performance of our model.
 For the seperated model we have the following numbers:
 ```{r}
-hist(fit_sm$ypred[,1])
-cat("Mean of 4000 predictions for Finland: ", mean(fit_sm$ypred[,1]))
-```
-```{r}
-hist(fit_sm$ypred[,2])
-cat("Mean of 4000 predictions for Germany: ", mean(fit_sm$ypred[,2]))
-```
-```{r}
-hist(fit_sm$ypred[,3])
-cat("Mean of 4000 predictions for Portugal: ", mean(fit_sm$ypred[,3]))
-```
-```{r}
-hist(fit_sm$ypred[,4])
-cat("Mean of 4000 predictions for Hong Kong: ", mean(fit_sm$ypred[,4]))
-```
-```{r}
-hist(fit_sm$ypred[,5])
-cat("Mean of 4000 predictions for Japan: ", mean(fit_sm$ypred[,5]))
+qplot(fit_sm$ypred[,1], geom="histogram") +
+    xlab("") +
+    ylab("") +
+    ggtitle("Prediction of vaccination rate in close future,Finland")
 ```
 
+```{r}
+qplot(fit_sm$ypred[,2], geom="histogram") +
+    xlab("") +
+    ylab("") +
+    ggtitle("Prediction of vaccination rate in close future, Germany")
+```
+
+```{r}
+qplot(fit_sm$ypred[,3], geom="histogram") +
+    xlab("") +
+    ylab("") +
+    ggtitle("Prediction of vaccination rate in close future, Portugal")
+```
+
+```{r}
+qplot(fit_sm$ypred[,4], geom="histogram") +
+    xlab("") +
+    ylab("") +
+    ggtitle("Prediction of vaccination rate in close future, Hongkong")
+```
+
+```{r}
+qplot(fit_sm$ypred[,5], geom="histogram") +
+    xlab("") +
+    ylab("") +
+    ggtitle("Prediction of vaccination rate in close future, Japan")
+```
+
+```{r}
+cat("Mean of 4000 predictions for Finland: ", mean(fit_sm$ypred[,1]),'\n')
+cat("Mean of 4000 predictions for Germany: ", mean(fit_sm$ypred[,2]),'\n')
+cat("Mean of 4000 predictions for Portugal: ", mean(fit_sm$ypred[,3]),'\n')
+cat("Mean of 4000 predictions for Hong Kong: ", mean(fit_sm$ypred[,4]),'\n')
+cat("Mean of 4000 predictions for Japan: ", mean(fit_sm$ypred[,5]),'\n')
+```
+
+
+## Hierarchical model
 
 Now we can evaluate the numbers for the hirachical model:
+
 ```{r}
-hist(fit_hm$ypred[,1])
-cat("Mean of 4000 predictions for Finland: ", mean(fit_hm$ypred[,1]))
-```
-```{r}
-hist(fit_hm$ypred[,2])
-cat("Mean of 4000 predictions for Germany: ", mean(fit_hm$ypred[,2]))
-```
-```{r}
-hist(fit_hm$ypred[,3])
-cat("Mean of 4000 predictions for Portugal: ", mean(fit_hm$ypred[,3]))
-```
-```{r}
-hist(fit_hm$ypred[,4])
-cat("Mean of 4000 predictions for Hong Kong: ", mean(fit_hm$ypred[,4]))
-```
-```{r}
-hist(fit_hm$ypred[,5])
-cat("Mean of 4000 predictions for Japan: ", mean(fit_hm$ypred[,5]))
+qplot(fit_hm$ypred[,1], geom="histogram") +
+    xlab("") +
+    ylab("") +
+    ggtitle("Prediction of vaccination rate in close future,Finland")
 ```
 
-We can see, that a pointwise  prediction for those countries it not very meaningfull, as it might end up lower, than the current vaccination status, which is not reasonable to assume and also some predictions are above 1, which is also not reasonable to assume, as not more people can get vaccinated than the population of the country. 
-To minimise the effects of those outliers, we look at the mean values for the prediction. In general we can see, that those are much more reasonable looking, especially compared to those pointwise predictions. 
+```{r}
+qplot(fit_hm$ypred[,2], geom="histogram") +
+    xlab("") +
+    ylab("") +
+    ggtitle("Prediction of vaccination rate in close future, Germany")
+```
+
+```{r}
+qplot(fit_hm$ypred[,3], geom="histogram") +
+    xlab("") +
+    ylab("") +
+    ggtitle("Prediction of vaccination rate in close future, Portugal")
+```
+
+```{r}
+qplot(fit_hm$ypred[,4], geom="histogram") +
+    xlab("") +
+    ylab("") +
+    ggtitle("Prediction of vaccination rate in close future, Hongkong")
+```
+
+```{r}
+qplot(fit_hm$ypred[,5], geom="histogram") +
+    xlab("") +
+    ylab("") +
+    ggtitle("Prediction of vaccination rate in close future, Japan")
+```
+
+```{r}
+cat("Mean of 4000 predictions for Finland: ", mean(fit_hm$ypred[,1]),'\n')
+cat("Mean of 4000 predictions for Germany: ", mean(fit_hm$ypred[,2]),'\n')
+cat("Mean of 4000 predictions for Portugal: ", mean(fit_hm$ypred[,3]),'\n')
+cat("Mean of 4000 predictions for Hong Kong: ", mean(fit_hm$ypred[,4]),'\n')
+cat("Mean of 4000 predictions for Japan: ", mean(fit_hm$ypred[,5]),'\n')
+```
+
+We can see, that a pointwise  prediction for those countries it not very meaningfull, as it might end up lower, than the current vaccination status, which is not reasonable to assume and also some predictions are above 1, which is also not reasonable to assume, as not more people can get vaccinated than the population of the country.
+To minimise the effects of those outliers, we look at the mean values for the prediction. In general we can see, that those are much more reasonable looking, especially compared to those pointwise predictions.
 
 However we need to be very carefull about the prediction of the vaccination numbers. While it is nice having those predicitions, they are just of limited usefullness for some countries. In the case of a high vacination rate and low covid case numbers like in Japan we can expect that those numbers will be fairly accuarate, as there are unlikely to happen anything societly or pollitically to suddenly increase the number of vaccines.
 
@@ -511,9 +613,9 @@ On the other hand Germany has a comparatively low number of vaccinations, but re
 
 # 12. Discussion of issues and potential improvements.
 
-As our raw data contained the number of vaccinated doses given, we made the simplification, that two doses are needed to be counted as a fully vaccinated person. However when having a closer look at the number of people in Germany, who recives vaccination, we can see a rise in the last couple of datapoints. This spike can however be partially explained by given everyone above 18 the possibility to get the 3rd dose. By simply dividing the data by 2 we might soon end up in vaccination rates above 1. The data therefore would need to be further modified to also account for those changes. 
+As our raw data contained the number of vaccinated doses given, we made the simplification, that two doses are needed to be counted as a fully vaccinated person. However when having a closer look at the number of people in Germany, who recives vaccination, we can see a rise in the last couple of datapoints. This spike can however be partially explained by given everyone above 18 the possibility to get the 3rd dose. By simply dividing the data by 2 we might soon end up in vaccination rates above 1. The data therefore would need to be further modified to also account for those changes.
 
-One issue with our model is, that we used normal distributions to model our data and predictions. This does not fully reflect the reality. As the data is dependent on each other we would describe the vaccination rate as a time series, which is monotonic increasing. We therefore would need the strict condition, that $y_i \geq y_{i-1}$ for all $i > 0$. This is not given with our simple model and a process, which includes those conditions, as it is for example the case with the poisson process, as it can be seen in the plot below, which sample code can be found on the following website (http://theanalysisofdata.com/probability/7_2.html): 
+One issue with our model is, that we used normal distributions to model our data and predictions. This does not fully reflect the reality. As the data is dependent on each other we would describe the vaccination rate as a time series, which is monotonic increasing. We therefore would need the strict condition, that $y_i \geq y_{i-1}$ for all $i > 0$. This is not given with our simple model and a process, which includes those conditions, as it is for example the case with the poisson process, as it can be seen in the plot below, which sample code can be found on the following website (http://theanalysisofdata.com/probability/7_2.html):
 
 
 ```{r}
