@@ -8,19 +8,17 @@ output:
     toc: yes
     toc_depth: 1
 urlcolor: blue
-bibliography: ["reference.bib"]
+bibliography: reference.bib
 ---
 ```{r setup, include=FALSE}
 # This chunk sets echo = TRUE as default, that is print all code.
 # knitr::opts_chunk$set can be used to set other notebook generation options, too.
 # include=FALSE inside curly brackets makes this block not be included in the pdf.
-#install.packages("remotes")
-#remotes::install_github("avehtari/BDA_course_Aalto",
-#        subdir = "rpackage", upgrade="never")
-#install.packages("aaltobda")
-devtools::install_github("crsh/citr")
+install.packages("remotes")
+remotes::install_github("avehtari/BDA_course_Aalto",
+        subdir = "rpackage", upgrade="never")
+install.packages("aaltobda")
 knitr::opts_chunk$set(echo = TRUE)
-library(citr)
 library(aaltobda)
 library(rstan)
 library(loo)
@@ -31,8 +29,8 @@ rstan_options(auto_write = TRUE)
 
 # 1. Introduction
 
-It's been almost 2 years since the covid-19 started in December 2019, and it's been 1 year since world vaccination has been started December 2020. Even though most of the countries rushing into vaccination and some countries are picking over 80% rate in vaccination, the pandemic seems unstoppable. One of the popular idea to stop the pandemic is that to achieve a 'herd-immunity threshold, which occurs when a large portion of a community (the herd) becomes immune to a disease, making the spread of disease from person to person unlikely. Immune individuals are unlikely to contribute to disease transmission, disrupting chains of infection, which stops or slows the spread of disease (wiki citation).
-It is known that the herd-immunity threshold is achievable only with high vaccination rates, and many scientists had thought that once people started being immunized en masse, herd immunity would permit society to return to normal. Most estimates had placed the threshold at 60–70% of the population gaining immunity, either through vaccinations or past exposure to the virus(nature citation).
+It's been almost 2 years since the covid-19 started in December 2019, and it's been 1 year since world vaccination has been started December 2020. Even though most of the countries rushing into vaccination and some countries are picking over 80% rate in vaccination, the pandemic seems unstoppable. One of the popular idea to stop the pandemic is that to achieve a 'herd-immunity threshold, which occurs when a large portion of a community (the herd) becomes immune to a disease, making the spread of disease from person to person unlikely. Immune individuals are unlikely to contribute to disease transmission, disrupting chains of infection, which stops or slows the spread of disease @wiki.
+It is known that the herd-immunity threshold is achievable only with high vaccination rates, and many scientists had thought that once people started being immunized en masse, herd immunity would permit society to return to normal. Most estimates had placed the threshold at 60–70% of the population gaining immunity, either through vaccinations or past exposure to the virus @nature.
 Down below shows the graph of population fully vaccinated by countries.
 ```{r}
 knitr::include_graphics("./image/share-people-fully-vaccinated-covid_world.png")
@@ -44,14 +42,17 @@ Down below shows the barplot of population rate who received at least one dose o
 ```{r}
 knitr::include_graphics("./image/share-people-vaccinated-covid.png")
 ```
+
 Down below shows the barplot of population rate of fully vaccinated against covid19 by countries in our interest.
 ```{r}
 knitr::include_graphics("./image/share-people-fully-vaccinated-covid_bar.png")
 ```
+
 Down below shows the barplot of fully vaccinated population rate by countries in our interest.
 ```{r}
 knitr::include_graphics("./image/share-people-fully-vaccinated-covid_plot.png")
 ```
+
 ### Relative work
 
 # 2. Dataset
@@ -60,6 +61,7 @@ Datasets down below show cumulative covid vaccinations rate by countries( collec
 
 ```{r}
 #setwd('/Users/chuhyeongyeong/2021_period1/bayesian_data_analysis/bda_aalto_project')
+#setwd("/home/chooh1/notebooks/BDA/project")
 finland <- read.csv("data/Finland_output.csv")
 germany <- read.csv("data/Germany_output.csv")
 hongkong <- read.csv('data/Hong Kong_output.csv')
@@ -152,6 +154,7 @@ model {
 }
 
 generated quantities {
+  vector[N] log_lik[M];
   real ypred[M];
   real t[1];
   real log_lik[M,N];
@@ -192,9 +195,9 @@ $$
 
 
 
-Now we will build the hirachical model in stan:
+Now we will build the hierarchical model in stan:
 ```{r}
-hirachical_model <- "
+hierarchical_model <- "
 functions {
   real[] logit_transform(real[] x, real k, real x0) {
     int N = size(x);
@@ -250,6 +253,7 @@ model {
 }
 
 generated quantities {
+  vector[N] log_lik[M];
   real ypred[M];
   real log_lik[M,N];
   real t[1];
@@ -317,6 +321,7 @@ The stan code was provided above with the describtion of the model
 
 ```{r}
 # setwd("/Users/max/Documents/UniMac/Aalto/BDA/bda_aalto_project/data")
+setwd("/home/chooh1/notebooks/BDA/project")
 finland <- read.csv("data/Finland_output.csv")
 germany <- read.csv("data/Germany_output.csv")
 portugal <- read.csv("data/Portugal_output.csv")
@@ -326,17 +331,15 @@ japan <- read.csv("data/Japan_output.csv")
 
 
 ```{r, results='hide', error=FALSE}
-xData <- rbind(finland$X,germany$X,portugal$X,hongkong$X,japan$X)
-#dim(xData) <- c(5,222)
-
-yData <-rbind(finland$Y,germany$Y,portugal$Y,hongkong$Y,japan$Y)
-#dim(yData) <- c(5,222)
+#seperate model run
+xData <- rbind(finland$X,germany$X,portugal$X,hongkong$X,japan$X) #(5,222)
+yData <-rbind(finland$Y,germany$Y,portugal$Y,hongkong$Y,japan$Y) #(5,222)
 
 sm <- rstan::stan_model(model_code = seperated_model)
 stan_data <- list(
     J = 1,
-    N = length(finland$Y),
-    M = 5,
+    N = dim(xData)[2],
+    M = dim(xData)[1],
     y = yData,
     x = xData,
     xpred = 1.1
@@ -347,17 +350,18 @@ plot(fit_sm$mu[3000,1,])
 ```
 
 ```{r}
-hm <- rstan::stan_model(model_code = hirachical_model)
+#hierarchical model run
+hm <- rstan::stan_model(model_code = hierarchical_model)
 stan_data <- list(
-    N = length(finland$Y),
-    M = 5,
+    N = dim(xData)[2],
+    M = dim(xData)[1],
     y = yData,
     x = xData,
     xpred = 1.1
 )
-model_hirachical <- rstan::sampling(hm, data = stan_data, warmup=3000, iter=4000)
-fit_hm <- extract(model_hirachical, permuted = TRUE, inc_warmup = FALSE)
-plot(fit_hm$mu[3000,1,])
+model_hierarchical <- rstan::sampling(hm, data = stan_data, warmup=3000, iter=4000)
+fit_hm <- extract(model_hierarchical, permuted = TRUE, inc_warmup = FALSE)
+#plot(fit_hm$mu[3000,1,])
 ```
 
 With the command ```rstan::stan_model``` we compile our stan models from a string vector and in the next step with ```rstan::sampling```
@@ -399,33 +403,67 @@ Here we can nicely see, that all ESS values are above 400, which indicates, that
 
 # 9.Model comparison (e.g. with LOO-CV)
 
-## Seperate model
 ```{r,results='hide',error=FALSE}
+#seperate model extract log_lik
 l_like_s <- extract_log_lik(model_seperated)
 loo_s <- loo(l_like_s)
 elpd_s <- loo_s$estimates[1,1]
-print(elpd_s)
+
+#hierarchical model extract log_lik
+l_like_h <- extract_log_lik(model_hierarchical)
+loo_h <- loo(l_like_h)
+elpd_h <- loo_h$estimates[1,1]
 ```
+
 
 ```{r}
 k_s <- loo_s$diagnostics$pareto_k
-plot(1:length(k_s),k_s,main="K-values in seperate model")
-```
-
-## Hierarchical model
-```{r,results='hide',error=FALSE}
-l_like_h <- extract_log_lik(model_hirachical)
-loo_h <- loo(l_like_h)
-elpd_h <- loo_h$estimates[1,1]
-print(elpd_h)
+plot_s <- ggplot(data = data.frame(x = seq(1,length(k_s)) ,y = k_s))
+plot_s + geom_point(aes(x = x, y = y, color = "blue"), alpha = 0.8) +
+    theme_light() +
+    xlab("") +
+    ylab("k-value") +
+    theme(legend.position="none")+
+    ggtitle("K-values in seperate model")
 ```
 
 ```{r}
-k_s <- loo_h$diagnostics$pareto_k
-plot(1:length(k_h),k_h,main="K-values in hierarchical model")
+k_h <- loo_h$diagnostics$pareto_k
+plot_h <- ggplot(data = data.frame(x = seq(1,length(k_h)) ,y = k_h))
+plot_h + geom_point(aes(x = x, y = y, color = "blue"), alpha = 0.8) +
+    theme_light() +
+    xlab("") +
+    ylab("k-value") +
+    theme(legend.position="none")+
+    ggtitle("K-values in hierarchical model")
+```
+```{r}
+cat("Maximum k-values in seperate model is ",max(k_s),'\n')
+cat("Maximum k-values in hierarchical model is ",max(k_h),'\n')
 ```
 
-# 11. Sensitivity analysis with respect to prior choices (i.e. checking whether the result changes a lot if prior is changed)
+If the k < 0.7 we can say that PSIS-LOO estimates are reliable. Based on this,for seperate model and hierarchical model both, the \hat{k}-values are all below 0.5 which are good. Therefore, both  seperate model and hierarchicalmodels are reliable. However, the maximum  \hat{k}-values in seperate model is 0.216 and the maximum \hat{k}-values in hierarchical model is 0.176, so we could say the hierarchical model is more reliable.
+
+####comparing PSIS-LOO estimates
+```{r}
+cat("PSIS-LOO estimates in seperate model",elpd_s,'\n')
+cat("PSIS-LOO estimates in hierarchical model",elpd_h,'\n')
+```
+
+According to the PSIS-LOO estimate, hierarchical model has slightly higher value for the PSIS-LOO estimate than seperate model,so we could choose hierarchical model but still seperate model also have nice score in PSIS-LOO estimate.
+
+
+# 12. Discussion of issues and potential improvements.
+
+
+# 13. Conclusion what was learned from the data analysis.
+
+
+# 14. Self-reflection of what the group learned while making the project.
+
+
+
+
 
 # 10. Predictive performance assessment if applicable (e.g. classification accuracy) and evaluation of practical usefulness of the accuracy
 
