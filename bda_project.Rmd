@@ -3,12 +3,12 @@ title: "BDA - Assignment 9"
 author: "Anonymous"
 header-includes:
    - \usepackage{listings}
-output: 
-  pdf_document: 
+output:
+  pdf_document:
     toc: yes
     toc_depth: 1
 urlcolor: blue
-bibliography: ["reference.bib"] 
+bibliography: ["reference.bib"]
 ---
 ```{r setup, include=FALSE}
 # This chunk sets echo = TRUE as default, that is print all code.
@@ -30,14 +30,14 @@ rstan_options(auto_write = TRUE)
 
 # 1. Introduction
 
-It's been almost 2 years since the covid-19 started in December 2019, and it's been 1 year since world vaccination has been started December 2020. Even though most of the countries rushing into vaccination and some countries are picking over 80% rate in vaccination, the pandemic seems unstoppable. One of the popular idea to stop the pandemic is that to achieve a 'herd-immunity threshold, which occurs when a large portion of a community (the herd) becomes immune to a disease, making the spread of disease from person to person unlikely. Immune individuals are unlikely to contribute to disease transmission, disrupting chains of infection, which stops or slows the spread of disease (wiki citation). 
+It's been almost 2 years since the covid-19 started in December 2019, and it's been 1 year since world vaccination has been started December 2020. Even though most of the countries rushing into vaccination and some countries are picking over 80% rate in vaccination, the pandemic seems unstoppable. One of the popular idea to stop the pandemic is that to achieve a 'herd-immunity threshold, which occurs when a large portion of a community (the herd) becomes immune to a disease, making the spread of disease from person to person unlikely. Immune individuals are unlikely to contribute to disease transmission, disrupting chains of infection, which stops or slows the spread of disease (wiki citation).
 It is known that the herd-immunity threshold is achievable only with high vaccination rates, and many scientists had thought that once people started being immunized en masse, herd immunity would permit society to return to normal. Most estimates had placed the threshold at 60–70% of the population gaining immunity, either through vaccinations or past exposure to the virus(nature citation).
 Down below shows the graph of population fully vaccinated by countries.
 ```{r}
 knitr::include_graphics("./image/share-people-fully-vaccinated-covid_world.png")
 ```
 
-As the high vaccination rate is a big part of ending pandemic by achieving herd-immunity, our group was interested in predicting how much high vaccination rate that countries will achieve in future. As we expect the cumulative vaccination rate graph will follow logit function, we set our model as a logit function. We picked 5 countries,which are Finland, Portugal, Japan, Germany,and Hongkong for our data. The cumulative vaccination graphs in these countries roughly follow the logit function and our main modeling idea is to see find which model the data fits well (seperate model or hierarchical model) and to predict the future vaccination rate. 
+As the high vaccination rate is a big part of ending pandemic by achieving herd-immunity, our group was interested in predicting how much high vaccination rate that countries will achieve in future. As we expect the cumulative vaccination rate graph will follow logit function, we set our model as a logit function. We picked 5 countries,which are Finland, Portugal, Japan, Germany,and Hongkong for our data. The cumulative vaccination graphs in these countries roughly follow the logit function and our main modeling idea is to see find which model the data fits well (seperate model or hierarchical model) and to predict the future vaccination rate.
 
 Down below shows the barplot of population rate who received at least one dose of covid19 vaccine by countries in our interest.
 ```{r}
@@ -141,12 +141,12 @@ model {
     alpha[i] ~ inv_chi_square(1);
     beta[i] ~ normal(0.5,1);
   }
-  
+
   sigma ~ inv_chi_square(1);
-  
+
   //likelihood
   for (i in 1:M){
-    y[i,] ~ normal(mu[i,], sigma); 
+    y[i,] ~ normal(mu[i,], sigma);
   }
 }
 
@@ -157,7 +157,7 @@ generated quantities {
   for (i in 1:M){
     ypred[i] = normal_rng(logit_transform(t,alpha[i], beta[i])[1], sigma);
   }
-  
+
   //log-likelihood
   for (i in 1:M) {
     for (j in 1:N) {
@@ -208,8 +208,8 @@ functions {
 data {
     int<lower=1> M; //number of country
     int<lower=0> N; // number of data points
-    real x[M,N]; // 
-    real y[M,N]; // 
+    real x[M,N]; //
+    real y[M,N]; //
     real xpred;  // prediction year
 }
 
@@ -233,18 +233,18 @@ model {
     hyper_mu ~ normal(0, 1);
     hyper_sigma ~ inv_chi_square(10);
     hyper_alpha ~ inv_chi_square(10);
-    
+
   for (i in 1:M){
     // as prior we will change it to the same values
     alpha[i] ~ inv_chi_square(hyper_alpha);
     beta[i] ~ normal(hyper_mu,hyper_sigma);
   }
-  
+
   sigma ~ inv_chi_square(1);
-  
-  //likelihood 
+
+  //likelihood
   for (i in 1:M){
-    y[i,] ~ normal(mu[i,], sigma); 
+    y[i,] ~ normal(mu[i,], sigma);
   }
 }
 
@@ -255,14 +255,14 @@ generated quantities {
   for (i in 1:M){
     ypred[i] = normal_rng(logit_transform(t,alpha[i], beta[i])[1], sigma);
   }
-  
+
   //log-likelihood
   for (i in 1:M) {
     for (j in 1:N) {
     log_lik[i,j] = normal_lpdf(y[i,j] | mu[i,j], sigma);
     }
   }
-  
+
 }
 
 "
@@ -270,23 +270,23 @@ generated quantities {
 
 # Prior selection
 
-For both models we choose to use weakly informative priors. 
+For both models we choose to use weakly informative priors.
 
 ## Prior choice of the seperated model
 
 For the seperated model, the $\alpha$ prior needed to fullfill two criteria. First it needed to be a positive number, as we can expect from the vaccination, that the rate is rising and not dropping. Also, as the vaccination should follow roughly a logit function, as it can be observed from the data, we can expect to have a gradient, which is more likely around $1$ than bigger than $50$. Hence the prior of $\operatorname{Inv}-\chi^{2}(1) $ was choosen.
- 
-For our $\beta$ prior estimation we know, that it should be in the range of $[0,1]$, as this is the range of our x-Data. Therefore we choose $N(0.5,1)$. 
+
+For our $\beta$ prior estimation we know, that it should be in the range of $[0,1]$, as this is the range of our x-Data. Therefore we choose $N(0.5,1)$.
 
 The variance of our y-sampling should be a positive number. As we can also expect it to be quite small, as we want our model following the line quite tightly, we choose here as well $\operatorname{Inv}-\chi^{2}(1) $.
 
 ## Prior choices of the hirachical model
 
-The hirachical model has the following priors. The $\alpha$- prior still has the same distribution function: $\operatorname{Inv}-\chi^{2}(\cdot) $, with the same reasoning as for the seperated model. Here however, the parameter for the function gets sampled as well. With the same reasoning about the order of magnitude of our parameter we choose $\operatorname{Inv}-\chi^{2}(1)$ as a suitable weakly informative prior. 
+The hirachical model has the following priors. The $\alpha$- prior still has the same distribution function: $\operatorname{Inv}-\chi^{2}(\cdot) $, with the same reasoning as for the seperated model. Here however, the parameter for the function gets sampled as well. With the same reasoning about the order of magnitude of our parameter we choose $\operatorname{Inv}-\chi^{2}(1)$ as a suitable weakly informative prior.
 ![inverse chi sqare](invchisqrt1.png)
 As we can see here, the PDF of the probability distribution has nearly all amount of its mass in the interval of $[0,10]$
 
-The $\beta$ prior is again, like in the seperated model a normal distribution $N(\cdot,\cdot)$. For the first argument, we choose a normal distribution of $N(0,1)$, with the reasoning, that we expect it to be located somewhere in the interval of $[0,1]$, as this is the range of the data. 
+The $\beta$ prior is again, like in the seperated model a normal distribution $N(\cdot,\cdot)$. For the first argument, we choose a normal distribution of $N(0,1)$, with the reasoning, that we expect it to be located somewhere in the interval of $[0,1]$, as this is the range of the data.
 The prior of the variance is given by a $\operatorname{Inv}-\chi^{2}(1)$, as here as well we want to have a variance, which is not much larger, than our expected interval.
 
 ```{r}
@@ -306,6 +306,21 @@ xData <- rbind(finland$X,germany$X,portugal$X,hongkong$X,japan$X)
 yData <-rbind(finland$Y,germany$Y,portugal$Y,hongkong$Y,japan$Y)
 #dim(yData) <- c(5,222)
 
+sm <- rstan::stan_model(model_code = seperated_model)
+stan_data <- list(
+    J = 1,
+    N = length(data1$Y),
+    M = 5,
+    y = yData,
+    x = xData,
+    xpred = 1.1
+)
+model_standart <- rstan::sampling(sm, data = stan_data, warmup=3000, iter=4000)
+fit_hm <- extract(model_standart, permuted = TRUE, inc_warmup = FALSE)
+plot(fit_hm$mu[3000,1,])
+```
+
+```{r}
 hm <- rstan::stan_model(model_code = hirachical_model)
 stan_data <- list(
     N = length(finland$Y),
@@ -366,3 +381,11 @@ plot(1:length(k_h),k_h,main="K-values in hierarchical model")
 
 
 
+# Rhat and ESS analysis
+We will use the build in tool from the stan library to analyse the convergence of our chains.
+```{r}
+sum_seperate <- summary(model_standart)
+sum_hirachical <- summary(model_hirachical)
+cat("Rhat of seperate model: \n")
+sum_seperate$summary[1:11,10]
+```
