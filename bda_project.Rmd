@@ -452,19 +452,6 @@ cat("PSIS-LOO estimates in hierarchical model",elpd_h,'\n')
 
 According to the PSIS-LOO estimate, hierarchical model has slightly higher value for the PSIS-LOO estimate than seperate model,so we could choose hierarchical model but still seperate model also have nice score in PSIS-LOO estimate.
 
-
-# 12. Discussion of issues and potential improvements.
-
-
-# 13. Conclusion what was learned from the data analysis.
-
-
-# 14. Self-reflection of what the group learned while making the project.
-
-
-
-
-
 # 10. Predictive performance assessment if applicable (e.g. classification accuracy) and evaluation of practical usefulness of the accuracy
 
 We can now evaluate the predictive performance of our model.
@@ -519,3 +506,36 @@ To minimise the effects of those outliers, we look at the mean values for the pr
 However we need to be very carefull about the prediction of the vaccination numbers. While it is nice having those predicitions, they are just of limited usefullness for some countries. In the case of a high vacination rate and low covid case numbers like in Japan we can expect that those numbers will be fairly accuarate, as there are unlikely to happen anything societly or pollitically to suddenly increase the number of vaccines.
 
 On the other hand Germany has a comparatively low number of vaccinations, but recently a high number of now covid infections. Therefore the numbers might not just increase steadily, but maybe more rapidly as the gouverment might introduce some vacine policies, which will change those numbers drastically, as suddenly it is mandatory to get vaccinated.
+
+
+
+# 12. Discussion of issues and potential improvements.
+
+As our raw data contained the number of vaccinated doses given, we made the simplification, that two doses are needed to be counted as a fully vaccinated person. However when having a closer look at the number of people in Germany, who recives vaccination, we can see a rise in the last couple of datapoints. This spike can however be partially explained by given everyone above 18 the possibility to get the 3rd dose. By simply dividing the data by 2 we might soon end up in vaccination rates above 1. The data therefore would need to be further modified to also account for those changes. 
+
+One issue with our model is, that we used normal distributions to model our data and predictions. This does not fully reflect the reality. As the data is dependent on each other we would describe the vaccination rate as a time series, which is monotonic increasing. We therefore would need the strict condition, that $y_i \geq y_{i-1}$ for all $i > 0$. This is not given with our simple model and a process, which includes those conditions, as it is for example the case with the poisson process, as it can be seen in the plot below, which sample code can be found on the following website (http://theanalysisofdata.com/probability/7_2.html): 
+
+
+```{r}
+Z = rexp(30, 1)
+t = seq(0, sum(Z), length.out = 200)
+X = t * 0
+for (i in 1:30) {
+    Zc = cumsum(Z)
+    X[t >= Zc[i]] = i
+}
+par(cex.main = 1.5, cex.axis = 1.2, cex.lab = 1.5)
+plot(c(0, sum(Z)), c(0, 30), type = "n", xlab = "t",
+    ylab = "X_t")
+curve(x * 1, add = TRUE, col = rgb(1, 0, 0), lwd = 2,
+    lty = 2, xlab = "t", ylab = "X_t")
+lines(t, X, lwd = 3, type = "s")
+title("A Poisson process sample path")
+```
+
+Therefore modelling our data $y$ with such a process would be a more realistic option and improvement.
+
+# 13. Conclusion what was learned from the data analysis.
+
+
+# 14. Self-reflection of what the group learned while making the project.
