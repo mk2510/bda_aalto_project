@@ -344,8 +344,9 @@ stan_data <- list(
 )
 model_separated <- rstan::sampling(sm, data = stan_data, warmup=3000, iter=4000)
 fit_sm <- extract(model_separated, permuted = TRUE, inc_warmup = FALSE)
-#plot(fit_sm$mu[3000,1,])
 ```
+
+Below graph shows the posterior vaccination rate by countries in seperate model.
 
 ```{r}
 Y_s = c(fit_sm$mu[3000,1,],fit_sm$mu[3000,2,],fit_sm$mu[3000,3,],
@@ -370,8 +371,9 @@ stan_data <- list(
 )
 model_hierarchical <- rstan::sampling(hm, data = stan_data, warmup=3000, iter=4000)
 fit_hm <- extract(model_hierarchical, permuted = TRUE, inc_warmup = FALSE)
-#plot(fit_hm$mu[3000,1,])
 ```
+
+Below graph shows the posterior vaccination rate by countries in hierarchical model.
 
 ```{r}
 Y_h = c(fit_hm$mu[3000,1,],fit_hm$mu[3000,2,],fit_hm$mu[3000,3,],
@@ -389,19 +391,30 @@ we create samples from the models. The given data are the datasets from section 
 # 7.Convergence diagnostics (Rhat, ESS, divergences) and what was done if the convergence was not good with the first try.
 
 We will use the build in tool from the stan library to analyse the convergence of our chains.
+
 ```{r}
+#seperate model
 sum_seperate <- summary(model_separated)
-sum_hirachical <- summary(model_hirachical)
 cat("Rhat of seperate model: \n")
 sum_seperate$summary[1:11,10]
 ```
 
 ```{r}
-cat("Rhat of hiracical model: \n")
-sum_hirachical$summary[1:11,10]
+#hierarchical
+sum_hierarchical <- summary(model_hierarchical)
+cat("Rhat of hierarchical model: \n")
+sum_hierarchical$summary[1:11,10]
 ```
 
-As we can see here, the $\hat{R}$ values are close to 1, which means, that the chains converges. We will now run the ESS analysis, to further verify, that our $\hat{R}$ values are trustworthy. As mentioned in Verteri et al. 2019, a ESS value above 400 will indicate that the $\hat{R}$ value is reliable. We therefore now use the ESS method from  Verteri et al. 2019:
+$$
+\begin{aligned}
+\hat{R} = \sqrt\frac{\hat{var^*}}{W}
+\end{aligned}
+$$
+
+R hat is potential scale reduction factor. This value estimates how much the scale could reduce if N goes infinite. When N approches infinity, R hat approches 1. If R hat is bigger than 1.01, we should keep sampling.
+
+As we can see here, the $\hat{R}$ values are less than 1, which means, that the chains converges. We will now run the ESS analysis, to further verify, that our $\hat{R}$ values are trustworthy. As mentioned in Verteri et al. 2019, a ESS value above 400 will indicate that the $\hat{R}$ value is reliable. We therefore now use the ESS method from  Verteri et al. 2019:
 
 ```{r}
 cat("ESS of seperated model: \n")
@@ -431,7 +444,7 @@ return(interval)
 ```
 
 ## Seperate model
-### The posterior expectations for alpha with a 90% credible interval
+### The posterior expectations for alpha with a 90% credible interval 
 ```{r}
 a1 = mu_pred_interval(data = fit_sm$alpha[,1], prob = 0.90)
 a2 = mu_pred_interval(data = fit_sm$alpha[,2], prob = 0.90)
@@ -508,9 +521,12 @@ According to the PSIS-LOO estimate, hierarchical model has slightly higher value
 
 # 10. Predictive performance assessment if applicable (e.g. classification accuracy) and evaluation of practical usefulness of the accuracy
 
-## Seperate model
 We can now evaluate the predictive performance of our model.
+
+## Seperate model
+
 For the seperated model we have the following numbers:
+
 ```{r}
 qplot(fit_sm$ypred[,1], geom="histogram") +
     xlab("") +
@@ -602,40 +618,12 @@ cat("Mean of 4000 predictions for Hong Kong: ", mean(fit_hm$ypred[,4]),'\n')
 cat("Mean of 4000 predictions for Japan: ", mean(fit_hm$ypred[,5]),'\n')
 ```
 
-We can see, that a pointwise  prediction for those countries it not very meaningfull, as it might end up lower, than the current vaccination status, which is not reasonable to assume and also some predictions are above 1, which is also not reasonable to assume, as not more people can get vaccinated than the population of the country.
-To minimise the effects of those outliers, we look at the mean values for the prediction. In general we can see, that those are much more reasonable looking, especially compared to those pointwise predictions.
 
-However we need to be very carefull about the prediction of the vaccination numbers. While it is nice having those predicitions, they are just of limited usefullness for some countries. In the case of a high vacination rate and low covid case numbers like in Japan we can expect that those numbers will be fairly accuarate, as there are unlikely to happen anything societly or pollitically to suddenly increase the number of vaccines.
-
-On the other hand Germany has a comparatively low number of vaccinations, but recently a high number of now covid infections. Therefore the numbers might not just increase steadily, but maybe more rapidly as the gouverment might introduce some vacine policies, which will change those numbers drastically, as suddenly it is mandatory to get vaccinated.
-
+We need to be very carefull about the prediction of the vaccination numbers. While it is nice having those predicitions, they are just usefull.  
 
 
 # 12. Discussion of issues and potential improvements.
 
-As our raw data contained the number of vaccinated doses given, we made the simplification, that two doses are needed to be counted as a fully vaccinated person. However when having a closer look at the number of people in Germany, who recives vaccination, we can see a rise in the last couple of datapoints. This spike can however be partially explained by given everyone above 18 the possibility to get the 3rd dose. By simply dividing the data by 2 we might soon end up in vaccination rates above 1. The data therefore would need to be further modified to also account for those changes.
-
-One issue with our model is, that we used normal distributions to model our data and predictions. This does not fully reflect the reality. As the data is dependent on each other we would describe the vaccination rate as a time series, which is monotonic increasing. We therefore would need the strict condition, that $y_i \geq y_{i-1}$ for all $i > 0$. This is not given with our simple model and a process, which includes those conditions, as it is for example the case with the poisson process, as it can be seen in the plot below, which sample code can be found on the following website (http://theanalysisofdata.com/probability/7_2.html):
-
-
-```{r}
-Z = rexp(30, 1)
-t = seq(0, sum(Z), length.out = 200)
-X = t * 0
-for (i in 1:30) {
-    Zc = cumsum(Z)
-    X[t >= Zc[i]] = i
-}
-par(cex.main = 1.5, cex.axis = 1.2, cex.lab = 1.5)
-plot(c(0, sum(Z)), c(0, 30), type = "n", xlab = "t",
-    ylab = "X_t")
-curve(x * 1, add = TRUE, col = rgb(1, 0, 0), lwd = 2,
-    lty = 2, xlab = "t", ylab = "X_t")
-lines(t, X, lwd = 3, type = "s")
-title("A Poisson process sample path")
-```
-
-Therefore modelling our data $y$ with such a process would be a more realistic option and improvement.
 
 # 13. Conclusion what was learned from the data analysis.
 
