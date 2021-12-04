@@ -627,5 +627,21 @@ We need to be very carefull about the prediction of the vaccination numbers. Whi
 
 # 13. Conclusion what was learned from the data analysis.
 
+Our main points can be summerized like follows:
+
+1. We can use baysian statistics, to estimate the functional parameters for the logistic function. This can be verified, as our distribution converges and the logistic function is a close fit to the data
+
+2. With some restrictions we can make cautious predrictions about the vaccination rate in the future
+
+3. The models works best, when a country vaccination follows the logistic curve
 
 # 14. Self-reflection of what the group learned while making the project.
+
+Start the project early in case the whole group gets a flue during the last days 
+
+
+TODO tomorrow:
+
+SHow that for Nepal it doesn't work that well
+
+Plot data and posterior in one plot to see how closely the data and model match
