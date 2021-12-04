@@ -318,3 +318,21 @@ sum_hirachical <- summary(model_hirachical)
 cat("Rhat of seperate model: \n")
 sum_seperate$summary[1:11,10]
 ```
+
+```{r}
+cat("Rhat of hiracical model: \n")
+sum_hirachical$summary[1:11,10]
+```
+
+As we can see here, the $\hat{R}$ values are close to 1, which means, that the chains converges. We will now run the ESS analysis, to further verify, that our $\hat{R}$ values are trustworthy. As mentioned in Verteri et al. 2019, a ESS value above 400 will indicate that the $\hat{R}$ value is reliable. We therefore now use the ESS method from  Verteri et al. 2019:
+
+```{r}
+cat("ESS of seperated model: \n")
+sum_seperate$summary[1:11,9]
+```
+```{r}
+cat("ESS of hiracical model: \n")
+sum_hirachical$summary[1:11,9]
+```
+
+Here we can nicely see, that all ESS values are above 400, which indicates, that our $\hat{R}$ values are realiable. We can therefore conclude, that our chains converged.
