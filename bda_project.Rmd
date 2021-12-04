@@ -109,7 +109,6 @@ $$
 
 We will first try to build the seperated model in stan
 
-
 ```{r}
 seperated_model <- "
 functions {
