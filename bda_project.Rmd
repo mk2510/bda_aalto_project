@@ -24,6 +24,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(aaltobda)
 library(rstan)
 library(loo)
+library(LaplacesDemon) # important for the density plots
 options(mc.cores = parallel::detectCores())
 rstan_options(auto_write = TRUE)
 ```
@@ -83,7 +84,7 @@ ggplot(data = total, aes(x = X, y = Y, color = Country)) +
     xlab("time") + ylab("vaccination rate")
 ```
 
-# Mathematical Models and Stan code
+# 3. Mathematical Models and Stan code
 
 ## Seperated Model
 
@@ -269,9 +270,26 @@ generated quantities {
 "
 ```
 
-# Prior selection
+# 4. Prior selection
 
 For both models we choose to use weakly informative priors.
+We will first present all prior distribuions in plots, to visualize better their properties.
+
+```{r}
+x <- seq(from=0.1, to=5, by=0.01)
+plot(x, dinvchisq(x,1,1), ylim=c(0,1), type="l", main="inv-chi-square(1) PDF",
+     ylab="density", col="red")
+```
+```{r}
+x <- seq(from=-5, to=5, by=0.01)
+plot(x, dnorm(x, 0.5, 1), ylim=c(0,1), type="l", main="Normal(0.5,1) PDF",
+     ylab="density", col="red")
+```
+```{r}
+x <- seq(from=-5, to=5, by=0.01)
+plot(x, dnorm(x, 0, 1), ylim=c(0,1), type="l", main="Normal(0,1) PDF",
+     ylab="density", col="red")
+```
 
 ## Prior choice of the seperated model
 
@@ -283,12 +301,19 @@ The variance of our y-sampling should be a positive number. As we can also expec
 
 ## Prior choices of the hirachical model
 
-The hirachical model has the following priors. The $\alpha$- prior still has the same distribution function: $\operatorname{Inv}-\chi^{2}(\cdot)$, with the same reasoning as for the seperated model. Here however, the parameter for the function gets sampled as well. With the same reasoning about the order of magnitude of our parameter we choose $\operatorname{Inv}-\chi^{2}(1)$ as a suitable weakly informative prior.
-![inverse chi sqare](invchisqrt1.png)
-As we can see here, the PDF of the probability distribution has nearly all amount of its mass in the interval of $[0,10]$
+The hirachical model has the following priors. The $\alpha$- prior still has the same distribution function: $\operatorname{Inv}-\chi^{2}(\cdot) $, with the same reasoning as for the seperated model. Here however, the parameter for the function gets sampled as well. With the same reasoning about the order of magnitude of our parameter we choose $\operatorname{Inv}-\chi^{2}(1)$ as a suitable weakly informative prior.
+As we can see in the plot above, the PDF of the probability distribution has nearly all amount of its mass in the interval of $[0,10]$
 
 The $\beta$ prior is again, like in the seperated model a normal distribution $N(\cdot,\cdot)$. For the first argument, we choose a normal distribution of $N(0,1)$, with the reasoning, that we expect it to be located somewhere in the interval of $[0,1]$, as this is the range of the data.
 The prior of the variance is given by a $\operatorname{Inv}-\chi^{2}(1)$, as here as well we want to have a variance, which is not much larger, than our expected interval.
+
+
+# 5. Stan code
+
+The stan code was provided above with the describtion of the model
+
+# 6. How to the Stan model was run, that is, what options were used. This is also more clear as combination of textual explanation and the actual code line
+
 
 ```{r}
 # setwd("/Users/max/Documents/UniMac/Aalto/BDA/bda_aalto_project/data")
@@ -335,9 +360,8 @@ fit_hm <- extract(model_hirachical, permuted = TRUE, inc_warmup = FALSE)
 plot(fit_hm$mu[3000,1,])
 ```
 
-
-# 6.How to the Stan model was run, that is, what options were used. This is also more clear as combination of textual explanation and the actual code line.
-(explain)
+With the command ```rstan::stan_model``` we compile our stan models from a string vector and in the next step with ```rstan::sampling```
+we create samples from the models. The given data are the datasets from section 2. As a warmup phase we use the generous length of $3000$ and as a total chain length $4000$. As the warmup lenght is longer than half of the chain length we made sure, that the samples are within our posterior distribution.
 
 # 7.Convergence diagnostics (Rhat, ESS, divergences) and what was done if the convergence was not good with the first try.
 
