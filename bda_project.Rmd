@@ -14,14 +14,15 @@ bibliography: reference.bib
 # This chunk sets echo = TRUE as default, that is print all code.
 # knitr::opts_chunk$set can be used to set other notebook generation options, too.
 # include=FALSE inside curly brackets makes this block not be included in the pdf.
-#install.packages("remotes")
-#remotes::install_github("avehtari/BDA_course_Aalto",
-#        subdir = "rpackage", upgrade="never")
-#install.packages("aaltobda")
+install.packages("remotes")
+remotes::install_github("avehtari/BDA_course_Aalto",
+        subdir = "rpackage", upgrade="never")
+install.packages("aaltobda")
 knitr::opts_chunk$set(echo = TRUE)
 library(aaltobda)
 library(rstan)
 library(loo)
+install.packages("LaplacesDemon")
 library(LaplacesDemon) # important for the density plots
 options(mc.cores = parallel::detectCores())
 rstan_options(auto_write = TRUE)
@@ -32,6 +33,7 @@ rstan_options(auto_write = TRUE)
 It's been almost 2 years since the covid-19 started in December 2019, and it's been 1 year since world vaccination has been started December 2020. Even though most of the countries rushing into vaccination and some countries are picking over 80% rate in vaccination, the pandemic seems unstoppable. One of the popular idea to stop the pandemic is that to achieve a 'herd-immunity threshold, which occurs when a large portion of a community (the herd) becomes immune to a disease, making the spread of disease from person to person unlikely. Immune individuals are unlikely to contribute to disease transmission, disrupting chains of infection, which stops or slows the spread of disease @wiki.
 It is known that the herd-immunity threshold is achievable only with high vaccination rates, and many scientists had thought that once people started being immunized en masse, herd immunity would permit society to return to normal. Most estimates had placed the threshold at 60–70% of the population gaining immunity, either through vaccinations or past exposure to the virus @nature.
 Down below shows the graph of population fully vaccinated by countries.
+
 ```{r}
 knitr::include_graphics("./image/share-people-fully-vaccinated-covid_world.png")
 ```
@@ -39,16 +41,19 @@ knitr::include_graphics("./image/share-people-fully-vaccinated-covid_world.png")
 As the high vaccination rate is a big part of ending pandemic by achieving herd-immunity, our group was interested in predicting how much high vaccination rate that countries will achieve in future. As we expect the cumulative vaccination rate graph will follow logit function, we set our model as a logit function. We picked 5 countries,which are Finland, Portugal, Japan, Germany,and Hongkong for our data. The cumulative vaccination graphs in these countries roughly follow the logit function and our main modeling idea is to see find which model the data fits well (seperate model or hierarchical model) and to predict the future vaccination rate.
 
 Down below shows the barplot of population rate who received at least one dose of covid19 vaccine by countries in our interest.
+
 ```{r}
 knitr::include_graphics("./image/share-people-vaccinated-covid.png")
 ```
 
 Down below shows the barplot of population rate of fully vaccinated against covid19 by countries in our interest.
+
 ```{r}
 knitr::include_graphics("./image/share-people-fully-vaccinated-covid_bar.png")
 ```
 
 Down below shows the barplot of fully vaccinated population rate by countries in our interest.
+
 ```{r}
 knitr::include_graphics("./image/share-people-fully-vaccinated-covid_plot.png")
 ```
@@ -356,7 +361,7 @@ ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
 ```
 
 
-```{r}
+```{r, results='hide', error=FALSE}
 #hierarchical model run
 hm <- rstan::stan_model(model_code = hierarchical_model)
 stan_data <- list(
@@ -425,8 +430,12 @@ sum_hierarchical$summary[1:11,9]
 
 Here we can nicely see, that all ESS values are above 400, which indicates, that our $\hat{R}$ values are realiable. We can therefore conclude, that our chains converged.
 
+
 # 8. Posterior predictive checks and what was done to improve the model.
 
+We want to see if our model works by posterior predictive checking. 
+
+## The posterior expectations with a 90% credible interval 
 ```{r}
 #the posterior expectation for parameter with a 90% credible interval
 mu_pred_interval<-function(data, prob){
@@ -441,128 +450,187 @@ return(interval)
 }
 ```
 
-## Seperate model
-### The posterior expectations for alpha with a 90% credible interval 
+For example, let's see the vaccination rate in Finland on the random data point 200 in $[1,222]$.
+
 ```{r}
-a1 = mu_pred_interval(data = fit_sm$alpha[,1], prob = 0.90)
-a2 = mu_pred_interval(data = fit_sm$alpha[,2], prob = 0.90)
-a3 = mu_pred_interval(data = fit_sm$alpha[,3], prob = 0.90)
-a4 = mu_pred_interval(data = fit_sm$alpha[,4], prob = 0.90)
-a5 = mu_pred_interval(data = fit_sm$alpha[,5], prob = 0.90)
-cat()
-cat()
+#seperate model
+a_s = mu_pred_interval(data = fit_sm$mu[,1,200], prob = 0.90)
+cat('Actual vaccination rate: ',finland$Y[200],'\n')
+cat('Credible interval of predicted vaccination rate in seperated model: ',a_s,'\n')
 ```
 
 
-### the posterior expectation for betas with a 90% credible interval
 ```{r}
-b1 = mu_pred_interval(data = fit_sm$beta[,1], prob = 0.90)
-b2 = mu_pred_interval(data = fit_sm$beta[,2], prob = 0.90)
-b3 = mu_pred_interval(data = fit_sm$beta[,3], prob = 0.90)
-b4 = mu_pred_interval(data = fit_sm$beta[,4], prob = 0.90)
-b5 = mu_pred_interval(data = fit_sm$beta[,5], prob = 0.90)
+#hierarchical model
+a_h = mu_pred_interval(data = fit_hm$ypred[,1,200], prob = 0.90)
+cat('Actual vaccination rate: ',finland$Y[200],'\n')
+cat('Credible interval of predicted vaccination rate in hierarchical model: ',a_h,'\n')
 ```
+
+In seperate model, the credible interval for $\mu$ in datapoint 200 which is $[0.7843056, 0.7995294]$ doesn't include the actual vaccination rate 0.7301881. However, in hierarchical model, the credible interval $[0.7232421, 0.8609337]$ includes actual vaccination rate. 
 
 ## Visual comparisions
 
+In posterior expectations with a 90% credible interval, we checked in one datapoint. We will now also show, how close our modeling is, when compared to the original data in overall whole data points. We choose for this a visual approach down below.
+
 ### Seperated model
-We will now also show, how close our modeling is, when compared to the original data. We choose for this a visual approach.
+
 ```{r}
 finland_mu <- c()
 for(i in 3001:4000){
-    finland_mu <- c(finland_mu, fit_sm$mu[i,1,])
+    finland_mu <- c(finland_mu, fit_sm$ypred[i,1,])
 }
 Y_s = c(finland_mu,finland$Y)
 names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), finland$Country)
 result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
-    ggtitle("Modelled means and accual data for Finland") +
+    ggtitle("Seperate modeled means and accual data for Finland") +
     xlab("time") + ylab("vaccination rate")
 ```
+
+
 ```{r}
-Y_s = c(fit_sm$mu[3000:4000,2,],germany$Y)
-names = c(rep(c("Model"), times = 222, length.out = NA, each = 1), germany$Country)
-result_s = data.frame(Country=names,X=total$X[1:444],Y=Y_s)
+#germany
+germany_mu <- c()
+for(i in 3001:4000){
+    germany_mu <- c(germany_mu, fit_sm$ypred[i,2,])
+}
+Y_s = c(germany_mu,germany$Y)
+names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), germany$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
-    ggtitle("Modelled means and accual data for Finland") +
+    ggtitle("Seperate modeled means and accual data for Germany") +
     xlab("time") + ylab("vaccination rate")
 ```
+
 ```{r}
-Y_s = c(fit_sm$mu[3000,3,],hongkong$Y)
-names = c(rep(c("Model"), times = 222, length.out = NA, each = 1), hongkong$Country)
-result_s = data.frame(Country=names,X=total$X[1:444],Y=Y_s)
+#portugal
+portugal_mu <- c()
+for(i in 3001:4000){
+    portugal_mu <- c(portugal_mu, fit_sm$ypred[i,3,])
+}
+Y_s = c(portugal_mu,portugal$Y)
+names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), portugal$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
-    ggtitle("Modelled means and accual data for Finland") +
+    ggtitle("Seperate modeled means and accual data for Portugal") +
     xlab("time") + ylab("vaccination rate")
 ```
+
 ```{r}
-Y_s = c(fit_sm$mu[3000,4,],portugal$Y)
-names = c(rep(c("Model"), times = 222, length.out = NA, each = 1), portugal$Country)
-result_s = data.frame(Country=names,X=total$X[1:444],Y=Y_s)
+#hongkong
+hongkong_mu <- c()
+for(i in 3001:4000){
+    hongkong_mu <- c(hongkong_mu, fit_sm$ypred[i,4,])
+}
+Y_s = c(hongkong_mu,hongkong$Y)
+names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), hongkong$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
-    ggtitle("Modelled means and accual data for Finland") +
+    ggtitle("Seperate modeled means and accual data for Hongkong") +
     xlab("time") + ylab("vaccination rate")
 ```
+
 ```{r}
-Y_s = c(fit_sm$mu[3000,1,],japan$Y)
-names = c(rep(c("Model"), times = 222, length.out = NA, each = 1), japan$Country)
-result_s = data.frame(Country=names,X=total$X[1:444],Y=Y_s)
+#japan
+japan_mu <- c()
+for(i in 3001:4000){
+    japan_mu <- c(japan_mu, fit_sm$ypred[i,5,])
+}
+Y_s = c(japan_mu,japan$Y)
+names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), japan$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
-    ggtitle("Modelled means and accual data for Finland") +
+    ggtitle("Seperate modeled means and accual data for Japan") +
     xlab("time") + ylab("vaccination rate")
 ```
+
+
+
 ### Hirachical Model
+
 ```{r}
-Y_s = c(fit_hm$mu[3000,1,],finland$Y)
-names = c(rep(c("Model"), times = 222, length.out = NA, each = 1), finland$Country)
-result_s = data.frame(Country=names,X=total$X[1:444],Y=Y_s)
+finland_mu <- c()
+for(i in 3001:4000){
+    finland_mu <- c(finland_mu, fit_hm$ypred[i,1,])
+}
+Y_s = c(finland_mu,finland$Y)
+names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), finland$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
-    ggtitle("Modelled means and accual data for Finland") +
+    ggtitle("Hierarchical modeled means and accual data for Finland") +
     xlab("time") + ylab("vaccination rate")
 ```
+
+
 ```{r}
-Y_s = c(fit_hm$mu[3000,2,],germany$Y)
-names = c(rep(c("Model"), times = 222, length.out = NA, each = 1), germany$Country)
-result_s = data.frame(Country=names,X=total$X[1:444],Y=Y_s)
+#germany
+germany_mu <- c()
+for(i in 3001:4000){
+    germany_mu <- c(germany_mu, fit_hm$ypred[i,2,])
+}
+Y_s = c(germany_mu,germany$Y)
+names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), germany$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
-    ggtitle("Modelled means and accual data for Finland") +
+    ggtitle("Hierarchical modeled means and accual data for Germany") +
     xlab("time") + ylab("vaccination rate")
 ```
+
 ```{r}
-Y_s = c(fit_hm$mu[3000,3,],hongkong$Y)
-names = c(rep(c("Model"), times = 222, length.out = NA, each = 1), hongkong$Country)
-result_s = data.frame(Country=names,X=total$X[1:444],Y=Y_s)
+#portugal
+portugal_mu <- c()
+for(i in 3001:4000){
+    portugal_mu <- c(portugal_mu, fit_hm$ypred[i,3,])
+}
+Y_s = c(portugal_mu,portugal$Y)
+names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), portugal$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
-    ggtitle("Modelled means and accual data for Finland") +
+    ggtitle("Hierarchical modeled means and accual data for Portugal") +
     xlab("time") + ylab("vaccination rate")
 ```
+
 ```{r}
-Y_s = c(fit_hm$mu[3000,4,],portugal$Y)
-names = c(rep(c("Model"), times = 222, length.out = NA, each = 1), portugal$Country)
-result_s = data.frame(Country=names,X=total$X[1:444],Y=Y_s)
+#hongkong
+hongkong_mu <- c()
+for(i in 3001:4000){
+    hongkong_mu <- c(hongkong_mu, fit_hm$ypred[i,4,])
+}
+Y_s = c(hongkong_mu,hongkong$Y)
+names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), hongkong$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
-    ggtitle("Modelled means and accual data for Finland") +
+    ggtitle("Hierarchical modeled means and accual data for Hongkong") +
     xlab("time") + ylab("vaccination rate")
 ```
+
 ```{r}
-Y_s = c(fit_hm$mu[3000,1,],japan$Y)
-names = c(rep(c("Model"), times = 222, length.out = NA, each = 1), japan$Country)
-result_s = data.frame(Country=names,X=total$X[1:444],Y=Y_s)
+#japan
+japan_mu <- c()
+for(i in 3001:4000){
+    japan_mu <- c(japan_mu, fit_hm$ypred[i,5,])
+}
+Y_s = c(japan_mu,japan$Y)
+names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), japan$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
-    ggtitle("Modelled means and accual data for Finland") +
+    ggtitle("Hierarchical modeled means and accual data for Japan") +
     xlab("time") + ylab("vaccination rate")
 ```
+
 ### Conclusion
+
 
 # 9.Model comparison (e.g. with LOO-CV)
 
