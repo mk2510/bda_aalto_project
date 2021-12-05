@@ -336,12 +336,12 @@ xpred <- c(1.1)
 dim(xpred) <- c(1)
 sm <- rstan::stan_model(model_code = seperated_model)
 stan_data <- list(
-    J = dim(xData)[2],
+    J = dim(xData)[2]+1,
     N = dim(xData)[2],
     M = dim(xData)[1],
     y = yData,
     x = xData,
-    xpred = finland$X
+    xpred = c(finland$X,1.1)
 )
 model_separated <- rstan::sampling(sm, data = stan_data, warmup=3000, iter=4000)
 fit_sm <- extract(model_separated, permuted = TRUE, inc_warmup = FALSE)
@@ -351,8 +351,8 @@ fit_sm <- extract(model_separated, permuted = TRUE, inc_warmup = FALSE)
 Below graph shows the posterior vaccination rate by countries in seperate model.
 
 ```{r}
-Y_s = c(fit_sm$mu[3000,1,],fit_sm$mu[3000,2,],fit_sm$mu[3000,3,],
-      fit_sm$mu[3000,4,],fit_sm$mu[3000,5,])
+Y_s = c(fit_sm$mu[3000,1,1:222],fit_sm$mu[3000,2,1:222],fit_sm$mu[3000,3,1:222],
+      fit_sm$mu[3000,4,1:222],fit_sm$mu[3000,5,1:222])
 result_s = data.frame(Country=total$Country,X=total$X,Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
@@ -365,12 +365,12 @@ ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
 #hierarchical model run
 hm <- rstan::stan_model(model_code = hierarchical_model)
 stan_data <- list(
-    J = dim(xData)[2],
+    J = dim(xData)[2]+1,
     N = dim(xData)[2],
     M = dim(xData)[1],
     y = yData,
     x = xData,
-    xpred = finland$X
+    xpred = c(finland$X,1.1)
 )
 model_hierarchical <- rstan::sampling(hm, data = stan_data, warmup=3000, iter=4000)
 fit_hm <- extract(model_hierarchical, permuted = TRUE, inc_warmup = FALSE)
@@ -379,8 +379,8 @@ fit_hm <- extract(model_hierarchical, permuted = TRUE, inc_warmup = FALSE)
 Below graph shows the posterior vaccination rate by countries in hierarchical model.
 
 ```{r}
-Y_h = c(fit_hm$mu[3000,1,],fit_hm$mu[3000,2,],fit_hm$mu[3000,3,],
-      fit_hm$mu[3000,4,],fit_hm$mu[3000,5,])
+Y_h = c(fit_hm$mu[3000,1,1:222],fit_hm$mu[3000,2,1:222],fit_hm$mu[3000,3,1:222],
+      fit_hm$mu[3000,4,1:222],fit_hm$mu[3000,5,1:222])
 result_h = data.frame(Country=total$Country,X=total$X,Y=Y_h)
 ggplot(data = result_h, aes(x =X, y = Y, color = Country)) +
     geom_line() +
@@ -478,7 +478,7 @@ In posterior expectations with a 90% credible interval, we checked in one datapo
 ```{r}
 finland_mu <- c()
 for(i in 3001:4000){
-    finland_mu <- c(finland_mu, fit_sm$ypred[i,1,])
+    finland_mu <- c(finland_mu, fit_sm$ypred[i,1,1:222])
 }
 Y_s = c(finland_mu,finland$Y)
 names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), finland$Country)
@@ -494,7 +494,7 @@ ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
 #germany
 germany_mu <- c()
 for(i in 3001:4000){
-    germany_mu <- c(germany_mu, fit_sm$ypred[i,2,])
+    germany_mu <- c(germany_mu, fit_sm$ypred[i,2,1:222])
 }
 Y_s = c(germany_mu,germany$Y)
 names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), germany$Country)
@@ -509,7 +509,7 @@ ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
 #portugal
 portugal_mu <- c()
 for(i in 3001:4000){
-    portugal_mu <- c(portugal_mu, fit_sm$ypred[i,3,])
+    portugal_mu <- c(portugal_mu, fit_sm$ypred[i,3,1:222])
 }
 Y_s = c(portugal_mu,portugal$Y)
 names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), portugal$Country)
@@ -524,7 +524,7 @@ ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
 #hongkong
 hongkong_mu <- c()
 for(i in 3001:4000){
-    hongkong_mu <- c(hongkong_mu, fit_sm$ypred[i,4,])
+    hongkong_mu <- c(hongkong_mu, fit_sm$ypred[i,4,1:222])
 }
 Y_s = c(hongkong_mu,hongkong$Y)
 names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), hongkong$Country)
@@ -539,7 +539,7 @@ ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
 #japan
 japan_mu <- c()
 for(i in 3001:4000){
-    japan_mu <- c(japan_mu, fit_sm$ypred[i,5,])
+    japan_mu <- c(japan_mu, fit_sm$ypred[i,5,1:222])
 }
 Y_s = c(japan_mu,japan$Y)
 names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), japan$Country)
@@ -557,7 +557,7 @@ ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
 ```{r}
 finland_mu <- c()
 for(i in 3001:4000){
-    finland_mu <- c(finland_mu, fit_hm$ypred[i,1,])
+    finland_mu <- c(finland_mu, fit_hm$ypred[i,1,1:222])
 }
 Y_s = c(finland_mu,finland$Y)
 names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), finland$Country)
@@ -573,7 +573,7 @@ ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
 #germany
 germany_mu <- c()
 for(i in 3001:4000){
-    germany_mu <- c(germany_mu, fit_hm$ypred[i,2,])
+    germany_mu <- c(germany_mu, fit_hm$ypred[i,2,1:222])
 }
 Y_s = c(germany_mu,germany$Y)
 names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), germany$Country)
@@ -588,7 +588,7 @@ ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
 #portugal
 portugal_mu <- c()
 for(i in 3001:4000){
-    portugal_mu <- c(portugal_mu, fit_hm$ypred[i,3,])
+    portugal_mu <- c(portugal_mu, fit_hm$ypred[i,3,1:222])
 }
 Y_s = c(portugal_mu,portugal$Y)
 names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), portugal$Country)
@@ -603,7 +603,7 @@ ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
 #hongkong
 hongkong_mu <- c()
 for(i in 3001:4000){
-    hongkong_mu <- c(hongkong_mu, fit_hm$ypred[i,4,])
+    hongkong_mu <- c(hongkong_mu, fit_hm$ypred[i,4,1:222])
 }
 Y_s = c(hongkong_mu,hongkong$Y)
 names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), hongkong$Country)
@@ -618,7 +618,7 @@ ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
 #japan
 japan_mu <- c()
 for(i in 3001:4000){
-    japan_mu <- c(japan_mu, fit_hm$ypred[i,5,])
+    japan_mu <- c(japan_mu, fit_hm$ypred[i,5,1:222])
 }
 Y_s = c(japan_mu,japan$Y)
 names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), japan$Country)
@@ -693,46 +693,46 @@ We can now evaluate the predictive performance of our model.
 For the seperated model we have the following numbers:
 
 ```{r}
-qplot(fit_sm$ypred[,1], geom="histogram") +
+qplot(fit_sm$ypred[,1,223], geom="histogram") +
     xlab("") +
     ylab("") +
     ggtitle("Prediction of vaccination rate in close future,Finland")
 ```
 
 ```{r}
-qplot(fit_sm$ypred[,2], geom="histogram") +
+qplot(fit_sm$ypred[,2,223], geom="histogram") +
     xlab("") +
     ylab("") +
     ggtitle("Prediction of vaccination rate in close future, Germany")
 ```
 
 ```{r}
-qplot(fit_sm$ypred[,3], geom="histogram") +
+qplot(fit_sm$ypred[,3,223], geom="histogram") +
     xlab("") +
     ylab("") +
     ggtitle("Prediction of vaccination rate in close future, Portugal")
 ```
 
 ```{r}
-qplot(fit_sm$ypred[,4], geom="histogram") +
+qplot(fit_sm$ypred[,4,223], geom="histogram") +
     xlab("") +
     ylab("") +
     ggtitle("Prediction of vaccination rate in close future, Hongkong")
 ```
 
 ```{r}
-qplot(fit_sm$ypred[,5], geom="histogram") +
+qplot(fit_sm$ypred[,5,223], geom="histogram") +
     xlab("") +
     ylab("") +
     ggtitle("Prediction of vaccination rate in close future, Japan")
 ```
 
 ```{r}
-cat("Mean of 4000 predictions for Finland: ", mean(fit_sm$ypred[,1]),'\n')
-cat("Mean of 4000 predictions for Germany: ", mean(fit_sm$ypred[,2]),'\n')
-cat("Mean of 4000 predictions for Portugal: ", mean(fit_sm$ypred[,3]),'\n')
-cat("Mean of 4000 predictions for Hong Kong: ", mean(fit_sm$ypred[,4]),'\n')
-cat("Mean of 4000 predictions for Japan: ", mean(fit_sm$ypred[,5]),'\n')
+cat("Mean of 4000 predictions for Finland: ", mean(fit_sm$ypred[,1,223]),'\n')
+cat("Mean of 4000 predictions for Germany: ", mean(fit_sm$ypred[,2,223]),'\n')
+cat("Mean of 4000 predictions for Portugal: ", mean(fit_sm$ypred[,3,223]),'\n')
+cat("Mean of 4000 predictions for Hong Kong: ", mean(fit_sm$ypred[,4,223]),'\n')
+cat("Mean of 4000 predictions for Japan: ", mean(fit_sm$ypred[,5,223]),'\n')
 ```
 
 
@@ -741,46 +741,46 @@ cat("Mean of 4000 predictions for Japan: ", mean(fit_sm$ypred[,5]),'\n')
 Now we can evaluate the numbers for the hirachical model:
 
 ```{r}
-qplot(fit_hm$ypred[,1], geom="histogram") +
+qplot(fit_hm$ypred[,1,223], geom="histogram") +
     xlab("") +
     ylab("") +
     ggtitle("Prediction of vaccination rate in close future,Finland")
 ```
 
 ```{r}
-qplot(fit_hm$ypred[,2], geom="histogram") +
+qplot(fit_hm$ypred[,2,223], geom="histogram") +
     xlab("") +
     ylab("") +
     ggtitle("Prediction of vaccination rate in close future, Germany")
 ```
 
 ```{r}
-qplot(fit_hm$ypred[,3], geom="histogram") +
+qplot(fit_hm$ypred[,3,223], geom="histogram") +
     xlab("") +
     ylab("") +
     ggtitle("Prediction of vaccination rate in close future, Portugal")
 ```
 
 ```{r}
-qplot(fit_hm$ypred[,4], geom="histogram") +
+qplot(fit_hm$ypred[,4,223], geom="histogram") +
     xlab("") +
     ylab("") +
     ggtitle("Prediction of vaccination rate in close future, Hongkong")
 ```
 
 ```{r}
-qplot(fit_hm$ypred[,5], geom="histogram") +
+qplot(fit_hm$ypred[,5,223], geom="histogram") +
     xlab("") +
     ylab("") +
     ggtitle("Prediction of vaccination rate in close future, Japan")
 ```
 
 ```{r}
-cat("Mean of 4000 predictions for Finland: ", mean(fit_hm$ypred[,1]),'\n')
-cat("Mean of 4000 predictions for Germany: ", mean(fit_hm$ypred[,2]),'\n')
-cat("Mean of 4000 predictions for Portugal: ", mean(fit_hm$ypred[,3]),'\n')
-cat("Mean of 4000 predictions for Hong Kong: ", mean(fit_hm$ypred[,4]),'\n')
-cat("Mean of 4000 predictions for Japan: ", mean(fit_hm$ypred[,5]),'\n')
+cat("Mean of 4000 predictions for Finland: ", mean(fit_hm$ypred[,1,223]),'\n')
+cat("Mean of 4000 predictions for Germany: ", mean(fit_hm$ypred[,2,223]),'\n')
+cat("Mean of 4000 predictions for Portugal: ", mean(fit_hm$ypred[,3,223]),'\n')
+cat("Mean of 4000 predictions for Hong Kong: ", mean(fit_hm$ypred[,4,223]),'\n')
+cat("Mean of 4000 predictions for Japan: ", mean(fit_hm$ypred[,5,223]),'\n')
 ```
 
 
@@ -954,10 +954,6 @@ Our main points can be summerized like follows:
 
 Start the project early in case the whole group gets a flue during the last days 
 
-```{r}
-setwd("/home/chooh1/notebooks/BDA/project")
-nepal <- read.csv("data/Nepal_output.csv")
-```
 TODO tomorrow:
 
 SHow that for Nepal it doesn't work that well
