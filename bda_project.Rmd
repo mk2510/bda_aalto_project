@@ -433,9 +433,9 @@ Here we can nicely see, that all ESS values are above 400, which indicates, that
 
 # 8. Posterior predictive checks and what was done to improve the model.
 
-We want to see if our model works by posterior predictive checking. 
+We want to see if our model works by posterior predictive checking.
 
-## The posterior expectations with a 90% credible interval 
+## The posterior expectations with a 90% credible interval
 ```{r}
 #the posterior expectation for parameter with a 90% credible interval
 mu_pred_interval<-function(data, prob){
@@ -467,7 +467,7 @@ cat('Actual vaccination rate: ',finland$Y[200],'\n')
 cat('Credible interval of predicted vaccination rate in hierarchical model: ',a_h,'\n')
 ```
 
-In seperate model, the credible interval for $\mu$ in datapoint 200 which is $[0.7843056, 0.7995294]$ doesn't include the actual vaccination rate 0.7301881. However, in hierarchical model, the credible interval $[0.7232421, 0.8609337]$ includes actual vaccination rate. 
+In seperate model, the credible interval for $\mu$ in datapoint 200 which is $[0.7843056, 0.7995294]$ doesn't include the actual vaccination rate 0.7301881. However, in hierarchical model, the credible interval $[0.7232421, 0.8609337]$ includes actual vaccination rate.
 
 ## Visual comparisions
 
@@ -908,17 +908,17 @@ points(fit_sm1$ypred[,5], col=5, pch=16)
 
 # 12. Discussion of issues and potential improvements.
 
-As our raw data contained the number of vaccinated doses given, we made the simplification, that two doses are needed to be counted 
-as a fully vaccinated person. However when having a closer look at the number of people in Germany, who recives vaccination, we can 
+As our raw data contained the number of vaccinated doses given, we made the simplification, that two doses are needed to be counted
+as a fully vaccinated person. However when having a closer look at the number of people in Germany, who recives vaccination, we can
 see a rise in the last couple of datapoints. This spike can however be partially explained by given everyone above 18 the possibility
-to get the 3rd dose. By simply dividing the data by 2 we might soon end up in vaccination rates above 1. The data therefore would 
-need to be further modified to also account for those changes. 
+to get the 3rd dose. By simply dividing the data by 2 we might soon end up in vaccination rates above 1. The data therefore would
+need to be further modified to also account for those changes.
 
-One issue with our model is, that we used normal distributions to model our data and predictions. This does not fully reflect the 
-reality. As the data is dependent on each other we would describe the vaccination rate as a time series, which is monotonic 
-increasing. We therefore would need the strict condition, that $y_i \geq y_{i-1}$ for all $i > 0$. This is not given with our simple 
-model and a process, which includes those conditions, as it is for example the case with the poisson process, as it can be seen in 
-the plot below, which sample code can be found on the following website (http://theanalysisofdata.com/probability/7_2.html): 
+One issue with our model is, that we used normal distributions to model our data and predictions. This does not fully reflect the
+reality. As the data is dependent on each other we would describe the vaccination rate as a time series, which is monotonic
+increasing. We therefore would need the strict condition, that $y_i \geq y_{i-1}$ for all $i > 0$. This is not given with our simple
+model and a process, which includes those conditions, as it is for example the case with the poisson process, as it can be seen in
+the plot below, which sample code can be found on the following website (http://theanalysisofdata.com/probability/7_2.html):
 
 
 ```{r}
@@ -940,20 +940,37 @@ title("A Poisson process sample path")
 
 Therefore modelling our data $y$ with such a process would be a more realistic option and improvement.
 
+
+The last issue, which we have with our modelling is that the standart logistic curve, which we try to fit has an image of $(0,1)$. However we can see in the country data, that their initial value is $0$ and their upper platteau is between $0.7-0.9$. As this domain is significantly smaller than the one of the modelled curve, we get a more flattened curve. One improvement here would be to further parameterize our logit function, in such a way, that the upper platteau is similar to the countries levels.
+
+
 # 13. Conclusion what was learned from the data analysis.
 
-Our main points can be summerized like follows:
+This project explored, how Baysian Dataanalysis can be used to fit functions to given data.
+Our data was the number of administraded vaccines in each country. After observing those plots we figured, that a fitted logit function would be the clossets fit. Therefore we choose:
+$$
+f_{k,x_0}(x) = \frac{1}{\operatorname{exp}(-k(x-x_0))}
+$$
+as our function we want to fit and build two Stan models (seperated and hirachical) to find the right parameters $k,x_0$.
+After evaluating, how trustworthy the results of the models are, by performing different convergence analysis like the $\hat{R}$ and $ESS$ analysis as well as comparing those models with each other with LOO-CV, we got reliable samples for $k$ and $x_0$. With those we created the fitted curves, draw some example data and made predictions, what the vaccination rate might look at a certain point in the future.
+
+In a nutsheel the main points from our project can be boiled down to the following three points:
 
 1. We can use baysian statistics, to estimate the functional parameters for the logistic function. This can be verified, as our distribution converges and the logistic function is a close fit to the data
 
 2. With some restrictions we can make cautious predrictions about the vaccination rate in the future
 
-3. The models works best, when a country vaccination follows the logistic curve
+3. The models works best, when a country vaccination follows the logistic curve, which similar platteaus at both ends
+
 
 # 14. Self-reflection of what the group learned while making the project.
 
-Start the project early in case the whole group gets a flue during the last days 
+During the project we strengthend our knowledge of the different topics, which were discussed in the course.
+Over the semester the different topics has been studied seperatly and by combining those together in a bigger final project realy helped us to put the pieces of knowledge together and take it with us for the next masters courses.
+Also applying the learned techniques in a practical project, where everything, including the data mining had to be done by ourself gave us a much deeper sense of the whole idea of Baysian Data Analysis.
 
-TODO tomorrow:
+Those kind of parameter fitting problems are often performed with other Machine Learning methods like bootstrapping or Deep Learning. To motivate us, we selected an interesting problem from the real world and got some more insights into this topic and modelling choice. However after evaluating our project we can say that for those kind of parameter fitting Stan is also a suitable tool for parameter optimisation and for certain task it should find a wider spread.
 
-SHow that for Nepal it doesn't work that well
+Last but by no means least, this project was an good oportunity to familiarize ourselfs further with Stan and R. Before the course started we had little to no knowledge in R and Stan. This open-ended project, with little guides forced us to create code by ourselfs without little guiding and learn more about the details of R and Stan.
+Especially generating nice plots with ggplot and performing data-preprocessing were two points, where we deepened our knowledge.
+In Stan on the other hand we learned, how to design working models fully by ourselfs and what to do, if a model fails on the first try, as all chains won't start sampling as the log-likehood was minus infinity.
