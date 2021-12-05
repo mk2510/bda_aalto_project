@@ -14,14 +14,15 @@ bibliography: reference.bib
 # This chunk sets echo = TRUE as default, that is print all code.
 # knitr::opts_chunk$set can be used to set other notebook generation options, too.
 # include=FALSE inside curly brackets makes this block not be included in the pdf.
-#install.packages("remotes")
-#remotes::install_github("avehtari/BDA_course_Aalto",
-#        subdir = "rpackage", upgrade="never")
-#install.packages("aaltobda")
+install.packages("remotes")
+remotes::install_github("avehtari/BDA_course_Aalto",
+        subdir = "rpackage", upgrade="never")
+install.packages("aaltobda")
 knitr::opts_chunk$set(echo = TRUE)
 library(aaltobda)
 library(rstan)
 library(loo)
+install.packages("LaplacesDemon")
 library(LaplacesDemon) # important for the density plots
 library(scales)
 library(ggplot2)
@@ -34,6 +35,7 @@ rstan_options(auto_write = TRUE)
 It's been almost 2 years since the covid-19 started in December 2019, and it's been 1 year since world vaccination has been started December 2020. Even though most of the countries rushing into vaccination and some countries are picking over 80% rate in vaccination, the pandemic seems unstoppable. One of the popular idea to stop the pandemic is that to achieve a 'herd-immunity threshold, which occurs when a large portion of a community (the herd) becomes immune to a disease, making the spread of disease from person to person unlikely. Immune individuals are unlikely to contribute to disease transmission, disrupting chains of infection, which stops or slows the spread of disease @wiki.
 It is known that the herd-immunity threshold is achievable only with high vaccination rates, and many scientists had thought that once people started being immunized en masse, herd immunity would permit society to return to normal. Most estimates had placed the threshold at 60–70% of the population gaining immunity, either through vaccinations or past exposure to the virus @nature.
 Down below shows the graph of population fully vaccinated by countries.
+
 ```{r}
 knitr::include_graphics("./image/share-people-fully-vaccinated-covid_world.png")
 ```
@@ -41,21 +43,22 @@ knitr::include_graphics("./image/share-people-fully-vaccinated-covid_world.png")
 As the high vaccination rate is a big part of ending pandemic by achieving herd-immunity, our group was interested in predicting how much high vaccination rate that countries will achieve in future. As we expect the cumulative vaccination rate graph will follow logit function, we set our model as a logit function. We picked 5 countries,which are Finland, Portugal, Japan, Germany,and Hongkong for our data. The cumulative vaccination graphs in these countries roughly follow the logit function and our main modeling idea is to see find which model the data fits well (seperate model or hierarchical model) and to predict the future vaccination rate.
 
 Down below shows the barplot of population rate who received at least one dose of covid19 vaccine by countries in our interest.
+
 ```{r}
 knitr::include_graphics("./image/share-people-vaccinated-covid.png")
 ```
 
 Down below shows the barplot of population rate of fully vaccinated against covid19 by countries in our interest.
+
 ```{r}
 knitr::include_graphics("./image/share-people-fully-vaccinated-covid_bar.png")
 ```
 
 Down below shows the barplot of fully vaccinated population rate by countries in our interest.
+
 ```{r}
 knitr::include_graphics("./image/share-people-fully-vaccinated-covid_plot.png")
 ```
-
-### Relative work
 
 # 2. Dataset
 
@@ -119,12 +122,12 @@ functions {
 }
 
 data {
-    int<lower=0> J;
+    int<lower=1> J;
     int<lower=1> M;
     int<lower=0> N; // number of data points
     real x[M,N]; // observation year
     real y[M,N]; // observation number of drowned
-    real xpred;  // prediction year
+    real xpred[J];  // prediction year
 }
 
 parameters {
@@ -157,11 +160,9 @@ model {
 
 generated quantities {
   vector[N] log_lik[M];
-  real ypred[M];
-  real t[1];
-  t[1] = xpred;
+  real ypred[M,J];
   for (i in 1:M){
-    ypred[i] = normal_rng(logit_transform(t,alpha[i], beta[i])[1], sigma);
+    ypred[i,] = normal_rng(logit_transform(xpred,alpha[i], beta[i]), sigma);
   }
 
   //log-likelihood
@@ -211,11 +212,12 @@ functions {
 }
 
 data {
+    int<lower = 1> J; //number of predictions
     int<lower=1> M; //number of country
     int<lower=0> N; // number of data points
     real x[M,N]; //
     real y[M,N]; //
-    real xpred;  // prediction year
+    real xpred[J];  // prediction year
 }
 
 parameters {
@@ -255,11 +257,9 @@ model {
 
 generated quantities {
   vector[N] log_lik[M];
-  real ypred[M];
-  real t[1];
-  t[1] = xpred;
+  real ypred[M,J];
   for (i in 1:M){
-    ypred[i] = normal_rng(logit_transform(t,alpha[i], beta[i])[1], sigma);
+    ypred[i,] = normal_rng(logit_transform(xpred,alpha[i], beta[i]), sigma);
   }
 
   //log-likelihood
@@ -334,25 +334,27 @@ japan <- read.csv("data/Japan_output.csv")
 #seperate model run
 xData <- rbind(finland$X,germany$X,portugal$X,hongkong$X,japan$X) #(5,222)
 yData <-rbind(finland$Y,germany$Y,portugal$Y,hongkong$Y,japan$Y) #(5,222)
-
+xpred <- c(1.1)
+dim(xpred) <- c(1)
 sm <- rstan::stan_model(model_code = seperated_model)
 stan_data <- list(
-    J = 1,
+    J = dim(xData)[2]+1,
     N = dim(xData)[2],
     M = dim(xData)[1],
     y = yData,
     x = xData,
-    xpred = 1.1
+    xpred = c(finland$X,1.1)
 )
 model_separated <- rstan::sampling(sm, data = stan_data, warmup=3000, iter=4000)
 fit_sm <- extract(model_separated, permuted = TRUE, inc_warmup = FALSE)
 ```
 
+
 Below graph shows the posterior vaccination rate by countries in seperate model.
 
 ```{r}
-Y_s = c(fit_sm$mu[3000,1,],fit_sm$mu[3000,2,],fit_sm$mu[3000,3,],
-      fit_sm$mu[3000,4,],fit_sm$mu[3000,5,])
+Y_s = c(fit_sm$mu[3000,1,1:222],fit_sm$mu[3000,2,1:222],fit_sm$mu[3000,3,1:222],
+      fit_sm$mu[3000,4,1:222],fit_sm$mu[3000,5,1:222])
 result_s = data.frame(Country=total$Country,X=total$X,Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
@@ -361,15 +363,16 @@ ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
 ```
 
 
-```{r}
+```{r, results='hide', error=FALSE}
 #hierarchical model run
 hm <- rstan::stan_model(model_code = hierarchical_model)
 stan_data <- list(
+    J = dim(xData)[2]+1,
     N = dim(xData)[2],
     M = dim(xData)[1],
     y = yData,
     x = xData,
-    xpred = 1.1
+    xpred = c(finland$X,1.1)
 )
 model_hierarchical <- rstan::sampling(hm, data = stan_data, warmup=3000, iter=4000)
 fit_hm <- extract(model_hierarchical, permuted = TRUE, inc_warmup = FALSE)
@@ -378,8 +381,8 @@ fit_hm <- extract(model_hierarchical, permuted = TRUE, inc_warmup = FALSE)
 Below graph shows the posterior vaccination rate by countries in hierarchical model.
 
 ```{r}
-Y_h = c(fit_hm$mu[3000,1,],fit_hm$mu[3000,2,],fit_hm$mu[3000,3,],
-      fit_hm$mu[3000,4,],fit_hm$mu[3000,5,])
+Y_h = c(fit_hm$mu[3000,1,1:222],fit_hm$mu[3000,2,1:222],fit_hm$mu[3000,3,1:222],
+      fit_hm$mu[3000,4,1:222],fit_hm$mu[3000,5,1:222])
 result_h = data.frame(Country=total$Country,X=total$X,Y=Y_h)
 ggplot(data = result_h, aes(x =X, y = Y, color = Country)) +
     geom_line() +
@@ -429,8 +432,12 @@ sum_hierarchical$summary[1:11,9]
 
 Here we can nicely see, that all ESS values are above 400, which indicates, that our $\hat{R}$ values are realiable. We can therefore conclude, that our chains converged.
 
+
 # 8. Posterior predictive checks and what was done to improve the model.
 
+We want to see if our model works by posterior predictive checking.
+
+## The posterior expectations with a 90% credible interval
 ```{r}
 #the posterior expectation for parameter with a 90% credible interval
 mu_pred_interval<-function(data, prob){
@@ -445,28 +452,186 @@ return(interval)
 }
 ```
 
-## Seperate model
-### The posterior expectations for alpha with a 90% credible interval 
+For example, let's see the vaccination rate in Finland on the random data point 200 in $[1,222]$.
+
 ```{r}
-a1 = mu_pred_interval(data = fit_sm$alpha[,1], prob = 0.90)
-a2 = mu_pred_interval(data = fit_sm$alpha[,2], prob = 0.90)
-a3 = mu_pred_interval(data = fit_sm$alpha[,3], prob = 0.90)
-a4 = mu_pred_interval(data = fit_sm$alpha[,4], prob = 0.90)
-a5 = mu_pred_interval(data = fit_sm$alpha[,5], prob = 0.90)
-cat()
-cat()
+#seperate model
+a_s = mu_pred_interval(data = fit_sm$mu[,1,200], prob = 0.90)
+cat('Actual vaccination rate: ',finland$Y[200],'\n')
+cat('Credible interval of predicted vaccination rate in seperated model: ',a_s,'\n')
 ```
 
 
-### the posterior expectation for betas with a 90% credible interval
 ```{r}
-b1 = mu_pred_interval(data = fit_sm$beta[,1], prob = 0.90)
-b2 = mu_pred_interval(data = fit_sm$beta[,2], prob = 0.90)
-b3 = mu_pred_interval(data = fit_sm$beta[,3], prob = 0.90)
-b4 = mu_pred_interval(data = fit_sm$beta[,4], prob = 0.90)
-b5 = mu_pred_interval(data = fit_sm$beta[,5], prob = 0.90)
+#hierarchical model
+a_h = mu_pred_interval(data = fit_hm$ypred[,1,200], prob = 0.90)
+cat('Actual vaccination rate: ',finland$Y[200],'\n')
+cat('Credible interval of predicted vaccination rate in hierarchical model: ',a_h,'\n')
 ```
 
+In seperate model, the credible interval for $\mu$ in datapoint 200 which is $[0.7843056, 0.7995294]$ doesn't include the actual vaccination rate 0.7301881. However, in hierarchical model, the credible interval $[0.7232421, 0.8609337]$ includes actual vaccination rate.
+
+## Visual comparisions
+
+In posterior expectations with a 90% credible interval, we checked in one datapoint. We will now also show, how close our modeling is, when compared to the original data in overall whole data points. We choose for this a visual approach down below.
+
+### Seperated model
+
+```{r}
+finland_mu <- c()
+for(i in 3001:4000){
+    finland_mu <- c(finland_mu, fit_sm$ypred[i,1,1:222])
+}
+Y_s = c(finland_mu,finland$Y)
+names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), finland$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
+ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
+    geom_line() +
+    ggtitle("Seperate modeled means and accual data for Finland") +
+    xlab("time") + ylab("vaccination rate")
+```
+
+
+```{r}
+#germany
+germany_mu <- c()
+for(i in 3001:4000){
+    germany_mu <- c(germany_mu, fit_sm$ypred[i,2,1:222])
+}
+Y_s = c(germany_mu,germany$Y)
+names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), germany$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
+ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
+    geom_line() +
+    ggtitle("Seperate modeled means and accual data for Germany") +
+    xlab("time") + ylab("vaccination rate")
+```
+
+```{r}
+#portugal
+portugal_mu <- c()
+for(i in 3001:4000){
+    portugal_mu <- c(portugal_mu, fit_sm$ypred[i,3,1:222])
+}
+Y_s = c(portugal_mu,portugal$Y)
+names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), portugal$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
+ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
+    geom_line() +
+    ggtitle("Seperate modeled means and accual data for Portugal") +
+    xlab("time") + ylab("vaccination rate")
+```
+
+```{r}
+#hongkong
+hongkong_mu <- c()
+for(i in 3001:4000){
+    hongkong_mu <- c(hongkong_mu, fit_sm$ypred[i,4,1:222])
+}
+Y_s = c(hongkong_mu,hongkong$Y)
+names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), hongkong$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
+ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
+    geom_line() +
+    ggtitle("Seperate modeled means and accual data for Hongkong") +
+    xlab("time") + ylab("vaccination rate")
+```
+
+```{r}
+#japan
+japan_mu <- c()
+for(i in 3001:4000){
+    japan_mu <- c(japan_mu, fit_sm$ypred[i,5,1:222])
+}
+Y_s = c(japan_mu,japan$Y)
+names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), japan$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
+ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
+    geom_line() +
+    ggtitle("Seperate modeled means and accual data for Japan") +
+    xlab("time") + ylab("vaccination rate")
+```
+
+
+
+### Hirachical Model
+
+```{r}
+finland_mu <- c()
+for(i in 3001:4000){
+    finland_mu <- c(finland_mu, fit_hm$ypred[i,1,1:222])
+}
+Y_s = c(finland_mu,finland$Y)
+names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), finland$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
+ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
+    geom_line() +
+    ggtitle("Hierarchical modeled means and accual data for Finland") +
+    xlab("time") + ylab("vaccination rate")
+```
+
+
+```{r}
+#germany
+germany_mu <- c()
+for(i in 3001:4000){
+    germany_mu <- c(germany_mu, fit_hm$ypred[i,2,1:222])
+}
+Y_s = c(germany_mu,germany$Y)
+names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), germany$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
+ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
+    geom_line() +
+    ggtitle("Hierarchical modeled means and accual data for Germany") +
+    xlab("time") + ylab("vaccination rate")
+```
+
+```{r}
+#portugal
+portugal_mu <- c()
+for(i in 3001:4000){
+    portugal_mu <- c(portugal_mu, fit_hm$ypred[i,3,1:222])
+}
+Y_s = c(portugal_mu,portugal$Y)
+names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), portugal$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
+ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
+    geom_line() +
+    ggtitle("Hierarchical modeled means and accual data for Portugal") +
+    xlab("time") + ylab("vaccination rate")
+```
+
+```{r}
+#hongkong
+hongkong_mu <- c()
+for(i in 3001:4000){
+    hongkong_mu <- c(hongkong_mu, fit_hm$ypred[i,4,1:222])
+}
+Y_s = c(hongkong_mu,hongkong$Y)
+names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), hongkong$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
+ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
+    geom_line() +
+    ggtitle("Hierarchical modeled means and accual data for Hongkong") +
+    xlab("time") + ylab("vaccination rate")
+```
+
+```{r}
+#japan
+japan_mu <- c()
+for(i in 3001:4000){
+    japan_mu <- c(japan_mu, fit_hm$ypred[i,5,1:222])
+}
+Y_s = c(japan_mu,japan$Y)
+names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), japan$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
+ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
+    geom_line() +
+    ggtitle("Hierarchical modeled means and accual data for Japan") +
+    xlab("time") + ylab("vaccination rate")
+```
+
+### Conclusion
 
 
 # 9.Model comparison (e.g. with LOO-CV)
@@ -530,46 +695,46 @@ We can now evaluate the predictive performance of our model.
 For the seperated model we have the following numbers:
 
 ```{r}
-qplot(fit_sm$ypred[,1], geom="histogram") +
+qplot(fit_sm$ypred[,1,223], geom="histogram") +
     xlab("") +
     ylab("") +
     ggtitle("Prediction of vaccination rate in close future,Finland")
 ```
 
 ```{r}
-qplot(fit_sm$ypred[,2], geom="histogram") +
+qplot(fit_sm$ypred[,2,223], geom="histogram") +
     xlab("") +
     ylab("") +
     ggtitle("Prediction of vaccination rate in close future, Germany")
 ```
 
 ```{r}
-qplot(fit_sm$ypred[,3], geom="histogram") +
+qplot(fit_sm$ypred[,3,223], geom="histogram") +
     xlab("") +
     ylab("") +
     ggtitle("Prediction of vaccination rate in close future, Portugal")
 ```
 
 ```{r}
-qplot(fit_sm$ypred[,4], geom="histogram") +
+qplot(fit_sm$ypred[,4,223], geom="histogram") +
     xlab("") +
     ylab("") +
     ggtitle("Prediction of vaccination rate in close future, Hongkong")
 ```
 
 ```{r}
-qplot(fit_sm$ypred[,5], geom="histogram") +
+qplot(fit_sm$ypred[,5,223], geom="histogram") +
     xlab("") +
     ylab("") +
     ggtitle("Prediction of vaccination rate in close future, Japan")
 ```
 
 ```{r}
-cat("Mean of 4000 predictions for Finland: ", mean(fit_sm$ypred[,1]),'\n')
-cat("Mean of 4000 predictions for Germany: ", mean(fit_sm$ypred[,2]),'\n')
-cat("Mean of 4000 predictions for Portugal: ", mean(fit_sm$ypred[,3]),'\n')
-cat("Mean of 4000 predictions for Hong Kong: ", mean(fit_sm$ypred[,4]),'\n')
-cat("Mean of 4000 predictions for Japan: ", mean(fit_sm$ypred[,5]),'\n')
+cat("Mean of 4000 predictions for Finland: ", mean(fit_sm$ypred[,1,223]),'\n')
+cat("Mean of 4000 predictions for Germany: ", mean(fit_sm$ypred[,2,223]),'\n')
+cat("Mean of 4000 predictions for Portugal: ", mean(fit_sm$ypred[,3,223]),'\n')
+cat("Mean of 4000 predictions for Hong Kong: ", mean(fit_sm$ypred[,4,223]),'\n')
+cat("Mean of 4000 predictions for Japan: ", mean(fit_sm$ypred[,5,223]),'\n')
 ```
 
 
@@ -578,46 +743,46 @@ cat("Mean of 4000 predictions for Japan: ", mean(fit_sm$ypred[,5]),'\n')
 Now we can evaluate the numbers for the hirachical model:
 
 ```{r}
-qplot(fit_hm$ypred[,1], geom="histogram") +
+qplot(fit_hm$ypred[,1,223], geom="histogram") +
     xlab("") +
     ylab("") +
     ggtitle("Prediction of vaccination rate in close future,Finland")
 ```
 
 ```{r}
-qplot(fit_hm$ypred[,2], geom="histogram") +
+qplot(fit_hm$ypred[,2,223], geom="histogram") +
     xlab("") +
     ylab("") +
     ggtitle("Prediction of vaccination rate in close future, Germany")
 ```
 
 ```{r}
-qplot(fit_hm$ypred[,3], geom="histogram") +
+qplot(fit_hm$ypred[,3,223], geom="histogram") +
     xlab("") +
     ylab("") +
     ggtitle("Prediction of vaccination rate in close future, Portugal")
 ```
 
 ```{r}
-qplot(fit_hm$ypred[,4], geom="histogram") +
+qplot(fit_hm$ypred[,4,223], geom="histogram") +
     xlab("") +
     ylab("") +
     ggtitle("Prediction of vaccination rate in close future, Hongkong")
 ```
 
 ```{r}
-qplot(fit_hm$ypred[,5], geom="histogram") +
+qplot(fit_hm$ypred[,5,223], geom="histogram") +
     xlab("") +
     ylab("") +
     ggtitle("Prediction of vaccination rate in close future, Japan")
 ```
 
 ```{r}
-cat("Mean of 4000 predictions for Finland: ", mean(fit_hm$ypred[,1]),'\n')
-cat("Mean of 4000 predictions for Germany: ", mean(fit_hm$ypred[,2]),'\n')
-cat("Mean of 4000 predictions for Portugal: ", mean(fit_hm$ypred[,3]),'\n')
-cat("Mean of 4000 predictions for Hong Kong: ", mean(fit_hm$ypred[,4]),'\n')
-cat("Mean of 4000 predictions for Japan: ", mean(fit_hm$ypred[,5]),'\n')
+cat("Mean of 4000 predictions for Finland: ", mean(fit_hm$ypred[,1,223]),'\n')
+cat("Mean of 4000 predictions for Germany: ", mean(fit_hm$ypred[,2,223]),'\n')
+cat("Mean of 4000 predictions for Portugal: ", mean(fit_hm$ypred[,3,223]),'\n')
+cat("Mean of 4000 predictions for Hong Kong: ", mean(fit_hm$ypred[,4,223]),'\n')
+cat("Mean of 4000 predictions for Japan: ", mean(fit_hm$ypred[,5,223]),'\n')
 ```
 
 
@@ -1443,24 +1608,69 @@ ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different beta pr
 
 # 12. Discussion of issues and potential improvements.
 
+As our raw data contained the number of vaccinated doses given, we made the simplification, that two doses are needed to be counted
+as a fully vaccinated person. However when having a closer look at the number of people in Germany, who recives vaccination, we can
+see a rise in the last couple of datapoints. This spike can however be partially explained by given everyone above 18 the possibility
+to get the 3rd dose. By simply dividing the data by 2 we might soon end up in vaccination rates above 1. The data therefore would
+need to be further modified to also account for those changes.
+
+One issue with our model is, that we used normal distributions to model our data and predictions. This does not fully reflect the
+reality. As the data is dependent on each other we would describe the vaccination rate as a time series, which is monotonic
+increasing. We therefore would need the strict condition, that $y_i \geq y_{i-1}$ for all $i > 0$. This is not given with our simple
+model and a process, which includes those conditions, as it is for example the case with the poisson process, as it can be seen in
+the plot below, which sample code can be found on the following website (http://theanalysisofdata.com/probability/7_2.html):
+
+
+```{r}
+Z = rexp(30, 1)
+t = seq(0, sum(Z), length.out = 200)
+X = t * 0
+for (i in 1:30) {
+    Zc = cumsum(Z)
+    X[t >= Zc[i]] = i
+}
+par(cex.main = 1.5, cex.axis = 1.2, cex.lab = 1.5)
+plot(c(0, sum(Z)), c(0, 30), type = "n", xlab = "t",
+    ylab = "X_t")
+curve(x * 1, add = TRUE, col = rgb(1, 0, 0), lwd = 2,
+    lty = 2, xlab = "t", ylab = "X_t")
+lines(t, X, lwd = 3, type = "s")
+title("A Poisson process sample path")
+```
+
+Therefore modelling our data $y$ with such a process would be a more realistic option and improvement.
+
+
+The last issue, which we have with our modelling is that the standart logistic curve, which we try to fit has an image of $(0,1)$. However we can see in the country data, that their initial value is $0$ and their upper platteau is between $0.7-0.9$. As this domain is significantly smaller than the one of the modelled curve, we get a more flattened curve. One improvement here would be to further parameterize our logit function, in such a way, that the upper platteau is similar to the countries levels.
+
 
 # 13. Conclusion what was learned from the data analysis.
 
-Our main points can be summerized like follows:
+This project explored, how Baysian Dataanalysis can be used to fit functions to given data.
+Our data was the number of administraded vaccines in each country. After observing those plots we figured, that a fitted logit function would be the clossets fit. Therefore we choose:
+$$
+f_{k,x_0}(x) = \frac{1}{\operatorname{exp}(-k(x-x_0))}
+$$
+as our function we want to fit and build two Stan models (seperated and hirachical) to find the right parameters $k,x_0$.
+After evaluating, how trustworthy the results of the models are, by performing different convergence analysis like the $\hat{R}$ and $ESS$ analysis as well as comparing those models with each other with LOO-CV, we got reliable samples for $k$ and $x_0$. With those we created the fitted curves, draw some example data and made predictions, what the vaccination rate might look at a certain point in the future.
+
+In a nutsheel the main points from our project can be boiled down to the following three points:
 
 1. We can use baysian statistics, to estimate the functional parameters for the logistic function. This can be verified, as our distribution converges and the logistic function is a close fit to the data
 
 2. With some restrictions we can make cautious predrictions about the vaccination rate in the future
 
-3. The models works best, when a country vaccination follows the logistic curve
+3. The models works best, when a country vaccination follows the logistic curve, which similar platteaus at both ends
+
 
 # 14. Self-reflection of what the group learned while making the project.
 
-Start the project early in case the whole group gets a flue during the last days 
+During the project we strengthend our knowledge of the different topics, which were discussed in the course.
+Over the semester the different topics has been studied seperatly and by combining those together in a bigger final project realy helped us to put the pieces of knowledge together and take it with us for the next masters courses.
+Also applying the learned techniques in a practical project, where everything, including the data mining had to be done by ourself gave us a much deeper sense of the whole idea of Baysian Data Analysis.
 
+Those kind of parameter fitting problems are often performed with other Machine Learning methods like bootstrapping or Deep Learning. To motivate us, we selected an interesting problem from the real world and got some more insights into this topic and modelling choice. However after evaluating our project we can say that for those kind of parameter fitting Stan is also a suitable tool for parameter optimisation and for certain task it should find a wider spread.
 
-TODO tomorrow:
-
-SHow that for Nepal it doesn't work that well
-
-Plot data and posterior in one plot to see how closely the data and model match
+Last but by no means least, this project was an good oportunity to familiarize ourselfs further with Stan and R. Before the course started we had little to no knowledge in R and Stan. This open-ended project, with little guides forced us to create code by ourselfs without little guiding and learn more about the details of R and Stan.
+Especially generating nice plots with ggplot and performing data-preprocessing were two points, where we deepened our knowledge.
+In Stan on the other hand we learned, how to design working models fully by ourselfs and what to do, if a model fails on the first try, as all chains won't start sampling as the log-likehood was minus infinity.
