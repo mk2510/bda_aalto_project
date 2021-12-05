@@ -23,6 +23,8 @@ library(aaltobda)
 library(rstan)
 library(loo)
 library(LaplacesDemon) # important for the density plots
+library(scales)
+library(ggplot2)
 options(mc.cores = parallel::detectCores())
 rstan_options(auto_write = TRUE)
 ```
@@ -623,27 +625,33 @@ We need to be very carefull about the prediction of the vaccination numbers. Whi
 
 # 11. Sensitivity analysis with respect to prior choices (i.e. checking whether the result changes a lot if prior is changed)
 
+## Sensitivity analysis for separate model
+
 Lets consider the similar mathematical modeling for the separated model and change some parameter values for the prior.
 
 $$
   \begin{aligned}
 y_{i j} \mid \mu_i, \sigma &\sim \operatorname{Normal}\left(\mu_i, \sigma\right) \\
 \mu_i &\sim \operatorname{logit}(\alpha_i, \beta_i)\\
-\sigma &\sim \text{inv}\chi^2(prior_1)\\
+\sigma &\sim \text{inv}\chi^2(param_1)\\
 \\
-\alpha_i &\sim \text{inv}\chi^2(prior_2) \\
-\beta_i &\sim N(0.5,prior_3) \\
+\alpha_i &\sim \text{inv}\chi^2(param_2) \\
+\beta_i &\sim N(param_3, param_4) \\
 \end{aligned}
 $$
-Here, $prior_1$, $prior_2$ and $prior_3$ are the prior parameters that we are going to vary in our analysis. Let us choose the following combination of the priors to make our analysis for the separated model:
+Here, $param_1$, $param_2$, $param_3$ and $param_4$ are the prior parameters that we are going to vary in our analysis. For the comparison, we have our original values for the parameters as follows:
 
-1. $prior_1 = $, $prior_2 = $ and $prior_3 = $
-2. $prior_1 = $, $prior_2 = $ and $prior_3 = $
-3. $prior_1 = $, $prior_2 = $ and $prior_3 = $
-
+$$
+\begin{aligned}
+\sigma &\sim \text{inv}\chi^2(1) \qquad param_1 = 1\\
+\alpha_i &\sim \text{inv}\chi^2(1) \qquad param_2 = 1\\
+\beta_i &\sim N(0.5,1) \qquad param_3 = 0.5 \quad param_4 = 1\\
+\end{aligned}
+$$
+We will now create a stan model which is parameterized with the above parameters.
 
 ```{r}
-seperated_model1 <- "
+seperated_model_parameterized <- "
 functions {
   real[] logit_transform(real[] x, real k, real x0) {
     int N = size(x);
@@ -662,6 +670,10 @@ data {
     real x[M,N]; // observation year
     real y[M,N]; // observation number of drowned
     real xpred;  // prediction year
+    real param1;
+    real param2;
+    real param3;
+    real param4;
 }
 
 parameters {
@@ -680,11 +692,11 @@ transformed parameters {
 model {
   for (i in 1:M){
     // as prior we will change it to the same values
-    alpha[i] ~ inv_chi_square(0.1);
-    beta[i] ~ normal(0.5,10);
+    alpha[i] ~ inv_chi_square(param2);
+    beta[i] ~ normal(param3,param4);
   }
 
-  sigma ~ inv_chi_square(0.1);
+  sigma ~ inv_chi_square(param1);
 
   //likelihood
   for (i in 1:M){
@@ -713,33 +725,721 @@ generated quantities {
 "
 ```
 
+### Let's fix rest of the parameters so that we can change the $\sigma$ prior and change only $param_1$
+
+* $param_1 = 0.1$
+* $param_1 = 0.5$
+* $param_1 = 10$
+* $param_1 = 100$
+
 ```{r, results='hide', error=FALSE}
-xData <- rbind(finland$X,germany$X,portugal$X,hongkong$X,japan$X)
-#dim(xData) <- c(5,222)
+xData <- rbind(finland$X,germany$X,portugal$X,hongkong$X,japan$X) #(5,222)
+yData <-rbind(finland$Y,germany$Y,portugal$Y,hongkong$Y,japan$Y) #(5,222)
 
-yData <-rbind(finland$Y,germany$Y,portugal$Y,hongkong$Y,japan$Y)
-#dim(yData) <- c(5,222)
+sigma_priors <- c(1, 0.01, 0.1, 10, 20)
 
-sm1 <- rstan::stan_model(model_code = seperated_model1)
-stan_data1 <- list(
-  J = 1,
-  N = length(finland$Y),
-  M = 5,
-  y = yData,
-  x = xData,
-  xpred = 1.1
-)
-model_separated1 <- rstan::sampling(sm1, data = stan_data1, warmup=3000, iter=4000)
-fit_sm1 <- extract(model_separated1, permuted = TRUE, inc_warmup = FALSE)
+fit_smps <- c()
+
+for(p in sigma_priors) {
+  smp <- rstan::stan_model(model_code = seperated_model_parameterized)
+  stan_data_parameterized <- list(
+      J = 1,
+      N = dim(xData)[2],
+      M = dim(xData)[1],
+      y = yData,
+      x = xData,
+      xpred = 1.1,
+      param1 = p,
+      param2 = 1,
+      param3 = 0.5,
+      param4 = 1
+  )
+  model_separated_parameterized <- rstan::sampling(smp, data = stan_data_parameterized, warmup=3000, iter=4000)
+  fit_smp <- extract(model_separated_parameterized, permuted = TRUE, inc_warmup = FALSE)
+  fit_smps <- rbind(fit_smps, fit_smp)
+}
 ```
+
+Lets plot the different sigma values using a histogram.
+
 ```{r}
-plot(fit_sm1$ypred[,1], col=1, pch=16)
-points(fit_sm1$ypred[,2], col=2, pch=16)
-points(fit_sm1$ypred[,3], col=3, pch=16)
-points(fit_sm1$ypred[,4], col=4, pch=16)
-points(fit_sm1$ypred[,5], col=5, pch=16)
+values <- c(fit_smps[1,]$sigma,
+            fit_smps[2,]$sigma,
+            fit_smps[3,]$sigma,
+            fit_smps[4,]$sigma,
+            fit_smps[5,]$sigma)
+group <- c(rep(sprintf("%f", sigma_priors[1]), length(fit_smps[1,]$sigma)),
+           rep(sprintf("%f", sigma_priors[2]), length(fit_smps[2,]$sigma)),
+           rep(sprintf("%f", sigma_priors[3]), length(fit_smps[3,]$sigma)),
+           rep(sprintf("%f", sigma_priors[4]), length(fit_smps[4,]$sigma)),
+           rep(sprintf("%f", sigma_priors[5]), length(fit_smps[5,]$sigma)))
+data <- data.frame(values = values, group = group)
+
+ggplot(data, aes(x = values, fill = group)) +                       # Draw overlaying histogram
+  geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
+### Let's fix rest of the parameters so that we can change the $\alpha$ prior and change only $param_2$
+
+* $param_2 = 0.1$
+* $param_2 = 0.5$
+* $param_2 = 10$
+* $param_2 = 100$
+
+```{r, results='hide', error=FALSE}
+xData <- rbind(finland$X,germany$X,portugal$X,hongkong$X,japan$X) #(5,222)
+yData <-rbind(finland$Y,germany$Y,portugal$Y,hongkong$Y,japan$Y) #(5,222)
+
+alpha_priors <- c(1, 0.01, 0.1, 10, 20)
+
+fit_smps <- c()
+
+for(p in sigma_priors) {
+  smp <- rstan::stan_model(model_code = seperated_model_parameterized)
+  stan_data_parameterized <- list(
+      J = 1,
+      N = dim(xData)[2],
+      M = dim(xData)[1],
+      y = yData,
+      x = xData,
+      xpred = 1.1,
+      param1 = 1,
+      param2 = p,
+      param3 = 0.5,
+      param4 = 1
+  )
+  model_separated_parameterized <- rstan::sampling(smp, data = stan_data_parameterized, warmup=3000, iter=4000)
+  fit_smp <- extract(model_separated_parameterized, permuted = TRUE, inc_warmup = FALSE)
+  fit_smps <- rbind(fit_smps, fit_smp)
+}
+```
+
+Lets plot the different alpha values using a histogram.
+
+```{r}
+values <- c(fit_smps[1,]$alpha[,1],
+            fit_smps[2,]$alpha[,1],
+            fit_smps[3,]$alpha[,1],
+            fit_smps[4,]$alpha[,1],
+            fit_smps[5,]$alpha[,1])
+group <- c(rep(sprintf("%f", alpha_priors[1]), length(fit_smps[1,]$alpha[,1])),
+           rep(sprintf("%f", alpha_priors[2]), length(fit_smps[2,]$alpha[,1])),
+           rep(sprintf("%f", alpha_priors[3]), length(fit_smps[3,]$alpha[,1])),
+           rep(sprintf("%f", alpha_priors[4]), length(fit_smps[4,]$alpha[,1])),
+           rep(sprintf("%f", alpha_priors[5]), length(fit_smps[5,]$alpha[,1])))
+data <- data.frame(values = values, group = group)
+
+ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different alpha priors for Finland") +
+  geom_histogram(position = "identity", alpha = 0.2, bins = 50)
+```
+
+```{r}
+values <- c(fit_smps[1,]$alpha[,2],
+            fit_smps[2,]$alpha[,2],
+            fit_smps[3,]$alpha[,2],
+            fit_smps[4,]$alpha[,2],
+            fit_smps[5,]$alpha[,2])
+group <- c(rep(sprintf("%f", alpha_priors[1]), length(fit_smps[1,]$alpha[,2])),
+           rep(sprintf("%f", alpha_priors[2]), length(fit_smps[2,]$alpha[,2])),
+           rep(sprintf("%f", alpha_priors[3]), length(fit_smps[3,]$alpha[,2])),
+           rep(sprintf("%f", alpha_priors[4]), length(fit_smps[4,]$alpha[,2])),
+           rep(sprintf("%f", alpha_priors[5]), length(fit_smps[5,]$alpha[,2])))
+data <- data.frame(values = values, group = group)
+
+ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different alpha priors for Germany") +
+  geom_histogram(position = "identity", alpha = 0.2, bins = 50)
+```
+
+```{r}
+values <- c(fit_smps[1,]$alpha[,3],
+            fit_smps[2,]$alpha[,3],
+            fit_smps[3,]$alpha[,3],
+            fit_smps[4,]$alpha[,3],
+            fit_smps[5,]$alpha[,3])
+group <- c(rep(sprintf("%f", alpha_priors[1]), length(fit_smps[1,]$alpha[,3])),
+           rep(sprintf("%f", alpha_priors[2]), length(fit_smps[2,]$alpha[,3])),
+           rep(sprintf("%f", alpha_priors[3]), length(fit_smps[3,]$alpha[,3])),
+           rep(sprintf("%f", alpha_priors[4]), length(fit_smps[4,]$alpha[,3])),
+           rep(sprintf("%f", alpha_priors[5]), length(fit_smps[5,]$alpha[,3])))
+data <- data.frame(values = values, group = group)
+
+ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different alpha priors for Portugal") +
+  geom_histogram(position = "identity", alpha = 0.2, bins = 50)
+```
+
+```{r}
+values <- c(fit_smps[1,]$alpha[,4],
+            fit_smps[2,]$alpha[,4],
+            fit_smps[3,]$alpha[,4],
+            fit_smps[4,]$alpha[,4],
+            fit_smps[5,]$alpha[,4])
+group <- c(rep(sprintf("%f", alpha_priors[1]), length(fit_smps[1,]$alpha[,4])),
+           rep(sprintf("%f", alpha_priors[2]), length(fit_smps[2,]$alpha[,4])),
+           rep(sprintf("%f", alpha_priors[3]), length(fit_smps[3,]$alpha[,4])),
+           rep(sprintf("%f", alpha_priors[4]), length(fit_smps[4,]$alpha[,4])),
+           rep(sprintf("%f", alpha_priors[5]), length(fit_smps[5,]$alpha[,4])))
+data <- data.frame(values = values, group = group)
+
+ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different alpha priors for Hong Kong") +
+  geom_histogram(position = "identity", alpha = 0.2, bins = 50)
+```
+
+```{r}
+values <- c(fit_smps[1,]$alpha[,5],
+            fit_smps[2,]$alpha[,5],
+            fit_smps[3,]$alpha[,5],
+            fit_smps[4,]$alpha[,5],
+            fit_smps[5,]$alpha[,5])
+group <- c(rep(sprintf("%f", alpha_priors[1]), length(fit_smps[1,]$alpha[,5])),
+           rep(sprintf("%f", alpha_priors[2]), length(fit_smps[2,]$alpha[,5])),
+           rep(sprintf("%f", alpha_priors[3]), length(fit_smps[3,]$alpha[,5])),
+           rep(sprintf("%f", alpha_priors[4]), length(fit_smps[4,]$alpha[,5])),
+           rep(sprintf("%f", alpha_priors[5]), length(fit_smps[5,]$alpha[,5])))
+data <- data.frame(values = values, group = group)
+
+ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different alpha priors for Japan") +
+  geom_histogram(position = "identity", alpha = 0.2, bins = 50)
+```
+
+### Let's fix rest of the parameters so that we can change the $\beta$ prior and change only the combination of $param_3$ and $param_4$
+
+* $param_3 = 0$ and $param_4 = 5$
+* $param_3 = 2$ and $param_4 = 7$
+* $param_3 = 1$ and $param_4 = 10$
+* $param_3 = 5$ and $param_4 = 15$
+
+```{r, results='hide', error=FALSE}
+xData <- rbind(finland$X,germany$X,portugal$X,hongkong$X,japan$X) #(5,222)
+yData <-rbind(finland$Y,germany$Y,portugal$Y,hongkong$Y,japan$Y) #(5,222)
+
+beta_priors <- rbind(c(0.5, 1),
+                 c(0, 5),
+                 c(2, 7),
+                 c(1, 10),
+                 c(5, 15))
+
+fit_smps <- c()
+
+for(i in seq(1,5)) {
+  smp <- rstan::stan_model(model_code = seperated_model_parameterized)
+  stan_data_parameterized <- list(
+      J = 1,
+      N = dim(xData)[2],
+      M = dim(xData)[1],
+      y = yData,
+      x = xData,
+      xpred = 1.1,
+      param1 = 1,
+      param2 = 1,
+      param3 = beta_priors[i, 1],
+      param4 = beta_priors[i, 2]
+  )
+  model_separated_parameterized <- rstan::sampling(smp, data = stan_data_parameterized, warmup=3000, iter=4000)
+  fit_smp <- extract(model_separated_parameterized, permuted = TRUE, inc_warmup = FALSE)
+  fit_smps <- rbind(fit_smps, fit_smp)
+}
+```
+
+Lets plot the different beta values using a histogram.
+
+```{r}
+values <- c(fit_smps[1,]$beta[,1],
+            fit_smps[2,]$beta[,1],
+            fit_smps[3,]$beta[,1],
+            fit_smps[4,]$beta[,1],
+            fit_smps[5,]$beta[,1])
+group <- c(rep(sprintf("%f : %f", beta_priors[1,1], beta_priors[1,2]), length(fit_smps[1,]$beta[,1])),
+           rep(sprintf("%f : %f", beta_priors[2,1], beta_priors[2,2]), length(fit_smps[2,]$beta[,1])),
+           rep(sprintf("%f : %f", beta_priors[3,1], beta_priors[3,2]), length(fit_smps[3,]$beta[,1])),
+           rep(sprintf("%f : %f", beta_priors[4,1], beta_priors[4,2]), length(fit_smps[4,]$beta[,1])),
+           rep(sprintf("%f : %f", beta_priors[5,1], beta_priors[5,2]), length(fit_smps[5,]$beta[,1])))
+data <- data.frame(values = values, group = group)
+
+ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different beta priors for Finland") +
+  geom_histogram(position = "identity", alpha = 0.2, bins = 50)
+```
+
+```{r}
+values <- c(fit_smps[1,]$beta[,2],
+            fit_smps[2,]$beta[,2],
+            fit_smps[3,]$beta[,2],
+            fit_smps[4,]$beta[,2],
+            fit_smps[5,]$beta[,2])
+group <- c(rep(sprintf("%f : %f", beta_priors[1,1], beta_priors[1,2]), length(fit_smps[1,]$beta[,2])),
+           rep(sprintf("%f : %f", beta_priors[2,1], beta_priors[2,2]), length(fit_smps[2,]$beta[,2])),
+           rep(sprintf("%f : %f", beta_priors[3,1], beta_priors[3,2]), length(fit_smps[3,]$beta[,2])),
+           rep(sprintf("%f : %f", beta_priors[4,1], beta_priors[4,2]), length(fit_smps[4,]$beta[,2])),
+           rep(sprintf("%f : %f", beta_priors[5,1], beta_priors[5,2]), length(fit_smps[5,]$beta[,2])))
+data <- data.frame(values = values, group = group)
+
+ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different beta priors for Germany") +
+  geom_histogram(position = "identity", alpha = 0.2, bins = 50)
+```
+
+```{r}
+values <- c(fit_smps[1,]$beta[,3],
+            fit_smps[2,]$beta[,3],
+            fit_smps[3,]$beta[,3],
+            fit_smps[4,]$beta[,3],
+            fit_smps[5,]$beta[,3])
+group <- c(rep(sprintf("%f : %f", beta_priors[1,1], beta_priors[1,2]), length(fit_smps[1,]$beta[,3])),
+           rep(sprintf("%f : %f", beta_priors[2,1], beta_priors[2,2]), length(fit_smps[2,]$beta[,3])),
+           rep(sprintf("%f : %f", beta_priors[3,1], beta_priors[3,2]), length(fit_smps[3,]$beta[,3])),
+           rep(sprintf("%f : %f", beta_priors[4,1], beta_priors[4,2]), length(fit_smps[4,]$beta[,3])),
+           rep(sprintf("%f : %f", beta_priors[5,1], beta_priors[5,2]), length(fit_smps[5,]$beta[,3])))
+data <- data.frame(values = values, group = group)
+
+ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different beta priors for Portugal") +
+  geom_histogram(position = "identity", alpha = 0.2, bins = 50)
+```
+
+```{r}
+values <- c(fit_smps[1,]$beta[,4],
+            fit_smps[2,]$beta[,4],
+            fit_smps[3,]$beta[,4],
+            fit_smps[4,]$beta[,4],
+            fit_smps[5,]$beta[,4])
+group <- c(rep(sprintf("%f : %f", beta_priors[1,1], beta_priors[1,2]), length(fit_smps[1,]$beta[,4])),
+           rep(sprintf("%f : %f", beta_priors[2,1], beta_priors[2,2]), length(fit_smps[2,]$beta[,4])),
+           rep(sprintf("%f : %f", beta_priors[3,1], beta_priors[3,2]), length(fit_smps[3,]$beta[,4])),
+           rep(sprintf("%f : %f", beta_priors[4,1], beta_priors[4,2]), length(fit_smps[4,]$beta[,4])),
+           rep(sprintf("%f : %f", beta_priors[5,1], beta_priors[5,2]), length(fit_smps[5,]$beta[,4])))
+data <- data.frame(values = values, group = group)
+
+ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different beta priors for Hong Kong") +
+  geom_histogram(position = "identity", alpha = 0.2, bins = 50)
+```
+
+```{r}
+values <- c(fit_smps[1,]$beta[,5],
+            fit_smps[2,]$beta[,5],
+            fit_smps[3,]$beta[,5],
+            fit_smps[4,]$beta[,5],
+            fit_smps[5,]$beta[,5])
+group <- c(rep(sprintf("%f : %f", beta_priors[1,1], beta_priors[1,2]), length(fit_smps[1,]$beta[,5])),
+           rep(sprintf("%f : %f", beta_priors[2,1], beta_priors[2,2]), length(fit_smps[2,]$beta[,5])),
+           rep(sprintf("%f : %f", beta_priors[3,1], beta_priors[3,2]), length(fit_smps[3,]$beta[,5])),
+           rep(sprintf("%f : %f", beta_priors[4,1], beta_priors[4,2]), length(fit_smps[4,]$beta[,5])),
+           rep(sprintf("%f : %f", beta_priors[5,1], beta_priors[5,2]), length(fit_smps[5,]$beta[,5])))
+data <- data.frame(values = values, group = group)
+
+ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different beta priors for Japan") +
+  geom_histogram(position = "identity", alpha = 0.2, bins = 50)
+```
+
+## Sensitivity analysis for hierarchical model
+
+Lets consider the similar mathematical modeling for the hierarchical model and change some parameter values for the prior.
+
+$$
+\begin{aligned}
+y_{i j} \mid \mu_i, \sigma &\sim \operatorname{Normal}\left(\mu_i, \sigma\right) \\
+\mu_i &\sim \operatorname{logit}(\alpha_i, \beta_i)\\
+\sigma & \sim \operatorname{Inv}-\chi^{2}(param_1) \\
+\\
+\beta_{j}\mid \mu_{\beta}, \sigma_{\beta} &\sim \operatorname{Normal}(\mu_{\beta}, \sigma_{\beta})\\
+\alpha_{j} \mid \sigma_{\alpha} & \sim \operatorname{Inv}-\chi^{2}\left(\sigma_{\alpha}\right) \\
+\\
+\mu_{\beta} & \sim \operatorname{Normal}(param_2,param_3)\\
+\sigma_{\beta} & \sim \operatorname{Inv}-\chi^{2}(param_4) \\
+\sigma_{\alpha} & \sim \operatorname{Inv}-\chi^{2}(param_5) \\
+\end{aligned}
+$$
+Here, $param_1$, $param_2$, $param_3$, $param_4$ and $param_5$ are the prior parameters that we are going to vary in our analysis. For the comparison, we have our original values for the parameters as follows:
+
+$$
+\begin{aligned}
+\sigma &\sim \text{inv}\chi^2(1) \qquad param_1 = 1\\
+\mu_{\beta} & \sim \operatorname{Normal}(0,1) \qquad param_2 = 0 \quad param_3 = 1\\
+\sigma_{\beta} & \sim \operatorname{Inv}-\chi^{2}(10) \qquad param_4 = 10\\
+\sigma_{\alpha} & \sim \operatorname{Inv}-\chi^{2}(10) \qquad param_5 = 10\\
+\end{aligned}
+$$
+We will now create a stan model which is parameterized with the above parameters.
+
+```{r}
+hierarchical_model_parameterized <- "
+functions {
+  real[] logit_transform(real[] x, real k, real x0) {
+    int N = size(x);
+    real xtemp[N];
+    for (i in 1:N){
+      xtemp[i] = 1 / (1 + exp(-k * (x[i] - x0)));
+    }
+     return xtemp;
+  }
+}
+
+data {
+    int<lower=1> M; //number of country
+    int<lower=0> N; // number of data points
+    real x[M,N]; //
+    real y[M,N]; //
+    real xpred;  // prediction year
+    real param1;
+    real param2;
+    real param3;
+    real param4;
+    real param5;
+}
+
+parameters {
+  real alpha[M];
+  real beta[M];
+  real<lower = 0> sigma;
+  real<lower = 0> hyper_sigma;
+  real hyper_mu;
+  real<lower = 0> hyper_alpha;
+}
+
+transformed parameters {
+  real mu[M,N];
+  for (i in 1:M){
+    mu[i,] = logit_transform(x[i,],alpha[i], beta[i]);
+  }
+}
+
+model {
+    hyper_mu ~ normal(param2, param3);
+    hyper_sigma ~ inv_chi_square(param4);
+    hyper_alpha ~ inv_chi_square(param5);
+
+  for (i in 1:M){
+    // as prior we will change it to the same values
+    alpha[i] ~ inv_chi_square(hyper_alpha);
+    beta[i] ~ normal(hyper_mu,hyper_sigma);
+  }
+
+  sigma ~ inv_chi_square(param1);
+
+  //likelihood
+  for (i in 1:M){
+    y[i,] ~ normal(mu[i,], sigma);
+  }
+}
+
+generated quantities {
+  vector[N] log_lik[M];
+  real ypred[M];
+  real t[1];
+  t[1] = xpred;
+  for (i in 1:M){
+    ypred[i] = normal_rng(logit_transform(t,alpha[i], beta[i])[1], sigma);
+  }
+
+  //log-likelihood
+  for (i in 1:M) {
+    for (j in 1:N) {
+    log_lik[i,j] = normal_lpdf(y[i,j] | mu[i,j], sigma);
+    }
+  }
+
+}
+
+"
+```
+
+### Let's fix rest of the parameters so that we can change the $\sigma$ prior and change only $param_1$
+
+* $param_1 = 0.1$
+* $param_1 = 0.5$
+* $param_1 = 10$
+* $param_1 = 100$
+
+```{r, results='hide', error=FALSE}
+xData <- rbind(finland$X,germany$X,portugal$X,hongkong$X,japan$X) #(5,222)
+yData <-rbind(finland$Y,germany$Y,portugal$Y,hongkong$Y,japan$Y) #(5,222)
+
+sigma_priors <- c(1, 0.01, 0.1, 10, 20)
+
+fit_hmps <- c()
+
+for(p in sigma_priors) {
+  hmp <- rstan::stan_model(model_code = hierarchical_model_parameterized)
+  stan_data_parameterized <- list(
+      N = dim(xData)[2],
+      M = dim(xData)[1],
+      y = yData,
+      x = xData,
+      xpred = 1.1,
+      param1 = p,
+      param2 = 0,
+      param3 = 1,
+      param4 = 10,
+      param5 = 10
+  )
+  model_hierarchical_parameterized <- rstan::sampling(hmp, data = stan_data_parameterized, warmup=3000, iter=4000)
+  fit_hmp <- extract(model_hierarchical_parameterized, permuted = TRUE, inc_warmup = FALSE)
+  fit_hmps <- rbind(fit_hmps, fit_hmp)
+}
+```
+
+Lets plot the different sigma values using a histogram.
+
+```{r}
+values <- c(fit_hmps[1,]$sigma,
+            fit_hmps[2,]$sigma,
+            fit_hmps[3,]$sigma,
+            fit_hmps[4,]$sigma,
+            fit_hmps[5,]$sigma)
+group <- c(rep(sprintf("%f", sigma_priors[1]), length(fit_hmps[1,]$sigma)),
+           rep(sprintf("%f", sigma_priors[2]), length(fit_hmps[2,]$sigma)),
+           rep(sprintf("%f", sigma_priors[3]), length(fit_hmps[3,]$sigma)),
+           rep(sprintf("%f", sigma_priors[4]), length(fit_hmps[4,]$sigma)),
+           rep(sprintf("%f", sigma_priors[5]), length(fit_hmps[5,]$sigma)))
+data <- data.frame(values = values, group = group)
+
+ggplot(data, aes(x = values, fill = group)) +                       # Draw overlaying histogram
+  geom_histogram(position = "identity", alpha = 0.2, bins = 50)
+```
+
+### Let's fix rest of the parameters so that we can change the $\alpha$ prior and change only $param_5$
+
+* $param_2 = 0.1$
+* $param_2 = 0.5$
+* $param_2 = 1$
+* $param_2 = 20$
+
+```{r, results='hide', error=FALSE}
+xData <- rbind(finland$X,germany$X,portugal$X,hongkong$X,japan$X) #(5,222)
+yData <-rbind(finland$Y,germany$Y,portugal$Y,hongkong$Y,japan$Y) #(5,222)
+
+alpha_priors <- c(10, 0.1, 0.5, 1, 20)
+
+fit_hmps <- c()
+
+for(p in alpha_priors) {
+  hmp <- rstan::stan_model(model_code = hierarchical_model_parameterized)
+  stan_data_parameterized <- list(
+      N = dim(xData)[2],
+      M = dim(xData)[1],
+      y = yData,
+      x = xData,
+      xpred = 1.1,
+      param1 = 1,
+      param2 = 0,
+      param3 = 1,
+      param4 = 10,
+      param5 = p
+  )
+  model_hierarchical_parameterized <- rstan::sampling(hmp, data = stan_data_parameterized, warmup=3000, iter=4000)
+  fit_hmp <- extract(model_hierarchical_parameterized, permuted = TRUE, inc_warmup = FALSE)
+  fit_hmps <- rbind(fit_hmps, fit_hmp)
+}
+```
+
+Lets plot the different alpha values using a histogram.
+
+```{r}
+values <- c(fit_hmps[1,]$alpha[,1],
+            fit_hmps[2,]$alpha[,1],
+            fit_hmps[3,]$alpha[,1],
+            fit_hmps[4,]$alpha[,1],
+            fit_hmps[5,]$alpha[,1])
+group <- c(rep(sprintf("%f", alpha_priors[1]), length(fit_hmps[1,]$alpha[,1])),
+           rep(sprintf("%f", alpha_priors[2]), length(fit_hmps[2,]$alpha[,1])),
+           rep(sprintf("%f", alpha_priors[3]), length(fit_hmps[3,]$alpha[,1])),
+           rep(sprintf("%f", alpha_priors[4]), length(fit_hmps[4,]$alpha[,1])),
+           rep(sprintf("%f", alpha_priors[5]), length(fit_hmps[5,]$alpha[,1])))
+data <- data.frame(values = values, group = group)
+
+ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different alpha priors for Finland") +
+  geom_histogram(position = "identity", alpha = 0.2, bins = 50)
+```
+
+```{r}
+values <- c(fit_hmps[1,]$alpha[,2],
+            fit_hmps[2,]$alpha[,2],
+            fit_hmps[3,]$alpha[,2],
+            fit_hmps[4,]$alpha[,2],
+            fit_hmps[5,]$alpha[,2])
+group <- c(rep(sprintf("%f", alpha_priors[1]), length(fit_hmps[1,]$alpha[,2])),
+           rep(sprintf("%f", alpha_priors[2]), length(fit_hmps[2,]$alpha[,2])),
+           rep(sprintf("%f", alpha_priors[3]), length(fit_hmps[3,]$alpha[,2])),
+           rep(sprintf("%f", alpha_priors[4]), length(fit_hmps[4,]$alpha[,2])),
+           rep(sprintf("%f", alpha_priors[5]), length(fit_hmps[5,]$alpha[,2])))
+data <- data.frame(values = values, group = group)
+
+ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different alpha priors for Germany") +
+  geom_histogram(position = "identity", alpha = 0.2, bins = 50)
+```
+
+```{r}
+values <- c(fit_hmps[1,]$alpha[,3],
+            fit_hmps[2,]$alpha[,3],
+            fit_hmps[3,]$alpha[,3],
+            fit_hmps[4,]$alpha[,3],
+            fit_hmps[5,]$alpha[,3])
+group <- c(rep(sprintf("%f", alpha_priors[1]), length(fit_hmps[1,]$alpha[,3])),
+           rep(sprintf("%f", alpha_priors[2]), length(fit_hmps[2,]$alpha[,3])),
+           rep(sprintf("%f", alpha_priors[3]), length(fit_hmps[3,]$alpha[,3])),
+           rep(sprintf("%f", alpha_priors[4]), length(fit_hmps[4,]$alpha[,3])),
+           rep(sprintf("%f", alpha_priors[5]), length(fit_hmps[5,]$alpha[,3])))
+data <- data.frame(values = values, group = group)
+
+ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different alpha priors for Portugal") +
+  geom_histogram(position = "identity", alpha = 0.2, bins = 50)
+```
+
+```{r}
+values <- c(fit_hmps[1,]$alpha[,4],
+            fit_hmps[2,]$alpha[,4],
+            fit_hmps[3,]$alpha[,4],
+            fit_hmps[4,]$alpha[,4],
+            fit_hmps[5,]$alpha[,4])
+group <- c(rep(sprintf("%f", alpha_priors[1]), length(fit_hmps[1,]$alpha[,4])),
+           rep(sprintf("%f", alpha_priors[2]), length(fit_hmps[2,]$alpha[,4])),
+           rep(sprintf("%f", alpha_priors[3]), length(fit_hmps[3,]$alpha[,4])),
+           rep(sprintf("%f", alpha_priors[4]), length(fit_hmps[4,]$alpha[,4])),
+           rep(sprintf("%f", alpha_priors[5]), length(fit_hmps[5,]$alpha[,4])))
+data <- data.frame(values = values, group = group)
+
+ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different alpha priors for Hong Kong") +
+  geom_histogram(position = "identity", alpha = 0.2, bins = 50)
+```
+
+```{r}
+values <- c(fit_hmps[1,]$alpha[,5],
+            fit_hmps[2,]$alpha[,5],
+            fit_hmps[3,]$alpha[,5],
+            fit_hmps[4,]$alpha[,5],
+            fit_hmps[5,]$alpha[,5])
+group <- c(rep(sprintf("%f", alpha_priors[1]), length(fit_hmps[1,]$alpha[,5])),
+           rep(sprintf("%f", alpha_priors[2]), length(fit_hmps[2,]$alpha[,5])),
+           rep(sprintf("%f", alpha_priors[3]), length(fit_hmps[3,]$alpha[,5])),
+           rep(sprintf("%f", alpha_priors[4]), length(fit_hmps[4,]$alpha[,5])),
+           rep(sprintf("%f", alpha_priors[5]), length(fit_hmps[5,]$alpha[,5])))
+data <- data.frame(values = values, group = group)
+
+ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different alpha priors for Japan") +
+  geom_histogram(position = "identity", alpha = 0.2, bins = 50)
+```
+
+### Let's fix rest of the parameters so that we can change the $\beta$ prior and change only the combination of $param_2$, $param_3$ and $param_4$
+
+* $param_2 = 0$, $param_3 = 5$ and $param_4 = 0.1$
+* $param_2 = 2$, $param_3 = 7$ and $param_4 = 0.5$
+* $param_2 = 1$, $param_3 = 10$ and $param_4 = 1$
+* $param_2 = 5$, $param_3 = 15$ and $param_4 = 20$
+
+```{r, results='hide', error=FALSE}
+xData <- rbind(finland$X,germany$X,portugal$X,hongkong$X,japan$X) #(5,222)
+yData <-rbind(finland$Y,germany$Y,portugal$Y,hongkong$Y,japan$Y) #(5,222)
+
+beta_priors <- rbind(c(1, 1, 10),
+                 c(0, 5, 0.1),
+                 c(2, 7, 0.5),
+                 c(1, 10, 1),
+                 c(5, 15, 20))
+
+fit_hmps <- c()
+
+for(i in seq(1,5)) {
+  hmp <- rstan::stan_model(model_code = hierarchical_model_parameterized)
+  stan_data_parameterized <- list(
+      N = dim(xData)[2],
+      M = dim(xData)[1],
+      y = yData,
+      x = xData,
+      xpred = 1.1,
+      param1 = 1,
+      param2 = beta_priors[i, 1],
+      param3 = beta_priors[i, 2],
+      param4 = beta_priors[i, 3],
+      param5 = 10
+  )
+  model_hierarchical_parameterized <- rstan::sampling(hmp, data = stan_data_parameterized, warmup=3000, iter=4000)
+  fit_hmp <- extract(model_hierarchical_parameterized, permuted = TRUE, inc_warmup = FALSE)
+  fit_hmps <- rbind(fit_hmps, fit_hmp)
+}
+```
+
+Lets plot the different beta values using a histogram.
+
+```{r}
+values <- c(fit_hmps[1,]$beta[,1],
+            fit_hmps[2,]$beta[,1],
+            fit_hmps[3,]$beta[,1],
+            fit_hmps[4,]$beta[,1],
+            fit_hmps[5,]$beta[,1])
+group <- c(rep(sprintf("%f : %f : %f", beta_priors[1,1], beta_priors[1,2], beta_priors[1,3]), length(fit_hmps[1,]$beta[,1])),
+           rep(sprintf("%f : %f : %f", beta_priors[2,1], beta_priors[2,2], beta_priors[2,3]), length(fit_hmps[2,]$beta[,1])),
+           rep(sprintf("%f : %f : %f", beta_priors[3,1], beta_priors[3,2], beta_priors[3,3]), length(fit_hmps[3,]$beta[,1])),
+           rep(sprintf("%f : %f : %f", beta_priors[4,1], beta_priors[4,2], beta_priors[4,3]), length(fit_hmps[4,]$beta[,1])),
+           rep(sprintf("%f : %f : %f", beta_priors[5,1], beta_priors[5,2], beta_priors[5,3]), length(fit_hmps[5,]$beta[,1])))
+data <- data.frame(values = values, group = group)
+
+ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different beta priors for Finland") +
+  geom_histogram(position = "identity", alpha = 0.2, bins = 50)
+```
+
+```{r}
+values <- c(fit_hmps[1,]$beta[,2],
+            fit_hmps[2,]$beta[,2],
+            fit_hmps[3,]$beta[,2],
+            fit_hmps[4,]$beta[,2],
+            fit_hmps[5,]$beta[,2])
+group <- c(rep(sprintf("%f : %f : %f", beta_priors[1,1], beta_priors[1,2], beta_priors[1,3]), length(fit_hmps[1,]$beta[,2])),
+           rep(sprintf("%f : %f : %f", beta_priors[2,1], beta_priors[2,2], beta_priors[2,3]), length(fit_hmps[2,]$beta[,2])),
+           rep(sprintf("%f : %f : %f", beta_priors[3,1], beta_priors[3,2], beta_priors[3,3]), length(fit_hmps[3,]$beta[,2])),
+           rep(sprintf("%f : %f : %f", beta_priors[4,1], beta_priors[4,2], beta_priors[4,3]), length(fit_hmps[4,]$beta[,2])),
+           rep(sprintf("%f : %f : %f", beta_priors[5,1], beta_priors[5,2], beta_priors[5,3]), length(fit_hmps[5,]$beta[,2])))
+data <- data.frame(values = values, group = group)
+
+ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different beta priors for Germany") +
+  geom_histogram(position = "identity", alpha = 0.2, bins = 50)
+```
+
+```{r}
+values <- c(fit_hmps[1,]$beta[,3],
+            fit_hmps[2,]$beta[,3],
+            fit_hmps[3,]$beta[,3],
+            fit_hmps[4,]$beta[,3],
+            fit_hmps[5,]$beta[,3])
+group <- c(rep(sprintf("%f : %f : %f", beta_priors[1,1], beta_priors[1,2], beta_priors[1,3]), length(fit_hmps[1,]$beta[,3])),
+           rep(sprintf("%f : %f : %f", beta_priors[2,1], beta_priors[2,2], beta_priors[2,3]), length(fit_hmps[2,]$beta[,3])),
+           rep(sprintf("%f : %f : %f", beta_priors[3,1], beta_priors[3,2], beta_priors[3,3]), length(fit_hmps[3,]$beta[,3])),
+           rep(sprintf("%f : %f : %f", beta_priors[4,1], beta_priors[4,2], beta_priors[4,3]), length(fit_hmps[4,]$beta[,3])),
+           rep(sprintf("%f : %f : %f", beta_priors[5,1], beta_priors[5,2], beta_priors[5,3]), length(fit_hmps[5,]$beta[,3])))
+data <- data.frame(values = values, group = group)
+
+ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different beta priors for Portugal") +
+  geom_histogram(position = "identity", alpha = 0.2, bins = 50)
+```
+
+```{r}
+values <- c(fit_hmps[1,]$beta[,4],
+            fit_hmps[2,]$beta[,4],
+            fit_hmps[3,]$beta[,4],
+            fit_hmps[4,]$beta[,4],
+            fit_hmps[5,]$beta[,4])
+group <- c(rep(sprintf("%f : %f : %f", beta_priors[1,1], beta_priors[1,2], beta_priors[1,3]), length(fit_hmps[1,]$beta[,4])),
+           rep(sprintf("%f : %f : %f", beta_priors[2,1], beta_priors[2,2], beta_priors[2,3]), length(fit_hmps[2,]$beta[,4])),
+           rep(sprintf("%f : %f : %f", beta_priors[3,1], beta_priors[3,2], beta_priors[3,3]), length(fit_hmps[3,]$beta[,4])),
+           rep(sprintf("%f : %f : %f", beta_priors[4,1], beta_priors[4,2], beta_priors[4,3]), length(fit_hmps[4,]$beta[,4])),
+           rep(sprintf("%f : %f : %f", beta_priors[5,1], beta_priors[5,2], beta_priors[5,3]), length(fit_hmps[5,]$beta[,4])))
+data <- data.frame(values = values, group = group)
+
+ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different beta priors for Hong Kong") +
+  geom_histogram(position = "identity", alpha = 0.2, bins = 50)
+```
+
+```{r}
+values <- c(fit_hmps[1,]$beta[,5],
+            fit_hmps[2,]$beta[,5],
+            fit_hmps[3,]$beta[,5],
+            fit_hmps[4,]$beta[,5],
+            fit_hmps[5,]$beta[,5])
+group <- c(rep(sprintf("%f : %f : %f", beta_priors[1,1], beta_priors[1,2], beta_priors[1,3]), length(fit_hmps[1,]$beta[,5])),
+           rep(sprintf("%f : %f : %f", beta_priors[2,1], beta_priors[2,2], beta_priors[2,3]), length(fit_hmps[2,]$beta[,5])),
+           rep(sprintf("%f : %f : %f", beta_priors[3,1], beta_priors[3,2], beta_priors[3,3]), length(fit_hmps[3,]$beta[,5])),
+           rep(sprintf("%f : %f : %f", beta_priors[4,1], beta_priors[4,2], beta_priors[4,3]), length(fit_hmps[4,]$beta[,5])),
+           rep(sprintf("%f : %f : %f", beta_priors[5,1], beta_priors[5,2], beta_priors[5,3]), length(fit_hmps[5,]$beta[,5])))
+data <- data.frame(values = values, group = group)
+
+ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different beta priors for Japan") +
+  geom_histogram(position = "identity", alpha = 0.2, bins = 50)
+```
 
 # 12. Discussion of issues and potential improvements.
 
