@@ -908,6 +908,37 @@ points(fit_sm1$ypred[,5], col=5, pch=16)
 
 # 12. Discussion of issues and potential improvements.
 
+As our raw data contained the number of vaccinated doses given, we made the simplification, that two doses are needed to be counted 
+as a fully vaccinated person. However when having a closer look at the number of people in Germany, who recives vaccination, we can 
+see a rise in the last couple of datapoints. This spike can however be partially explained by given everyone above 18 the possibility
+to get the 3rd dose. By simply dividing the data by 2 we might soon end up in vaccination rates above 1. The data therefore would 
+need to be further modified to also account for those changes. 
+
+One issue with our model is, that we used normal distributions to model our data and predictions. This does not fully reflect the 
+reality. As the data is dependent on each other we would describe the vaccination rate as a time series, which is monotonic 
+increasing. We therefore would need the strict condition, that $y_i \geq y_{i-1}$ for all $i > 0$. This is not given with our simple 
+model and a process, which includes those conditions, as it is for example the case with the poisson process, as it can be seen in 
+the plot below, which sample code can be found on the following website (http://theanalysisofdata.com/probability/7_2.html): 
+
+
+```{r}
+Z = rexp(30, 1)
+t = seq(0, sum(Z), length.out = 200)
+X = t * 0
+for (i in 1:30) {
+    Zc = cumsum(Z)
+    X[t >= Zc[i]] = i
+}
+par(cex.main = 1.5, cex.axis = 1.2, cex.lab = 1.5)
+plot(c(0, sum(Z)), c(0, 30), type = "n", xlab = "t",
+    ylab = "X_t")
+curve(x * 1, add = TRUE, col = rgb(1, 0, 0), lwd = 2,
+    lty = 2, xlab = "t", ylab = "X_t")
+lines(t, X, lwd = 3, type = "s")
+title("A Poisson process sample path")
+```
+
+Therefore modelling our data $y$ with such a process would be a more realistic option and improvement.
 
 # 13. Conclusion what was learned from the data analysis.
 
@@ -930,5 +961,3 @@ nepal <- read.csv("data/Nepal_output.csv")
 TODO tomorrow:
 
 SHow that for Nepal it doesn't work that well
-
-Plot data and posterior in one plot to see how closely the data and model match
