@@ -859,5 +859,3 @@ Start the project early in case the whole group gets a flue during the last days
 TODO tomorrow:
 
 SHow that for Nepal it doesn't work that well
-
-Plot data and posterior in one plot to see how closely the data and model match
