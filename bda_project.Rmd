@@ -462,7 +462,7 @@ cat("ESS of hiracical model: \n")
 sum_hierarchical$summary[1:11,9]
 ```
 
-Here we can nicely see, that all ESS values are above 400, which indicates, that our $\hat{R}$ values are realiable. We can therefore conclude, that our chains converged.
+Here we can nicely see, that all ESS values are above 400, which indicates, that our $\hat{R}$ values are reliable. We can therefore conclude, that our chains converged.
 
 
 \newpage
@@ -504,7 +504,7 @@ cat('Credible interval of predicted vaccination rate in hierarchical model: ',
     a_h,'\n')
 ```
 
-In seperate model, the credible interval for $\mu$ in datapoint 200 which is $[0.7843056, 0.7995294]$ doesn't include the actual vaccination rate 0.7301881. However, in hierarchical model, the credible interval $[0.7232421, 0.8609337]$ includes actual vaccination rate.
+In seperate model, the credible interval for $\mu$ in datapoint 200 which is $[0.7843056, 0.7995294]$ doesn't include the actual vaccination rate 0.7301881. However, in hierarchical model, the credible interval $[0.7232421, 0.8609337]$ includes actual vaccination rate. We can therefore see, that our model approaches the data. In section 13. further improvements it will be further evaluated how the seperated model can be optimised. 
 
 ## Visual comparisions
 
@@ -740,7 +740,7 @@ cat("Maximum k-values in seperate model is ",max(k_s),'\n')
 cat("Maximum k-values in hierarchical model is ",max(k_h),'\n')
 ```
 
-If the k < 0.7 we can say that PSIS-LOO estimates are reliable. Based on this,for seperate model and hierarchical model both, the $\hat{k}$-values are all below 0.5 which are good. Therefore, both  seperate model and hierarchicalmodels are reliable. However, the maximum  $\hat{k}$-values in seperate model is 0.216 and the maximum $\hat{k}$-values in hierarchical model is 0.176, so we could say the hierarchical model is more reliable.
+If the k < 0.7 we can say that PSIS-LOO estimates are reliable. Based on this, for seperate model and hierarchical model both, the $\hat{k}$-values are all below 0.5 which are good. Therefore, both  seperate model and hierarchical models are reliable. However, the maximum  $\hat{k}$-values in seperate model is 0.216 and the maximum $\hat{k}$-values in hierarchical model is 0.176, so we could say the hierarchical model is more reliable.
 
 #### comparing PSIS-LOO estimates
 ```{r}
@@ -851,8 +851,7 @@ cat("Mean of 4000 predictions for Japan: ", mean(fit_hm$ypred[,5,223]),'\n')
 ```
 
 
-We need to be very carefully about the prediction of the vaccination numbers. While it is nice having those predictions, they are just useful.  
-
+We need to be very carefully about the prediction of the vaccination numbers. While it is nice having those predictions, they might not reflect the actual numbers. We can see, that most curves have too big $y$ values for $x$ values close to 1. The predictions will therefore be quite optimistic. Also certain sociatal influences like a vaccination mandate, like it is introduced in Austria for the 1st of February, are not factored in.
 
 \newpage
 # 11. Sensitivity analysis with respect to prior choices (i.e. checking whether the result changes a lot if prior is changed)
@@ -1820,7 +1819,7 @@ $$
 as our function we want to fit and build two Stan models (seperated and hirachical) to find the right parameters $k,x_0$.
 After evaluating, how trustworthy the results of the models are, by performing different convergence analysis like the $\hat{R}$ and $ESS$ analysis as well as comparing those models with each other with LOO-CV, we got reliable samples for $k$ and $x_0$. With those we created the fitted curves, draw some example data and made predictions, what the vaccination rate might look at a certain point in the future.
 
-In a nutshell the main points from our project can be boiled down to the following three points:
+Summerizing the main points from our project we can say:
 
 1. We can use bayesian statistics, to estimate the functional parameters for the logistic function. This can be verified, as our distribution converges and the logistic function is a close fit to the data
 
