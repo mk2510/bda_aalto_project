@@ -1819,7 +1819,7 @@ $$
 as our function we want to fit and build two Stan models (seperated and hirachical) to find the right parameters $k,x_0$.
 After evaluating, how trustworthy the results of the models are, by performing different convergence analysis like the $\hat{R}$ and $ESS$ analysis as well as comparing those models with each other with LOO-CV, we got reliable samples for $k$ and $x_0$. With those we created the fitted curves, draw some example data and made predictions, what the vaccination rate might look at a certain point in the future.
 
-In a nutshell the main points from our project can be boiled down to the following three points:
+Summerizing the main points from our project we can say:
 
 1. We can use bayesian statistics, to estimate the functional parameters for the logistic function. This can be verified, as our distribution converges and the logistic function is a close fit to the data
 
