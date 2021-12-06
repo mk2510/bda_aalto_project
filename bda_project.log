@@ -1,91 +1,91 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2022/dev) (preloaded format=pdflatex 2021.12.4)  5 DEC 2021 16:17
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.6.3)  6 DEC 2021 14:57
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **bda_project.tex
 (./bda_project.tex
-LaTeX2e <2021-11-15>
-L3 programming layer <2021-11-22> (/Users/ashok/Library/TinyTeX/texmf-dist/tex/
-latex/base/article.cls
-Document Class: article 2021/10/04 v1.4n Standard LaTeX document class
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/base/size10.clo
-File: size10.clo 2021/10/04 v1.4n Standard LaTeX file (size option)
+LaTeX2e <2020-02-02> patch level 5
+L3 programming layer <2020-03-06> (/usr/local/texlive/2020/texmf-dist/tex/latex
+/base/article.cls
+Document Class: article 2019/12/20 v1.4l Standard LaTeX document class
+(/usr/local/texlive/2020/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2019/12/20 v1.4l Standard LaTeX file (size option)
 )
-\c@part=\count183
-\c@section=\count184
-\c@subsection=\count185
-\c@subsubsection=\count186
-\c@paragraph=\count187
-\c@subparagraph=\count188
-\c@figure=\count189
-\c@table=\count190
+\c@part=\count167
+\c@section=\count168
+\c@subsection=\count169
+\c@subsubsection=\count170
+\c@paragraph=\count171
+\c@subparagraph=\count172
+\c@figure=\count173
+\c@table=\count174
 \abovecaptionskip=\skip47
 \belowcaptionskip=\skip48
-\bibindent=\dimen138
-) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/amsmath/amsmath.sty
-Package: amsmath 2021/10/15 v2.17l AMS math features
+\bibindent=\dimen134
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2020/01/20 v2.17e AMS math features
 \@mathmargin=\skip49
 For additional information on amsmath, use the `?' option.
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/amsmath/amstext.sty
-Package: amstext 2021/08/26 v2.01 AMS text
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/amsmath/amsgen.sty
+(/usr/local/texlive/2020/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2000/06/29 v2.01 AMS text
+(/usr/local/texlive/2020/texmf-dist/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0 generic functions
-\@emptytoks=\toks16
-\ex@=\dimen139
-)) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/amsmath/amsbsy.sty
+\@emptytoks=\toks15
+\ex@=\dimen135
+)) (/usr/local/texlive/2020/texmf-dist/tex/latex/amsmath/amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
-\pmbraise@=\dimen140
-) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/amsmath/amsopn.sty
-Package: amsopn 2021/08/26 v2.02 operator names
+\pmbraise@=\dimen136
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 2016/03/08 v2.02 operator names
 )
-\inf@bad=\count191
-LaTeX Info: Redefining \frac on input line 234.
-\uproot@=\count192
-\leftroot@=\count193
-LaTeX Info: Redefining \overline on input line 399.
-\classnum@=\count194
-\DOTSCASE@=\count195
-LaTeX Info: Redefining \ldots on input line 496.
-LaTeX Info: Redefining \dots on input line 499.
-LaTeX Info: Redefining \cdots on input line 620.
-\Mathstrutbox@=\box50
-\strutbox@=\box51
-\big@size=\dimen141
-LaTeX Font Info:    Redeclaring font encoding OML on input line 743.
-LaTeX Font Info:    Redeclaring font encoding OMS on input line 744.
-\macc@depth=\count196
-\c@MaxMatrixCols=\count197
+\inf@bad=\count175
+LaTeX Info: Redefining \frac on input line 227.
+\uproot@=\count176
+\leftroot@=\count177
+LaTeX Info: Redefining \overline on input line 389.
+\classnum@=\count178
+\DOTSCASE@=\count179
+LaTeX Info: Redefining \ldots on input line 486.
+LaTeX Info: Redefining \dots on input line 489.
+LaTeX Info: Redefining \cdots on input line 610.
+\Mathstrutbox@=\box45
+\strutbox@=\box46
+\big@size=\dimen137
+LaTeX Font Info:    Redeclaring font encoding OML on input line 733.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 734.
+\macc@depth=\count180
+\c@MaxMatrixCols=\count181
 \dotsspace@=\muskip16
-\c@parentequation=\count198
-\dspbrk@lvl=\count199
-\tag@help=\toks17
-\row@=\count266
-\column@=\count267
-\maxfields@=\count268
-\andhelp@=\toks18
-\eqnshift@=\dimen142
-\alignsep@=\dimen143
-\tagshift@=\dimen144
-\tagwidth@=\dimen145
-\totwidth@=\dimen146
-\lineht@=\dimen147
-\@envbody=\toks19
+\c@parentequation=\count182
+\dspbrk@lvl=\count183
+\tag@help=\toks16
+\row@=\count184
+\column@=\count185
+\maxfields@=\count186
+\andhelp@=\toks17
+\eqnshift@=\dimen138
+\alignsep@=\dimen139
+\tagshift@=\dimen140
+\tagwidth@=\dimen141
+\totwidth@=\dimen142
+\lineht@=\dimen143
+\@envbody=\toks18
 \multlinegap=\skip50
 \multlinetaggap=\skip51
-\mathdisplay@stack=\toks20
-LaTeX Info: Redefining \[ on input line 2938.
-LaTeX Info: Redefining \] on input line 2939.
-) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/amssymb.sty
+\mathdisplay@stack=\toks19
+LaTeX Info: Redefining \[ on input line 2859.
+LaTeX Info: Redefining \] on input line 2860.
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/amsfonts/amssymb.sty
 Package: amssymb 2013/01/14 v3.01 AMS font symbols
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+(/usr/local/texlive/2020/texmf-dist/tex/latex/amsfonts/amsfonts.sty
 Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
 \symAMSa=\mathgroup4
 \symAMSb=\mathgroup5
 LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
-)) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/lm/lmodern.sty
-Package: lmodern 2015/05/01 v1.6.1 Latin Modern Fonts
+)) (/usr/local/texlive/2020/texmf-dist/tex/latex/lm/lmodern.sty
+Package: lmodern 2009/10/30 v1.6 Latin Modern Fonts
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
 (Font)                  OT1/cmr/m/n --> OT1/lmr/m/n on input line 22.
 LaTeX Font Info:    Overwriting symbol font `letters' in version `normal'
@@ -118,309 +118,369 @@ LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
 (Font)                  OT1/cmr/bx/it --> OT1/lmr/bx/it on input line 37.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
 (Font)                  OT1/cmtt/m/n --> OT1/lmtt/m/n on input line 38.
-) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/generic/iftex/iftex.sty
+) (/usr/local/texlive/2020/texmf-dist/tex/generic/iftex/ifxetex.sty
+Package: ifxetex 2019/10/25 v0.7 ifxetex legacy package. Use iftex instead.
+(/usr/local/texlive/2020/texmf-dist/tex/generic/iftex/iftex.sty
 Package: iftex 2020/03/06 v1.0d TeX engine tests
-) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/base/fontenc.sty
-Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
+)) (/usr/local/texlive/2020/texmf-dist/tex/generic/iftex/ifluatex.sty
+Package: ifluatex 2019/10/25 v1.5 ifluatex legacy package. Use iftex instead.
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2020/02/11 v2.0o Standard LaTeX package
 LaTeX Font Info:    Trying to load font information for T1+lmr on input line 11
 2.
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/lm/t1lmr.fd
-File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/base/inputenc.sty
-Package: inputenc 2021/02/14 v1.3d Input encoding file
-\inpenc@prehook=\toks21
-\inpenc@posthook=\toks22
-) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/base/textcomp.sty
+(/usr/local/texlive/2020/texmf-dist/tex/latex/lm/t1lmr.fd
+File: t1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)) (/usr/local/texlive/2020/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2018/08/11 v1.3c Input encoding file
+\inpenc@prehook=\toks20
+\inpenc@posthook=\toks21
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/base/textcomp.sty
 Package: textcomp 2020/02/02 v2.0n Standard LaTeX package
-) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/xcolor/xcolor.sty
-Package: xcolor 2021/10/31 v2.13 LaTeX color extensions (UK)
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/graphics-cfg/color.cfg
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/upquote/upquote.sty
+Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
+tim
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/microtype/microtype.sty
+Package: microtype 2019/11/18 v2.7d Micro-typographical refinements (RS)
+(/usr/local/texlive/2020/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks22
+)
+\MT@toks=\toks23
+\MT@count=\count187
+LaTeX Info: Redefining \textls on input line 790.
+\MT@outer@kern=\dimen144
+LaTeX Info: Redefining \textmicrotypecontext on input line 1354.
+\MT@listname@count=\count188
+(/usr/local/texlive/2020/texmf-dist/tex/latex/microtype/microtype-pdftex.def
+File: microtype-pdftex.def 2019/11/18 v2.7d Definitions specific to pdftex (RS)
+
+LaTeX Info: Redefining \lsstyle on input line 914.
+LaTeX Info: Redefining \lslig on input line 914.
+\MT@outer@space=\skip52
+)
+Package microtype Info: Loading configuration file microtype.cfg.
+(/usr/local/texlive/2020/texmf-dist/tex/latex/microtype/microtype.cfg
+File: microtype.cfg 2019/11/18 v2.7d microtype main configuration file (RS)
+)) (/usr/local/texlive/2020/texmf-dist/tex/latex/parskip/parskip.sty
+Package: parskip 2020-01-22 v2.0d non-zero parskip adjustments
+(/usr/local/texlive/2020/texmf-dist/tex/latex/kvoptions/kvoptions.sty
+Package: kvoptions 2019/11/29 v3.13 Key value format for package options (HO)
+(/usr/local/texlive/2020/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
+Package: ltxcmds 2019/12/15 v1.24 LaTeX kernel commands for general use (HO)
+) (/usr/local/texlive/2020/texmf-dist/tex/generic/kvsetkeys/kvsetkeys.sty
+Package: kvsetkeys 2019/12/15 v1.18 Key value parser (HO)
+)) (/usr/local/texlive/2020/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+Package: etoolbox 2019/09/21 v2.5h e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count189
+)) (/usr/local/texlive/2020/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2016/05/11 v2.12 LaTeX color extensions (UK)
+(/usr/local/texlive/2020/texmf-dist/tex/latex/graphics-cfg/color.cfg
 File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
-Package xcolor Info: Driver file: pdftex.def on input line 227.
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/graphics-def/pdftex.def
-File: pdftex.def 2020/10/05 v1.2a Graphics/color driver for pdftex
+Package xcolor Info: Driver file: pdftex.def on input line 225.
+(/usr/local/texlive/2020/texmf-dist/tex/latex/graphics-def/pdftex.def
+File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
 )
-Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1352.
-Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1356.
-Package xcolor Info: Model `RGB' extended on input line 1368.
-Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1370.
-Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1371.
-Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1372.
-Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1373.
-Package xcolor Info: Model `Gray' substituted by `gray' on input line 1374.
-Package xcolor Info: Model `wave' substituted by `hsb' on input line 1375.
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/graphics/dvipsnam.def
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1348.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1352.
+Package xcolor Info: Model `RGB' extended on input line 1364.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1366.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1367.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1370.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1371.
+(/usr/local/texlive/2020/texmf-dist/tex/latex/graphics/dvipsnam.def
 File: dvipsnam.def 2016/06/17 v3.0m Driver-dependent file (DPC,SPQR)
-) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/xcolor/svgnam.def
-File: svgnam.def 2021/10/31 v2.13 Predefined colors according to SVG 1.1 (UK)
-) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/xcolor/x11nam.def
-File: x11nam.def 2021/10/31 v2.13 Predefined colors according to Unix/X11 (UK)
-)) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/hyperref/hyperref.sty
-Package: hyperref 2021-06-07 v7.00m Hypertext links for LaTeX
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
-Package: ltxcmds 2020-05-10 v1.25 LaTeX kernel commands for general use (HO)
-) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.st
-y
-Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/xcolor/svgnam.def
+File: svgnam.def 2016/05/11 v2.12 Predefined colors according to SVG 1.1 (UK)
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/xcolor/x11nam.def
+File: x11nam.def 2016/05/11 v2.12 Predefined colors according to Unix/X11 (UK)
+)) (/usr/local/texlive/2020/texmf-dist/tex/latex/xurl/xurl.sty
+Package: xurl 2020/01/24 v 0.09 modify URL breaks
+(/usr/local/texlive/2020/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip17
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)) (/usr/local/texlive/2020/texmf-dist/tex/latex/bookmark/bookmark.sty
+Package: bookmark 2019/12/03 v1.28 PDF bookmarks (HO)
+(/usr/local/texlive/2020/texmf-dist/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2020/01/14 v7.00d Hypertext links for LaTeX
+(/usr/local/texlive/2020/texmf-dist/tex/latex/pdftexcmds/pdftexcmds.sty
+Package: pdftexcmds 2019/11/24 v0.31 Utility functions of pdfTeX for LuaTeX (HO
 )
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/generic/infwarerr/infwarerr.sty
+(/usr/local/texlive/2020/texmf-dist/tex/generic/infwarerr/infwarerr.sty
 Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
 )
 Package pdftexcmds Info: \pdf@primitive is available.
 Package pdftexcmds Info: \pdf@ifprimitive is available.
 Package pdftexcmds Info: \pdfdraftmode found.
-) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/graphics/keyval.sty
-Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
-\KV@toks@=\toks23
-) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/generic/kvsetkeys/kvsetkeys.sty
-Package: kvsetkeys 2019/12/15 v1.18 Key value parser (HO)
-)
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.
-sty
+) (/usr/local/texlive/2020/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty
 Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
-) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+) (/usr/local/texlive/2020/texmf-dist/tex/generic/pdfescape/pdfescape.sty
 Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
-) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/hycolor/hycolor.sty
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/hycolor/hycolor.sty
 Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
-) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/letltxmacro/letltxmacro.st
-y
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/letltxmacro/letltxmacro.sty
 Package: letltxmacro 2019/12/03 v1.6 Let assignment for LaTeX macros (HO)
-) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/auxhook/auxhook.sty
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/auxhook/auxhook.sty
 Package: auxhook 2019-12-17 v1.6 Hooks for auxiliary files (HO)
-) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/kvoptions/kvoptions.sty
-Package: kvoptions 2020-10-07 v3.14 Key value format for package options (HO)
 )
-\@linkdim=\dimen148
-\Hy@linkcounter=\count269
-\Hy@pagecounter=\count270
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/hyperref/pd1enc.def
-File: pd1enc.def 2021-06-07 v7.00m Hyperref: PDFDocEncoding definition (HO)
+\@linkdim=\dimen145
+\Hy@linkcounter=\count190
+\Hy@pagecounter=\count191
+(/usr/local/texlive/2020/texmf-dist/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2020/01/14 v7.00d Hyperref: PDFDocEncoding definition (HO)
 Now handling font encoding PD1 ...
 ... no UTF-8 mapping file for font encoding PD1
-)
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/hyperref/hyperref-langpatche
-s.def
-File: hyperref-langpatches.def 2021-06-07 v7.00m Hyperref: patches for babel la
-nguages
-) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/generic/intcalc/intcalc.sty
+) (/usr/local/texlive/2020/texmf-dist/tex/generic/intcalc/intcalc.sty
 Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
-) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/generic/etexcmds/etexcmds.sty
+) (/usr/local/texlive/2020/texmf-dist/tex/generic/etexcmds/etexcmds.sty
 Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
 )
-\Hy@SavedSpaceFactor=\count271
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/hyperref/puenc.def
-File: puenc.def 2021-06-07 v7.00m Hyperref: PDF Unicode definition (HO)
+\Hy@SavedSpaceFactor=\count192
+Package hyperref Info: Option `unicode' set `true' on input line 4421.
+(/usr/local/texlive/2020/texmf-dist/tex/latex/hyperref/puenc.def
+File: puenc.def 2020/01/14 v7.00d Hyperref: PDF Unicode definition (HO)
 Now handling font encoding PU ...
 ... no UTF-8 mapping file for font encoding PU
 )
-Package hyperref Info: Option `unicode' set `true' on input line 4073.
-Package hyperref Info: Hyper figures OFF on input line 4192.
-Package hyperref Info: Link nesting OFF on input line 4197.
-Package hyperref Info: Hyper index ON on input line 4200.
-Package hyperref Info: Plain pages OFF on input line 4207.
-Package hyperref Info: Backreferencing OFF on input line 4212.
+Package hyperref Info: Hyper figures OFF on input line 4547.
+Package hyperref Info: Link nesting OFF on input line 4552.
+Package hyperref Info: Hyper index ON on input line 4555.
+Package hyperref Info: Plain pages OFF on input line 4562.
+Package hyperref Info: Backreferencing OFF on input line 4567.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
-Package hyperref Info: Bookmarks ON on input line 4445.
-\c@Hy@tempcnt=\count272
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/url/url.sty
-\Urlmuskip=\muskip17
-Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
-)
-LaTeX Info: Redefining \url on input line 4804.
-\XeTeXLinkMargin=\dimen149
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/generic/bitset/bitset.sty
+Package hyperref Info: Bookmarks ON on input line 4800.
+\c@Hy@tempcnt=\count193
+LaTeX Info: Redefining \url on input line 5159.
+\XeTeXLinkMargin=\dimen146
+(/usr/local/texlive/2020/texmf-dist/tex/generic/bitset/bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty
+(/usr/local/texlive/2020/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
-\Fld@menulength=\count273
-\Field@Width=\dimen150
-\Fld@charsize=\dimen151
-Package hyperref Info: Hyper figures OFF on input line 6076.
-Package hyperref Info: Link nesting OFF on input line 6081.
-Package hyperref Info: Hyper index ON on input line 6084.
-Package hyperref Info: backreferencing OFF on input line 6091.
-Package hyperref Info: Link coloring OFF on input line 6096.
-Package hyperref Info: Link coloring with OCG OFF on input line 6101.
-Package hyperref Info: PDF/A mode OFF on input line 6106.
-LaTeX Info: Redefining \ref on input line 6146.
-LaTeX Info: Redefining \pageref on input line 6150.
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/base/atbegshi-ltx.sty
-Package: atbegshi-ltx 2021/01/10 v1.0c Emulation of the original atbegshi
-package with kernel methods
+\Fld@menulength=\count194
+\Field@Width=\dimen147
+\Fld@charsize=\dimen148
+Package hyperref Info: Hyper figures OFF on input line 6430.
+Package hyperref Info: Link nesting OFF on input line 6435.
+Package hyperref Info: Hyper index ON on input line 6438.
+Package hyperref Info: backreferencing OFF on input line 6445.
+Package hyperref Info: Link coloring OFF on input line 6450.
+Package hyperref Info: Link coloring with OCG OFF on input line 6455.
+Package hyperref Info: PDF/A mode OFF on input line 6460.
+LaTeX Info: Redefining \ref on input line 6500.
+LaTeX Info: Redefining \pageref on input line 6504.
+(/usr/local/texlive/2020/texmf-dist/tex/generic/atbegshi/atbegshi.sty
+Package: atbegshi 2019/12/05 v1.19 At begin shipout hook (HO)
 )
-\Hy@abspage=\count274
-\c@Item=\count275
-\c@Hfootnote=\count276
+\Hy@abspage=\count195
+\c@Item=\count196
+\c@Hfootnote=\count197
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/hyperref/hpdftex.def
-File: hpdftex.def 2021-06-07 v7.00m Hyperref driver for pdfTeX
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/base/atveryend-ltx.sty
-Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atveryend pac
-kage
-with kernel methods
+(/usr/local/texlive/2020/texmf-dist/tex/latex/hyperref/hpdftex.def
+File: hpdftex.def 2020/01/14 v7.00d Hyperref driver for pdfTeX
+(/usr/local/texlive/2020/texmf-dist/tex/latex/atveryend/atveryend.sty
+Package: atveryend 2019-12-11 v1.11 Hooks at the very end of document (HO)
 )
-\Fld@listcount=\count277
-\c@bookmark@seq@number=\count278
+\Fld@listcount=\count198
+\c@bookmark@seq@number=\count199
 
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/rerunfilecheck/rerunfilechec
-k.sty
+(/usr/local/texlive/2020/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
 Package: rerunfilecheck 2019/12/05 v1.9 Rerun checks for auxiliary files (HO)
 
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/generic/uniquecounter/uniquecounte
-r.sty
+(/usr/local/texlive/2020/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty
 Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
 )
 Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 86.
 )
-\Hy@SectionHShift=\skip52
-)
+\Hy@SectionHShift=\skip53
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/bookmark/bkm-pdftex.def
+File: bkm-pdftex.def 2019/12/03 v1.28 bookmark driver for pdfTeX (HO)
+\BKM@id=\count266
+))
 Package hyperref Info: Option `colorlinks' set `true' on input line 47.
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/geometry/geometry.sty
+(/usr/local/texlive/2020/texmf-dist/tex/latex/geometry/geometry.sty
 Package: geometry 2020/01/02 v5.9 Page Geometry
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/generic/iftex/ifvtex.sty
+(/usr/local/texlive/2020/texmf-dist/tex/generic/iftex/ifvtex.sty
 Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
 )
-\Gm@cnth=\count279
-\Gm@cntv=\count280
-\c@Gm@tempcnt=\count281
-\Gm@bindingoffset=\dimen152
-\Gm@wd@mp=\dimen153
-\Gm@odd@mp=\dimen154
-\Gm@even@mp=\dimen155
-\Gm@layoutwidth=\dimen156
-\Gm@layoutheight=\dimen157
-\Gm@layouthoffset=\dimen158
-\Gm@layoutvoffset=\dimen159
+\Gm@cnth=\count267
+\Gm@cntv=\count268
+\c@Gm@tempcnt=\count269
+\Gm@bindingoffset=\dimen149
+\Gm@wd@mp=\dimen150
+\Gm@odd@mp=\dimen151
+\Gm@even@mp=\dimen152
+\Gm@layoutwidth=\dimen153
+\Gm@layoutheight=\dimen154
+\Gm@layouthoffset=\dimen155
+\Gm@layoutvoffset=\dimen156
 \Gm@dimlist=\toks24
-) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
-Package: fancyvrb 2021/11/24\nobreakspace {} 4.1a\nobreakspace {}verbatim text 
-(tvz,hv)
-\FV@CodeLineNo=\count282
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
+Package: fancyvrb 2020/01/13 v3.5 verbatim text (tvz,hv)
+\FV@CodeLineNo=\count270
 \FV@InFile=\read2
-\FV@TabBox=\box52
-\c@FancyVerbLine=\count283
-\FV@StepNumber=\count284
+\FV@TabBox=\box47
+\c@FancyVerbLine=\count271
+\FV@StepNumber=\count272
 \FV@OutFile=\write3
-) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/framed/framed.sty
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/framed/framed.sty
 Package: framed 2011/10/22 v 0.96: framed or shaded text with page breaks
-\OuterFrameSep=\skip53
-\fb@frw=\dimen160
-\fb@frh=\dimen161
-\FrameRule=\dimen162
-\FrameSep=\dimen163
-) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/graphics/graphicx.sty
-Package: graphicx 2021/09/16 v1.2d Enhanced LaTeX Graphics (DPC,SPQR)
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/graphics/graphics.sty
-Package: graphics 2021/03/04 v1.4d Standard LaTeX Graphics (DPC,SPQR)
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/graphics/trig.sty
-Package: trig 2021/08/11 v1.11 sin cos tan (DPC)
-) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+\OuterFrameSep=\skip54
+\fb@frw=\dimen157
+\fb@frh=\dimen158
+\FrameRule=\dimen159
+\FrameSep=\dimen160
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2019/11/30 v1.2a Enhanced LaTeX Graphics (DPC,SPQR)
+(/usr/local/texlive/2020/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2019/11/30 v1.4a Standard LaTeX Graphics (DPC,SPQR)
+(/usr/local/texlive/2020/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
-Package graphics Info: Driver file: pdftex.def on input line 107.
+Package graphics Info: Driver file: pdftex.def on input line 105.
 )
-\Gin@req@height=\dimen164
-\Gin@req@width=\dimen165
-)
-\cslhangindent=\skip54
-\csllabelwidth=\skip55
-\cslentryspacingunit=\skip56
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/tools/calc.sty
-Package: calc 2017/05/25 v4.3 Infix arithmetic (KKT,FJ)
-\calc@Acount=\count285
-\calc@Bcount=\count286
-\calc@Adimen=\dimen166
-\calc@Bdimen=\dimen167
-\calc@Askip=\skip57
-\calc@Bskip=\skip58
-LaTeX Info: Redefining \setlength on input line 80.
-LaTeX Info: Redefining \addtolength on input line 81.
-\calc@Ccount=\count287
-\calc@Cskip=\skip59
-) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/listings/listings.sty
-\lst@mode=\count288
-\lst@gtempboxa=\box53
-\lst@token=\toks25
-\lst@length=\count289
-\lst@currlwidth=\dimen168
-\lst@column=\count290
-\lst@pos=\count291
-\lst@lostspace=\dimen169
-\lst@width=\dimen170
-\lst@newlines=\count292
-\lst@lineno=\count293
-\lst@maxwidth=\dimen171
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/listings/lstmisc.sty
+\Gin@req@height=\dimen161
+\Gin@req@width=\dimen162
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count273
+\float@exts=\toks25
+\float@box=\box48
+\@float@everytoks=\toks26
+\@floatcapt=\box49
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/tools/bm.sty
+Package: bm 2019/07/24 v1.2d Bold Symbol Support (DPC/FMi)
+\symboldoperators=\mathgroup6
+\symboldletters=\mathgroup7
+\symboldsymbols=\mathgroup8
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 141.
+LaTeX Info: Redefining \bm on input line 209.
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/listings/listings.sty
+\lst@mode=\count274
+\lst@gtempboxa=\box50
+\lst@token=\toks27
+\lst@length=\count275
+\lst@currlwidth=\dimen163
+\lst@column=\count276
+\lst@pos=\count277
+\lst@lostspace=\dimen164
+\lst@width=\dimen165
+\lst@newlines=\count278
+\lst@lineno=\count279
+\lst@maxwidth=\dimen166
+(/usr/local/texlive/2020/texmf-dist/tex/latex/listings/lstmisc.sty
 File: lstmisc.sty 2020/03/24 1.8d (Carsten Heinz)
-\c@lstnumber=\count294
-\lst@skipnumbers=\count295
-\lst@framebox=\box54
-) (/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/listings/listings.cfg
+\c@lstnumber=\count280
+\lst@skipnumbers=\count281
+\lst@framebox=\box51
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/listings/listings.cfg
 File: listings.cfg 2020/03/24 1.8d listings configuration
 ))
 Package: listings 2020/03/24 1.8d (Carsten Heinz)
-
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdftex.d
-ef
-File: l3backend-pdftex.def 2021-10-18 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count296
-\l__pdf_internal_box=\box55
+\@float@every@table=\toks28
+(/usr/local/texlive/2020/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2020/01/03 v3.4h Customizing captions (AR)
+(/usr/local/texlive/2020/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2020/01/03 v1.8h caption3 kernel (AR)
+Package caption3 Info: TeX engine: e-TeX on input line 61.
+\captionmargin=\dimen167
+\captionmargin@=\dimen168
+\captionwidth=\dimen169
+\caption@tempdima=\dimen170
+\caption@indent=\dimen171
+\caption@parindent=\dimen172
+\caption@hangindent=\dimen173
+Package caption Info: Standard document class detected.
+)
+\c@caption@flags=\count282
+\c@continuedfloat=\count283
+Package caption Info: float package is loaded.
+Package caption Info: hyperref package is loaded.
+Package caption Info: listings package is loaded.
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/l3backend/l3backend-pdfmode.def
+File: l3backend-pdfmode.def 2020-03-12 L3 backend support: PDF mode
+\l__kernel_color_stack_int=\count284
+\l__pdf_internal_box=\box52
 )
 No file bda_project.aux.
 \openout1 = `bda_project.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 139.
-LaTeX Font Info:    ... okay on input line 139.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 139.
-LaTeX Font Info:    ... okay on input line 139.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 139.
-LaTeX Font Info:    ... okay on input line 139.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 139.
-LaTeX Font Info:    ... okay on input line 139.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 139.
-LaTeX Font Info:    ... okay on input line 139.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 139.
-LaTeX Font Info:    ... okay on input line 139.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 139.
-LaTeX Font Info:    ... okay on input line 139.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 139.
-LaTeX Font Info:    ... okay on input line 139.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 139.
-LaTeX Font Info:    ... okay on input line 139.
-
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.s
-ty
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 116.
+LaTeX Font Info:    ... okay on input line 116.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 116.
+LaTeX Font Info:    ... okay on input line 116.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 116.
+LaTeX Font Info:    ... okay on input line 116.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 116.
+LaTeX Font Info:    ... okay on input line 116.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 116.
+LaTeX Font Info:    ... okay on input line 116.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 116.
+LaTeX Font Info:    ... okay on input line 116.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 116.
+LaTeX Font Info:    ... okay on input line 116.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 116.
+LaTeX Font Info:    ... okay on input line 116.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 116.
+LaTeX Font Info:    ... okay on input line 116.
+LaTeX Info: Redefining \microtypecontext on input line 116.
+Package microtype Info: Generating PDF output.
+Package microtype Info: Character protrusion enabled (level 2).
+Package microtype Info: Using protrusion set `basicmath'.
+Package microtype Info: Automatic font expansion enabled (level 2),
+(microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
+Package microtype Info: Using default expansion set `basictext'.
+LaTeX Info: Redefining \showhyphens on input line 116.
+Package microtype Info: No adjustment of tracking.
+Package microtype Info: No adjustment of interword spacing.
+Package microtype Info: No adjustment of character kerning.
+(/usr/local/texlive/2020/texmf-dist/tex/latex/microtype/mt-cmr.cfg
+File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman 
+(RS)
+) (/usr/local/texlive/2020/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count285
+\scratchdimen=\dimen174
+\scratchbox=\box53
+\nofMPsegments=\count286
+\nofMParguments=\count287
+\everyMPshowfont=\toks29
+\MPscratchCnt=\count288
+\MPscratchDim=\dimen175
+\MPnumerator=\count289
+\makeMPintoPDFobject=\count290
+\everyMPtoPDFconversion=\toks30
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 85.
-
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+(/usr/local/texlive/2020/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-Package hyperref Info: Link coloring ON on input line 139.
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/hyperref/nameref.sty
-Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/refcount/refcount.sty
+\AtBeginShipoutBox=\box54
+Package hyperref Info: Link coloring ON on input line 116.
+(/usr/local/texlive/2020/texmf-dist/tex/latex/hyperref/nameref.sty
+Package: nameref 2019/09/16 v2.46 Cross-referencing by name of section
+(/usr/local/texlive/2020/texmf-dist/tex/latex/refcount/refcount.sty
 Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 )
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/generic/gettitlestring/gettitlestr
-ing.sty
+(/usr/local/texlive/2020/texmf-dist/tex/generic/gettitlestring/gettitlestring.s
+ty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
-\c@section@level=\count297
+\c@section@level=\count291
 )
-LaTeX Info: Redefining \ref on input line 139.
-LaTeX Info: Redefining \pageref on input line 139.
-LaTeX Info: Redefining \nameref on input line 139.
-\@outlinefile=\write4
-\openout4 = `bda_project.out'.
-
+LaTeX Info: Redefining \ref on input line 116.
+LaTeX Info: Redefining \pageref on input line 116.
+LaTeX Info: Redefining \nameref on input line 116.
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
@@ -455,76 +515,82 @@ LaTeX Info: Redefining \nameref on input line 139.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-\c@lstlisting=\count298
+\c@lstlisting=\count292
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: End \AtBeginDocument code.
 LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 1
-41.
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/lm/ot1lmr.fd
-File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+18.
+(/usr/local/texlive/2020/texmf-dist/tex/latex/lm/ot1lmr.fd
+File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OML+lmm on input line 1
-41.
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/lm/omllmm.fd
-File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+18.
+(/usr/local/texlive/2020/texmf-dist/tex/latex/lm/omllmm.fd
+File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-141.
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/lm/omslmsy.fd
-File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+118.
+(/usr/local/texlive/2020/texmf-dist/tex/latex/lm/omslmsy.fd
+File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-141.
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/lm/omxlmex.fd
-File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+118.
+(/usr/local/texlive/2020/texmf-dist/tex/latex/lm/omxlmex.fd
+File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 141.
+(Font)              <12> on input line 118.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 141.
+(Font)              <8> on input line 118.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 141.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 141
+(Font)              <6> on input line 118.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 118
 .
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
+(/usr/local/texlive/2020/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/microtype/mt-msa.cfg
+File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 141
+LaTeX Font Info:    Trying to load font information for U+msb on input line 118
 .
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
+(/usr/local/texlive/2020/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+) (/usr/local/texlive/2020/texmf-dist/tex/latex/microtype/mt-msb.cfg
+File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 )
-\tf@toc=\write5
-\openout5 = `bda_project.toc'.
+\tf@toc=\write4
+\openout4 = `bda_project.toc'.
 
+[1
+
+{/usr/local/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 1
-70.
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
-File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+48.
+(/usr/local/texlive/2020/texmf-dist/tex/latex/lm/t1lmtt.fd
+File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-<./image/share-people-fully-vaccinated-covid_world.png, id=4, 3412.75pt x 2409.
-0pt>
+<./image/share-people-fully-vaccinated-covid_world.png, id=14, 3412.75pt x 2409
+.0pt>
 File: ./image/share-people-fully-vaccinated-covid_world.png Graphic file (type 
 png)
 <use ./image/share-people-fully-vaccinated-covid_world.png>
 Package pdftex.def Info: ./image/share-people-fully-vaccinated-covid_world.png 
- used on input line 175.
+ used on input line 153.
 (pdftex.def)             Requested size: 469.71024pt x 331.56017pt.
-[1
-
-{/Users/ashok/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-<./image/share-people-vaccinated-covid.png, id=19, 3412.75pt x 2409.0pt>
+[2 <./image/share-people-fully-vaccinated-covid_world.png>]
+<./image/share-people-vaccinated-covid.png, id=24, 3412.75pt x 2409.0pt>
 File: ./image/share-people-vaccinated-covid.png Graphic file (type png)
 <use ./image/share-people-vaccinated-covid.png>
 Package pdftex.def Info: ./image/share-people-vaccinated-covid.png  used on inp
-ut line 197.
+ut line 175.
 (pdftex.def)             Requested size: 469.71024pt x 331.56017pt.
-[2 <./image/share-people-fully-vaccinated-covid_world.png>]
 <./image/share-people-fully-vaccinated-covid_bar.png, id=25, 3412.75pt x 2409.0
 pt>
 File: ./image/share-people-fully-vaccinated-covid_bar.png Graphic file (type pn
 g)
 <use ./image/share-people-fully-vaccinated-covid_bar.png>
 Package pdftex.def Info: ./image/share-people-fully-vaccinated-covid_bar.png  u
-sed on input line 208.
+sed on input line 186.
 (pdftex.def)             Requested size: 469.71024pt x 331.56017pt.
 [3 <./image/share-people-vaccinated-covid.png>]
 <./image/share-people-fully-vaccinated-covid_plot.png, id=31, 3412.75pt x 2409.
@@ -533,196 +599,527 @@ File: ./image/share-people-fully-vaccinated-covid_plot.png Graphic file (type p
 ng)
 <use ./image/share-people-fully-vaccinated-covid_plot.png>
 Package pdftex.def Info: ./image/share-people-fully-vaccinated-covid_plot.png  
-used on input line 219.
+used on input line 197.
 (pdftex.def)             Requested size: 469.71024pt x 331.56017pt.
-[4 <./image/share-people-fully-vaccinated-covid_bar.png>]
-Underfull \hbox (badness 1062) in paragraph at lines 227--240
-\T1/lmr/m/n/10 Datasets down be-low show cu-mu-la-tive covid vac-ci-na-tions ra
-te by coun-tries( col-lected from [][]linked
- []
-
+[4 <./image/share-people-fully-vaccinated-covid_bar.png>] [5 <./image/share-peo
+ple-fully-vaccinated-covid_plot.png>]
 LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 
-243.
-(/Users/ashok/Library/TinyTeX/texmf-dist/tex/latex/lm/ts1lmtt.fd
-File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [5 <./image/share-people-fully-vaccinated-covid_plot.png>]
-<bda_project_files/figure-latex/unnamed-chunk-7-1.pdf, id=52, 469.755pt x 325.2
-15pt>
+222.
+(/usr/local/texlive/2020/texmf-dist/tex/latex/lm/ts1lmtt.fd
+File: ts1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
+<bda_project_files/figure-latex/unnamed-chunk-7-1.pdf, id=43, 457.71pt x 313.17
+pt>
 File: bda_project_files/figure-latex/unnamed-chunk-7-1.pdf Graphic file (type p
 df)
 <use bda_project_files/figure-latex/unnamed-chunk-7-1.pdf>
 Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-7-1.pdf  
-used on input line 313.
-(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+used on input line 288.
+(pdftex.def)             Requested size: 457.72285pt x 313.17877pt.
+[6] [7 <./bda_project_files/figure-latex/unnamed-chunk-7-1.pdf>]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 322.
+(Font)              <10> on input line 299.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 322.
+(Font)              <7> on input line 299.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 322.
-[6 <./bda_project_files/figure-latex/unnamed-chunk-7-1.pdf>] [7] [8]
-Underfull \vbox (badness 10000) detected at line 505
+(Font)              <5> on input line 299.
+[8] [9]
+Underfull \vbox (badness 10000) detected at line 479
  []
 
 
-Underfull \vbox (badness 10000) detected at line 505
+Underfull \vbox (badness 10000) detected at line 479
  []
 
-[9]
-<bda_project_files/figure-latex/unnamed-chunk-10-1.pdf, id=86, 469.755pt x 325.
-215pt>
+[10] [11]
+<bda_project_files/figure-latex/unnamed-chunk-10-1.pdf, id=91, 436.63126pt x 28
+3.0575pt>
 File: bda_project_files/figure-latex/unnamed-chunk-10-1.pdf Graphic file (type 
 pdf)
 <use bda_project_files/figure-latex/unnamed-chunk-10-1.pdf>
 Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-10-1.pdf 
- used on input line 522.
-(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[10]
-<bda_project_files/figure-latex/unnamed-chunk-11-1.pdf, id=93, 469.755pt x 325.
-215pt>
+ used on input line 498.
+(pdftex.def)             Requested size: 436.63019pt x 283.0568pt.
+<bda_project_files/figure-latex/unnamed-chunk-11-1.pdf, id=92, 436.63126pt x 28
+3.0575pt>
 File: bda_project_files/figure-latex/unnamed-chunk-11-1.pdf Graphic file (type 
 pdf)
 <use bda_project_files/figure-latex/unnamed-chunk-11-1.pdf>
 Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-11-1.pdf 
- used on input line 532.
-(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[11 <./bda_project_files/figure-latex/unnamed-chunk-10-1.pdf>]
-<bda_project_files/figure-latex/unnamed-chunk-12-1.pdf, id=104, 469.755pt x 325
-.215pt>
+ used on input line 508.
+(pdftex.def)             Requested size: 436.63019pt x 283.0568pt.
+[12 <./bda_project_files/figure-latex/unnamed-chunk-10-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-12-1.pdf, id=107, 436.63126pt x 2
+83.0575pt>
 File: bda_project_files/figure-latex/unnamed-chunk-12-1.pdf Graphic file (type 
 pdf)
 <use bda_project_files/figure-latex/unnamed-chunk-12-1.pdf>
 Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-12-1.pdf 
- used on input line 542.
-(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[12 <./bda_project_files/figure-latex/unnamed-chunk-11-1.pdf>] [13 <./bda_proje
-ct_files/figure-latex/unnamed-chunk-12-1.pdf>]
-<bda_project_files/figure-latex/unnamed-chunk-15-1.pdf, id=131, 469.755pt x 325
-.215pt>
+ used on input line 518.
+(pdftex.def)             Requested size: 436.63019pt x 283.0568pt.
+[13 <./bda_project_files/figure-latex/unnamed-chunk-11-1.pdf> <./bda_project_fi
+les/figure-latex/unnamed-chunk-12-1.pdf>] [14] [15]
+<bda_project_files/figure-latex/unnamed-chunk-15-1.pdf, id=143, 457.71pt x 313.
+17pt>
 File: bda_project_files/figure-latex/unnamed-chunk-15-1.pdf Graphic file (type 
 pdf)
 <use bda_project_files/figure-latex/unnamed-chunk-15-1.pdf>
 Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-15-1.pdf 
- used on input line 654.
-(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[14]
-Overfull \hbox (5530.97754pt too wide) in paragraph at lines 689--689
-[]\T1/lmtt/m/n/10 ## clang -mmacosx-version-min=10.13 -I"/Library/Frameworks/R.
-framework/Resources/include" -DNDEBUG   -I"/Library/Frameworks/R.framework/Vers
-ions/4.1/Resources/library/Rcpp/include/"  -I"/Library/Frameworks/R.framework/V
-ersions/4.1/Resources/library/RcppEigen/include/"  -I"/Library/Frameworks/R.fra
-mework/Versions/4.1/Resources/library/RcppEigen/include/unsupported"  -I"/Libra
-ry/Frameworks/R.framework/Versions/4.1/Resources/library/BH/include" -I"/Librar
-y/Frameworks/R.framework/Versions/4.1/Resources/library/StanHeaders/include/src
-/"  -I"/Library/Frameworks/R.framework/Versions/4.1/Resources/library/StanHeade
-rs/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1/Resources/library
-/RcppParallel/include/"  -I"/Library/Frameworks/R.framework/Versions/4.1/Resour
-ces/library/rstan/include" -DEIGEN_NO_DEBUG  -DBOOST_DISABLE_ASSERTS  -DBOOST_P
-ENDING_INTEGER_LOG2_HPP  -DSTAN_THREADS  -DBOOST_NO_AUTO_PTR  -include '/Librar
-y/Frameworks/R.framework/Versions/4.1/Resources/library/StanHeaders/include/sta
-n/math/prim/mat/fun/Eigen.hpp'  -D_REENTRANT -DRCPP_PARALLEL_USE_TBB=1   -I/usr
-/local/include   -fPIC  -Wall -g -O2  -c foo.c -o foo.o[] 
- []
-
-
-Overfull \hbox (286.24278pt too wide) in paragraph at lines 689--689
-[]\T1/lmtt/m/n/10 ## In file included from /Library/Frameworks/R.framework/Vers
-ions/4.1/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp
-:13:[] 
- []
-
-
-Overfull \hbox (160.24315pt too wide) in paragraph at lines 689--689
-[]\T1/lmtt/m/n/10 ## In file included from /Library/Frameworks/R.framework/Vers
-ions/4.1/Resources/library/RcppEigen/include/Eigen/Dense:1:[] 
- []
-
-
-Overfull \hbox (160.24315pt too wide) in paragraph at lines 689--689
-[]\T1/lmtt/m/n/10 ## In file included from /Library/Frameworks/R.framework/Vers
-ions/4.1/Resources/library/RcppEigen/include/Eigen/Core:88:[] 
- []
-
-
-Overfull \hbox (349.2426pt too wide) in paragraph at lines 689--689
-[]\T1/lmtt/m/n/10 ## /Library/Frameworks/R.framework/Versions/4.1/Resources/lib
-rary/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:1: error: unknown type 
-name 'namespace'[] 
- []
-
-
-Overfull \hbox (406.99243pt too wide) in paragraph at lines 689--689
-[]\T1/lmtt/m/n/10 ## /Library/Frameworks/R.framework/Versions/4.1/Resources/lib
-rary/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:16: error: expected ';'
- after top level declarator[] 
- []
-
-
-Overfull \hbox (286.24278pt too wide) in paragraph at lines 689--689
-[]\T1/lmtt/m/n/10 ## In file included from /Library/Frameworks/R.framework/Vers
-ions/4.1/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp
-:13:[] 
- []
-
-
-Overfull \hbox (160.24315pt too wide) in paragraph at lines 689--689
-[]\T1/lmtt/m/n/10 ## In file included from /Library/Frameworks/R.framework/Vers
-ions/4.1/Resources/library/RcppEigen/include/Eigen/Dense:1:[] 
- []
-
-
-Overfull \hbox (259.99286pt too wide) in paragraph at lines 689--689
-[]\T1/lmtt/m/n/10 ## /Library/Frameworks/R.framework/Versions/4.1/Resources/lib
-rary/RcppEigen/include/Eigen/Core:96:10: fatal error: 'complex' file not found[
-] 
- []
-
-[15 <./bda_project_files/figure-latex/unnamed-chunk-15-1.pdf>]
-<bda_project_files/figure-latex/unnamed-chunk-17-1.pdf, id=148, 469.755pt x 325
-.215pt>
+ used on input line 626.
+(pdftex.def)             Requested size: 457.72285pt x 313.17877pt.
+[16]
+<bda_project_files/figure-latex/unnamed-chunk-17-1.pdf, id=151, 457.71pt x 313.
+17pt>
 File: bda_project_files/figure-latex/unnamed-chunk-17-1.pdf Graphic file (type 
 pdf)
 <use bda_project_files/figure-latex/unnamed-chunk-17-1.pdf>
 Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-17-1.pdf 
- used on input line 739.
-(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[16] [17 <./bda_project_files/figure-latex/unnamed-chunk-17-1.pdf>] [18]
+ used on input line 661.
+(pdftex.def)             Requested size: 457.72285pt x 313.17877pt.
+[17 <./bda_project_files/figure-latex/unnamed-chunk-15-1.pdf>] [18 <./bda_proje
+ct_files/figure-latex/unnamed-chunk-17-1.pdf>] [19] [20]
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 881.
-[19]
-<bda_project_files/figure-latex/unnamed-chunk-26-1.pdf, id=187, 469.755pt x 325
-.215pt>
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 813.
+
+Overfull \hbox (7.99359pt too wide) in paragraph at lines 850--850
+[]\T1/lmtt/m/n/10 ## Credible interval of predicted vaccination rate in seperat
+ed model:  0.7841126 0.8000001[] 
+ []
+
+
+Overfull \hbox (23.74355pt too wide) in paragraph at lines 873--873
+[]\T1/lmtt/m/n/10 ## Credible interval of predicted vaccination rate in hierarc
+hical model:  0.7243148 0.8615208[] 
+ []
+
+[21]
+<bda_project_files/figure-latex/unnamed-chunk-25-1.pdf, id=202, 457.71pt x 313.
+17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-25-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-25-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-25-1.pdf 
+ used on input line 909.
+(pdftex.def)             Requested size: 457.72285pt x 313.17877pt.
+<bda_project_files/figure-latex/unnamed-chunk-26-1.pdf, id=203, 457.71pt x 313.
+17pt>
 File: bda_project_files/figure-latex/unnamed-chunk-26-1.pdf Graphic file (type 
 pdf)
 <use bda_project_files/figure-latex/unnamed-chunk-26-1.pdf>
 Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-26-1.pdf 
- used on input line 980.
-(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[20 <./bda_project_files/figure-latex/unnamed-chunk-26-1.pdf>]
-<bda_project_files/figure-latex/unnamed-chunk-27-1.pdf, id=201, 469.755pt x 325
-.215pt>
+ used on input line 930.
+(pdftex.def)             Requested size: 457.72285pt x 313.17877pt.
+[22 <./bda_project_files/figure-latex/unnamed-chunk-25-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-27-1.pdf, id=215, 457.71pt x 313.
+17pt>
 File: bda_project_files/figure-latex/unnamed-chunk-27-1.pdf Graphic file (type 
 pdf)
 <use bda_project_files/figure-latex/unnamed-chunk-27-1.pdf>
 Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-27-1.pdf 
- used on input line 995.
-(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+ used on input line 951.
+(pdftex.def)             Requested size: 457.72285pt x 313.17877pt.
+[23 <./bda_project_files/figure-latex/unnamed-chunk-26-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-28-1.pdf, id=227, 457.71pt x 313.
+17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-28-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-28-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-28-1.pdf 
+ used on input line 972.
+(pdftex.def)             Requested size: 457.72285pt x 313.17877pt.
+[24 <./bda_project_files/figure-latex/unnamed-chunk-27-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-29-1.pdf, id=239, 457.71pt x 313.
+17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-29-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-29-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-29-1.pdf 
+ used on input line 993.
+(pdftex.def)             Requested size: 457.72285pt x 313.17877pt.
+[25 <./bda_project_files/figure-latex/unnamed-chunk-28-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-30-1.pdf, id=252, 457.71pt x 313.
+17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-30-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-30-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-30-1.pdf 
+ used on input line 1016.
+(pdftex.def)             Requested size: 457.72285pt x 313.17877pt.
+[26 <./bda_project_files/figure-latex/unnamed-chunk-29-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-31-1.pdf, id=266, 457.71pt x 313.
+17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-31-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-31-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-31-1.pdf 
+ used on input line 1037.
+(pdftex.def)             Requested size: 457.72285pt x 313.17877pt.
+[27 <./bda_project_files/figure-latex/unnamed-chunk-30-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-32-1.pdf, id=278, 457.71pt x 313.
+17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-32-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-32-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-32-1.pdf 
+ used on input line 1058.
+(pdftex.def)             Requested size: 457.72285pt x 313.17877pt.
+[28 <./bda_project_files/figure-latex/unnamed-chunk-31-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-33-1.pdf, id=290, 457.71pt x 313.
+17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-33-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-33-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-33-1.pdf 
+ used on input line 1079.
+(pdftex.def)             Requested size: 457.72285pt x 313.17877pt.
+[29 <./bda_project_files/figure-latex/unnamed-chunk-32-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-34-1.pdf, id=302, 457.71pt x 313.
+17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-34-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-34-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-34-1.pdf 
+ used on input line 1100.
+(pdftex.def)             Requested size: 457.72285pt x 313.17877pt.
+[30 <./bda_project_files/figure-latex/unnamed-chunk-33-1.pdf>] [31 <./bda_proje
+ct_files/figure-latex/unnamed-chunk-34-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-36-1.pdf, id=331, 459.7175pt x 30
+0.12125pt>
+File: bda_project_files/figure-latex/unnamed-chunk-36-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-36-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-36-1.pdf 
+ used on input line 1179.
+(pdftex.def)             Requested size: 459.74442pt x 300.13882pt.
+[32]
+<bda_project_files/figure-latex/unnamed-chunk-37-1.pdf, id=338, 459.7175pt x 30
+0.12125pt>
+File: bda_project_files/figure-latex/unnamed-chunk-37-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-37-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-37-1.pdf 
+ used on input line 1194.
+(pdftex.def)             Requested size: 459.74442pt x 300.13882pt.
+[33 <./bda_project_files/figure-latex/unnamed-chunk-36-1.pdf>] [34 <./bda_proje
+ct_files/figure-latex/unnamed-chunk-37-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-40-1.pdf, id=371, 446.66875pt x 3
+00.12125pt>
+File: bda_project_files/figure-latex/unnamed-chunk-40-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-40-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-40-1.pdf 
+ used on input line 1281.
+(pdftex.def)             Requested size: 446.67445pt x 300.12509pt.
+<bda_project_files/figure-latex/unnamed-chunk-41-1.pdf, id=372, 446.66875pt x 3
+00.12125pt>
+File: bda_project_files/figure-latex/unnamed-chunk-41-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-41-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-41-1.pdf 
+ used on input line 1296.
+(pdftex.def)             Requested size: 446.67445pt x 300.12509pt.
+[35 <./bda_project_files/figure-latex/unnamed-chunk-40-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-42-1.pdf, id=388, 446.66875pt x 3
+00.12125pt>
+File: bda_project_files/figure-latex/unnamed-chunk-42-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-42-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-42-1.pdf 
+ used on input line 1311.
+(pdftex.def)             Requested size: 446.67445pt x 300.12509pt.
+[36 <./bda_project_files/figure-latex/unnamed-chunk-41-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-43-1.pdf, id=400, 448.67625pt x 3
+00.12125pt>
+File: bda_project_files/figure-latex/unnamed-chunk-43-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-43-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-43-1.pdf 
+ used on input line 1326.
+(pdftex.def)             Requested size: 448.68884pt x 300.12967pt.
+[37 <./bda_project_files/figure-latex/unnamed-chunk-42-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-44-1.pdf, id=413, 446.66875pt x 3
+00.12125pt>
+File: bda_project_files/figure-latex/unnamed-chunk-44-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-44-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-44-1.pdf 
+ used on input line 1341.
+(pdftex.def)             Requested size: 446.67445pt x 300.12509pt.
+[38 <./bda_project_files/figure-latex/unnamed-chunk-43-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-46-1.pdf, id=425, 446.66875pt x 3
+00.12125pt>
+File: bda_project_files/figure-latex/unnamed-chunk-46-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-46-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-46-1.pdf 
+ used on input line 1411.
+(pdftex.def)             Requested size: 446.67445pt x 300.12509pt.
+[39 <./bda_project_files/figure-latex/unnamed-chunk-44-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-47-1.pdf, id=439, 446.66875pt x 3
+00.12125pt>
+File: bda_project_files/figure-latex/unnamed-chunk-47-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-47-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-47-1.pdf 
+ used on input line 1426.
+(pdftex.def)             Requested size: 446.67445pt x 300.12509pt.
+[40 <./bda_project_files/figure-latex/unnamed-chunk-46-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-48-1.pdf, id=452, 446.66875pt x 3
+00.12125pt>
+File: bda_project_files/figure-latex/unnamed-chunk-48-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-48-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-48-1.pdf 
+ used on input line 1441.
+(pdftex.def)             Requested size: 446.67445pt x 300.12509pt.
+[41 <./bda_project_files/figure-latex/unnamed-chunk-47-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-49-1.pdf, id=464, 446.66875pt x 3
+00.12125pt>
+File: bda_project_files/figure-latex/unnamed-chunk-49-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-49-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-49-1.pdf 
+ used on input line 1456.
+(pdftex.def)             Requested size: 446.67445pt x 300.12509pt.
+[42 <./bda_project_files/figure-latex/unnamed-chunk-48-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-50-1.pdf, id=476, 446.66875pt x 3
+00.12125pt>
+File: bda_project_files/figure-latex/unnamed-chunk-50-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-50-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-50-1.pdf 
+ used on input line 1471.
+(pdftex.def)             Requested size: 446.67445pt x 300.12509pt.
+[43 <./bda_project_files/figure-latex/unnamed-chunk-49-1.pdf>] [44 <./bda_proje
+ct_files/figure-latex/unnamed-chunk-50-1.pdf>] [45]
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 1
+648.
+(/usr/local/texlive/2020/texmf-dist/tex/latex/lm/ts1lmr.fd
+File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
+) [46]
+<bda_project_files/figure-latex/unnamed-chunk-54-1.pdf, id=515, 453.695pt x 313
+.17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-54-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-54-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-54-1.pdf 
+ used on input line 1710.
+(pdftex.def)             Requested size: 453.6939pt x 313.16922pt.
+[47] [48 <./bda_project_files/figure-latex/unnamed-chunk-54-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-56-1.pdf, id=536, 453.695pt x 313
+.17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-56-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-56-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-56-1.pdf 
+ used on input line 1783.
+(pdftex.def)             Requested size: 453.6939pt x 313.16922pt.
+[49 <./bda_project_files/figure-latex/unnamed-chunk-56-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-57-1.pdf, id=552, 453.695pt x 313
+.17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-57-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-57-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-57-1.pdf 
+ used on input line 1805.
+(pdftex.def)             Requested size: 453.6939pt x 313.16922pt.
+[50 <./bda_project_files/figure-latex/unnamed-chunk-57-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-58-1.pdf, id=567, 453.695pt x 313
+.17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-58-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-58-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-58-1.pdf 
+ used on input line 1827.
+(pdftex.def)             Requested size: 453.6939pt x 313.16922pt.
+<bda_project_files/figure-latex/unnamed-chunk-59-1.pdf, id=568, 453.695pt x 313
+.17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-59-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-59-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-59-1.pdf 
+ used on input line 1849.
+(pdftex.def)             Requested size: 453.6939pt x 313.16922pt.
+[51 <./bda_project_files/figure-latex/unnamed-chunk-58-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-60-1.pdf, id=583, 453.695pt x 313
+.17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-60-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-60-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-60-1.pdf 
+ used on input line 1871.
+(pdftex.def)             Requested size: 453.6939pt x 313.16922pt.
+[52 <./bda_project_files/figure-latex/unnamed-chunk-59-1.pdf>] [53 <./bda_proje
+ct_files/figure-latex/unnamed-chunk-60-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-62-1.pdf, id=615, 453.695pt x 313
+.17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-62-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-62-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-62-1.pdf 
+ used on input line 1954.
+(pdftex.def)             Requested size: 453.6939pt x 313.16922pt.
+[54]
+<bda_project_files/figure-latex/unnamed-chunk-63-1.pdf, id=620, 453.695pt x 313
+.17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-63-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-63-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-63-1.pdf 
+ used on input line 1981.
+(pdftex.def)             Requested size: 453.6939pt x 313.16922pt.
+[55 <./bda_project_files/figure-latex/unnamed-chunk-62-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-64-1.pdf, id=636, 453.695pt x 313
+.17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-64-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-64-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-64-1.pdf 
+ used on input line 2008.
+(pdftex.def)             Requested size: 453.6939pt x 313.16922pt.
+[56 <./bda_project_files/figure-latex/unnamed-chunk-63-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-65-1.pdf, id=651, 453.695pt x 313
+.17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-65-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-65-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-65-1.pdf 
+ used on input line 2035.
+(pdftex.def)             Requested size: 453.6939pt x 313.16922pt.
+[57 <./bda_project_files/figure-latex/unnamed-chunk-64-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-66-1.pdf, id=666, 453.695pt x 313
+.17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-66-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-66-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-66-1.pdf 
+ used on input line 2062.
+(pdftex.def)             Requested size: 453.6939pt x 313.16922pt.
+[58 <./bda_project_files/figure-latex/unnamed-chunk-65-1.pdf>] [59 <./bda_proje
+ct_files/figure-latex/unnamed-chunk-66-1.pdf>]
+Underfull \vbox (badness 10000) detected at line 2181
+ []
 
-! Package amsmath Error: \hat allowed only in math mode.
-
-See the amsmath package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.1019 the \hat{k}
-                  -values are all below 0.5 which are good. Therefore, both 
+[60] [61]
+<bda_project_files/figure-latex/unnamed-chunk-69-1.pdf, id=708, 453.695pt x 313
+.17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-69-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-69-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-69-1.pdf 
+ used on input line 2262.
+(pdftex.def)             Requested size: 453.6939pt x 313.16922pt.
+[62] [63 <./bda_project_files/figure-latex/unnamed-chunk-69-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-71-1.pdf, id=730, 453.695pt x 313
+.17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-71-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-71-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-71-1.pdf 
+ used on input line 2335.
+(pdftex.def)             Requested size: 453.6939pt x 313.16922pt.
+[64 <./bda_project_files/figure-latex/unnamed-chunk-71-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-72-1.pdf, id=745, 453.695pt x 313
+.17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-72-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-72-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-72-1.pdf 
+ used on input line 2357.
+(pdftex.def)             Requested size: 453.6939pt x 313.16922pt.
+[65 <./bda_project_files/figure-latex/unnamed-chunk-72-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-73-1.pdf, id=760, 453.695pt x 313
+.17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-73-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-73-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-73-1.pdf 
+ used on input line 2379.
+(pdftex.def)             Requested size: 453.6939pt x 313.16922pt.
+<bda_project_files/figure-latex/unnamed-chunk-74-1.pdf, id=761, 453.695pt x 313
+.17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-74-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-74-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-74-1.pdf 
+ used on input line 2401.
+(pdftex.def)             Requested size: 453.6939pt x 313.16922pt.
+[66 <./bda_project_files/figure-latex/unnamed-chunk-73-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-75-1.pdf, id=776, 453.695pt x 313
+.17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-75-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-75-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-75-1.pdf 
+ used on input line 2423.
+(pdftex.def)             Requested size: 453.6939pt x 313.16922pt.
+[67 <./bda_project_files/figure-latex/unnamed-chunk-74-1.pdf>] [68 <./bda_proje
+ct_files/figure-latex/unnamed-chunk-75-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-77-1.pdf, id=808, 453.695pt x 313
+.17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-77-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-77-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-77-1.pdf 
+ used on input line 2515.
+(pdftex.def)             Requested size: 453.6939pt x 313.16922pt.
+[69]
+<bda_project_files/figure-latex/unnamed-chunk-78-1.pdf, id=813, 453.695pt x 313
+.17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-78-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-78-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-78-1.pdf 
+ used on input line 2542.
+(pdftex.def)             Requested size: 453.6939pt x 313.16922pt.
+[70 <./bda_project_files/figure-latex/unnamed-chunk-77-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-79-1.pdf, id=828, 453.695pt x 313
+.17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-79-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-79-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-79-1.pdf 
+ used on input line 2569.
+(pdftex.def)             Requested size: 453.6939pt x 313.16922pt.
+[71 <./bda_project_files/figure-latex/unnamed-chunk-78-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-80-1.pdf, id=843, 453.695pt x 313
+.17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-80-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-80-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-80-1.pdf 
+ used on input line 2596.
+(pdftex.def)             Requested size: 453.6939pt x 313.16922pt.
+[72 <./bda_project_files/figure-latex/unnamed-chunk-79-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-81-1.pdf, id=858, 453.695pt x 313
+.17pt>
+File: bda_project_files/figure-latex/unnamed-chunk-81-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-81-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-81-1.pdf 
+ used on input line 2623.
+(pdftex.def)             Requested size: 453.6939pt x 313.16922pt.
+[73 <./bda_project_files/figure-latex/unnamed-chunk-80-1.pdf>] [74 <./bda_proje
+ct_files/figure-latex/unnamed-chunk-81-1.pdf>]
+<bda_project_files/figure-latex/unnamed-chunk-82-1.pdf, id=890, 440.64626pt x 2
+85.065pt>
+File: bda_project_files/figure-latex/unnamed-chunk-82-1.pdf Graphic file (type 
+pdf)
+<use bda_project_files/figure-latex/unnamed-chunk-82-1.pdf>
+Package pdftex.def Info: bda_project_files/figure-latex/unnamed-chunk-82-1.pdf 
+ used on input line 2671.
+(pdftex.def)             Requested size: 440.64517pt x 285.0643pt.
+[75 <./bda_project_files/figure-latex/unnamed-chunk-82-1.pdf>] [76] [77]
+! Undefined control sequence.
+l.2757 \bibliagraphy
+                    {references.bib} 
 Here is how much of TeX's memory you used:
- 13093 strings out of 480313
- 206309 string characters out of 5896619
- 523580 words of memory out of 5000000
- 30696 multiletter control sequences out of 15000+600000
- 456256 words of font info for 72 fonts, out of 8000000 for 9000
- 14 hyphenation exceptions out of 8191
- 60i,9n,63p,1161b,369s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 16616 strings out of 480608
+ 261238 string characters out of 5903631
+ 550490 words of memory out of 5000000
+ 31937 multiletter control sequences out of 15000+600000
+ 610568 words of font info for 132 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 41i,9n,42p,810b,465s stack positions out of 5000i,500n,10000p,200000b,80000s
 
 !  ==> Fatal error occurred, no output PDF file produced!

@@ -1,15 +1,26 @@
 ---
-title: "BDA - Assignment 9"
+title: "BDA - Project"
 author: "Anonymous"
-header-includes:
-   - \usepackage{listings}
 output:
   pdf_document:
     toc: yes
     toc_depth: 1
 urlcolor: blue
+nocite: '@*'
 bibliography: reference.bib
+csl: elsevier-harvard.csl
+header-includes:
+  \usepackage{float}
+  \usepackage{bm}
+  \usepackage{amsmath}
+  \usepackage{listings}
+  \floatstyle{plaintop}
+  \restylefloat{table}
+  \usepackage{caption} 
+  \captionsetup[table]{skip=10pt}
 ---
+
+
 ```{r setup, include=FALSE}
 # This chunk sets echo = TRUE as default, that is print all code.
 # knitr::opts_chunk$set can be used to set other notebook generation options, too.
@@ -30,6 +41,8 @@ options(mc.cores = parallel::detectCores())
 rstan_options(auto_write = TRUE)
 ```
 
+
+\newpage
 # 1. Introduction
 
 It's been almost 2 years since the covid-19 started in December 2019, and it's been 1 year since world vaccination has been started December 2020. Even though most of the countries rushing into vaccination and some countries are picking over 80% rate in vaccination, the pandemic seems unstoppable. One of the popular idea to stop the pandemic is that to achieve a 'herd-immunity threshold, which occurs when a large portion of a community (the herd) becomes immune to a disease, making the spread of disease from person to person unlikely. Immune individuals are unlikely to contribute to disease transmission, disrupting chains of infection, which stops or slows the spread of disease @wiki.
@@ -60,13 +73,13 @@ Down below shows the barplot of fully vaccinated population rate by countries in
 knitr::include_graphics("./image/share-people-fully-vaccinated-covid_plot.png")
 ```
 
+
+\newpage
 # 2. Dataset
 
 Datasets down below show cumulative covid vaccinations rate by countries( collected from [linked phrase](https://ourworldindata.org/covid-vaccinations)).Country  column shows the country of this data. X column is originally from the date when the country started vaccination to the recent date of vaccination. We normalized the date column by giving index 0 to number of date and deviding it with the number of date. As the time length of the vaccination differs by country, we uniformly picked the 222 datapoints from the datasets before normalize the X column. Y column shows the covid vaccination rate in the country. With the cumulative covid vaccination number, we devide it by 2 times population because most of the vaccines require 2 doses to be fully vaccinated. Therefore, dimension of all datasets are (222,3).
 
 ```{r}
-#setwd('/Users/chuhyeongyeong/2021_period1/bayesian_data_analysis/bda_aalto_project')
-#setwd("/home/chooh1/notebooks/BDA/project")
 finland <- read.csv("data/Finland_output.csv")
 germany <- read.csv("data/Germany_output.csv")
 hongkong <- read.csv('data/Hong Kong_output.csv')
@@ -91,6 +104,9 @@ ggplot(data = total, aes(x = X, y = Y, color = Country)) +
     xlab("time") + ylab("vaccination rate")
 ```
 
+
+
+\newpage
 # 3. Mathematical Models and Stan code
 
 ## Seperated Model
@@ -274,6 +290,8 @@ generated quantities {
 "
 ```
 
+
+\newpage
 # 4. Prior selection
 
 For both models we choose to use weakly informative priors.
@@ -312,10 +330,13 @@ The $\beta$ prior is again, like in the seperated model a normal distribution $N
 The prior of the variance is given by a $\operatorname{Inv}-\chi^{2}(1)$, as here as well we want to have a variance, which is not much larger, than our expected interval.
 
 
+\newpage
 # 5. Stan code
 
 The stan code was provided above with the describtion of the model
 
+
+\newpage
 # 6. How to the Stan model was run, that is, what options were used. This is also more clear as combination of textual explanation and the actual code line
 
 
@@ -345,7 +366,7 @@ stan_data <- list(
     x = xData,
     xpred = c(finland$X,1.1)
 )
-model_separated <- rstan::sampling(sm, data = stan_data, warmup=3000, iter=4000)
+model_separated <- rstan::sampling(sm, data = stan_data, warmup=3000,iter=4000)
 fit_sm <- extract(model_separated, permuted = TRUE, inc_warmup = FALSE)
 ```
 
@@ -374,7 +395,8 @@ stan_data <- list(
     x = xData,
     xpred = c(finland$X,1.1)
 )
-model_hierarchical <- rstan::sampling(hm, data = stan_data, warmup=3000, iter=4000)
+model_hierarchical <- rstan::sampling(hm, data = stan_data, 
+                                      warmup=3000,iter=4000)
 fit_hm <- extract(model_hierarchical, permuted = TRUE, inc_warmup = FALSE)
 ```
 
@@ -393,6 +415,8 @@ ggplot(data = result_h, aes(x =X, y = Y, color = Country)) +
 With the command ```rstan::stan_model``` we compile our stan models from a string vector and in the next step with ```rstan::sampling```
 we create samples from the models. The given data are the datasets from section 2. As a warmup phase we use the generous length of $3000$ and as a total chain length $4000$. As the warmup lenght is longer than half of the chain length we made sure, that the samples are within our posterior distribution.
 
+
+\newpage
 # 7.Convergence diagnostics (Rhat, ESS, divergences) and what was done if the convergence was not good with the first try.
 
 We will use the build in tool from the stan library to analyse the convergence of our chains.
@@ -419,7 +443,7 @@ $$
 
 R hat is potential scale reduction factor. This value estimates how much the scale could reduce if N goes infinite. When N approches infinity, R hat approches 1. If R hat is bigger than 1.01, we should keep sampling.
 
-As we can see here, the $\hat{R}$ values are less than 1, which means, that the chains converges. We will now run the ESS analysis, to further verify, that our $\hat{R}$ values are trustworthy. As mentioned in Verteri et al. 2019, a ESS value above 400 will indicate that the $\hat{R}$ value is reliable. We therefore now use the ESS method from  Verteri et al. 2019:
+As we can see here, the $\hat{R}$ values are less than 1, which means, that the chains converges. We will now run the ESS analysis, to further verify, that our $\hat{R}$ values are trustworthy. As mentioned in Verteri et al. 2019 @vehtari2019rank, a ESS value above 400 will indicate that the $\hat{R}$ value is reliable. We therefore now use the ESS method from @vehtari2019rank:
 
 ```{r}
 cat("ESS of seperated model: \n")
@@ -433,6 +457,7 @@ sum_hierarchical$summary[1:11,9]
 Here we can nicely see, that all ESS values are above 400, which indicates, that our $\hat{R}$ values are realiable. We can therefore conclude, that our chains converged.
 
 
+\newpage
 # 8. Posterior predictive checks and what was done to improve the model.
 
 We want to see if our model works by posterior predictive checking.
@@ -458,7 +483,8 @@ For example, let's see the vaccination rate in Finland on the random data point 
 #seperate model
 a_s = mu_pred_interval(data = fit_sm$mu[,1,200], prob = 0.90)
 cat('Actual vaccination rate: ',finland$Y[200],'\n')
-cat('Credible interval of predicted vaccination rate in seperated model: ',a_s,'\n')
+cat('Credible interval of predicted vaccination rate in seperated model: ',
+    a_s,'\n')
 ```
 
 
@@ -466,7 +492,8 @@ cat('Credible interval of predicted vaccination rate in seperated model: ',a_s,'
 #hierarchical model
 a_h = mu_pred_interval(data = fit_hm$ypred[,1,200], prob = 0.90)
 cat('Actual vaccination rate: ',finland$Y[200],'\n')
-cat('Credible interval of predicted vaccination rate in hierarchical model: ',a_h,'\n')
+cat('Credible interval of predicted vaccination rate in hierarchical model: ',
+    a_h,'\n')
 ```
 
 In seperate model, the credible interval for $\mu$ in datapoint 200 which is $[0.7843056, 0.7995294]$ doesn't include the actual vaccination rate 0.7301881. However, in hierarchical model, the credible interval $[0.7232421, 0.8609337]$ includes actual vaccination rate.
@@ -483,8 +510,10 @@ for(i in 3001:4000){
     finland_mu <- c(finland_mu, fit_sm$ypred[i,1,1:222])
 }
 Y_s = c(finland_mu,finland$Y)
-names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), finland$Country)
-result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
+names = c(rep(c("A_Model"), times = 222*1000, 
+              length.out = NA, each = 1), finland$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], 
+                      times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
     ggtitle("Seperate modeled means and accual data for Finland") +
@@ -499,8 +528,10 @@ for(i in 3001:4000){
     germany_mu <- c(germany_mu, fit_sm$ypred[i,2,1:222])
 }
 Y_s = c(germany_mu,germany$Y)
-names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), germany$Country)
-result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
+names = c(rep(c("A_Model"), times = 222*1000, 
+              length.out = NA, each = 1), germany$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], 
+                      times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
     ggtitle("Seperate modeled means and accual data for Germany") +
@@ -514,8 +545,10 @@ for(i in 3001:4000){
     portugal_mu <- c(portugal_mu, fit_sm$ypred[i,3,1:222])
 }
 Y_s = c(portugal_mu,portugal$Y)
-names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), portugal$Country)
-result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
+names = c(rep(c("A_Model"), times = 222*1000, 
+              length.out = NA, each = 1), portugal$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], 
+                      times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
     ggtitle("Seperate modeled means and accual data for Portugal") +
@@ -529,8 +562,10 @@ for(i in 3001:4000){
     hongkong_mu <- c(hongkong_mu, fit_sm$ypred[i,4,1:222])
 }
 Y_s = c(hongkong_mu,hongkong$Y)
-names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), hongkong$Country)
-result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
+names = c(rep(c("A_Model"), times = 222*1000, 
+              length.out = NA, each = 1), hongkong$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222],
+                      times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
     ggtitle("Seperate modeled means and accual data for Hongkong") +
@@ -544,8 +579,10 @@ for(i in 3001:4000){
     japan_mu <- c(japan_mu, fit_sm$ypred[i,5,1:222])
 }
 Y_s = c(japan_mu,japan$Y)
-names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), japan$Country)
-result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
+names = c(rep(c("A_Model"), times = 222*1000, 
+              length.out = NA, each = 1), japan$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222],
+                      times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
     ggtitle("Seperate modeled means and accual data for Japan") +
@@ -562,8 +599,10 @@ for(i in 3001:4000){
     finland_mu <- c(finland_mu, fit_hm$ypred[i,1,1:222])
 }
 Y_s = c(finland_mu,finland$Y)
-names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), finland$Country)
-result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
+names = c(rep(c("A_Model"), times = 222*1000,
+              length.out = NA, each = 1), finland$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], 
+                      times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
     ggtitle("Hierarchical modeled means and accual data for Finland") +
@@ -578,8 +617,10 @@ for(i in 3001:4000){
     germany_mu <- c(germany_mu, fit_hm$ypred[i,2,1:222])
 }
 Y_s = c(germany_mu,germany$Y)
-names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), germany$Country)
-result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
+names = c(rep(c("A_Model"), times = 222*1000, 
+              length.out = NA, each = 1), germany$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], 
+                      times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
     ggtitle("Hierarchical modeled means and accual data for Germany") +
@@ -593,8 +634,10 @@ for(i in 3001:4000){
     portugal_mu <- c(portugal_mu, fit_hm$ypred[i,3,1:222])
 }
 Y_s = c(portugal_mu,portugal$Y)
-names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), portugal$Country)
-result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
+names = c(rep(c("A_Model"), times = 222*1000, 
+              length.out = NA, each = 1), portugal$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222],
+                      times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
     ggtitle("Hierarchical modeled means and accual data for Portugal") +
@@ -608,8 +651,10 @@ for(i in 3001:4000){
     hongkong_mu <- c(hongkong_mu, fit_hm$ypred[i,4,1:222])
 }
 Y_s = c(hongkong_mu,hongkong$Y)
-names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), hongkong$Country)
-result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
+names = c(rep(c("A_Model"), times = 222*1000, 
+              length.out = NA, each = 1), hongkong$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], 
+                      times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
     ggtitle("Hierarchical modeled means and accual data for Hongkong") +
@@ -623,8 +668,10 @@ for(i in 3001:4000){
     japan_mu <- c(japan_mu, fit_hm$ypred[i,5,1:222])
 }
 Y_s = c(japan_mu,japan$Y)
-names = c(rep(c("Model"), times = 222*1000, length.out = NA, each = 1), japan$Country)
-result_s = data.frame(Country=names,X=rep(total$X[1:222], times =1001, length.out = NA, each = 1),Y=Y_s)
+names = c(rep(c("A_Model"), times = 222*1000, 
+              length.out = NA, each = 1), japan$Country)
+result_s = data.frame(Country=names,X=rep(total$X[1:222], 
+                      times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
     ggtitle("Hierarchical modeled means and accual data for Japan") +
@@ -633,7 +680,17 @@ ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
 
 ### Conclusion
 
+With those posterior checks we can draw two main conclusions:
 
+1. Our two models are working as they should. They approximate a logistic function quite well within our given parameter range. Also the data could be a possible sampling from the model, which is a indication, that the wished posterior distribution was found and modeled by us in Stan
+
+2. The sampled variance has also the right size, to ensure, that every point from our data could possible be sampled. 
+
+The model, as we designed it works and is also suitable for modeling COVID-19 vaccination rates. In chapter 13 we will further evaluate which points could be improved.
+
+
+
+\newpage
 # 9.Model comparison (e.g. with LOO-CV)
 
 ```{r,results='hide',error=FALSE}
@@ -675,9 +732,9 @@ cat("Maximum k-values in seperate model is ",max(k_s),'\n')
 cat("Maximum k-values in hierarchical model is ",max(k_h),'\n')
 ```
 
-If the k < 0.7 we can say that PSIS-LOO estimates are reliable. Based on this,for seperate model and hierarchical model both, the \hat{k}-values are all below 0.5 which are good. Therefore, both  seperate model and hierarchicalmodels are reliable. However, the maximum  \hat{k}-values in seperate model is 0.216 and the maximum \hat{k}-values in hierarchical model is 0.176, so we could say the hierarchical model is more reliable.
+If the k < 0.7 we can say that PSIS-LOO estimates are reliable. Based on this,for seperate model and hierarchical model both, the $\hat{k}$-values are all below 0.5 which are good. Therefore, both  seperate model and hierarchicalmodels are reliable. However, the maximum  $\hat{k}$-values in seperate model is 0.216 and the maximum $\hat{k}$-values in hierarchical model is 0.176, so we could say the hierarchical model is more reliable.
 
-####comparing PSIS-LOO estimates
+#### comparing PSIS-LOO estimates
 ```{r}
 cat("PSIS-LOO estimates in seperate model",elpd_s,'\n')
 cat("PSIS-LOO estimates in hierarchical model",elpd_h,'\n')
@@ -685,7 +742,7 @@ cat("PSIS-LOO estimates in hierarchical model",elpd_h,'\n')
 
 According to the PSIS-LOO estimate, hierarchical model has slightly higher value for the PSIS-LOO estimate than seperate model,so we could choose hierarchical model but still seperate model also have nice score in PSIS-LOO estimate.
 
-
+\newpage
 # 10. Predictive performance assessment if applicable (e.g. classification accuracy) and evaluation of practical usefulness of the accuracy
 
 We can now evaluate the predictive performance of our model.
@@ -733,7 +790,7 @@ qplot(fit_sm$ypred[,5,223], geom="histogram") +
 cat("Mean of 4000 predictions for Finland: ", mean(fit_sm$ypred[,1,223]),'\n')
 cat("Mean of 4000 predictions for Germany: ", mean(fit_sm$ypred[,2,223]),'\n')
 cat("Mean of 4000 predictions for Portugal: ", mean(fit_sm$ypred[,3,223]),'\n')
-cat("Mean of 4000 predictions for Hong Kong: ", mean(fit_sm$ypred[,4,223]),'\n')
+cat("Mean of 4000 predictions for Hong Kong: ",mean(fit_sm$ypred[,4,223]),'\n')
 cat("Mean of 4000 predictions for Japan: ", mean(fit_sm$ypred[,5,223]),'\n')
 ```
 
@@ -781,13 +838,15 @@ qplot(fit_hm$ypred[,5,223], geom="histogram") +
 cat("Mean of 4000 predictions for Finland: ", mean(fit_hm$ypred[,1,223]),'\n')
 cat("Mean of 4000 predictions for Germany: ", mean(fit_hm$ypred[,2,223]),'\n')
 cat("Mean of 4000 predictions for Portugal: ", mean(fit_hm$ypred[,3,223]),'\n')
-cat("Mean of 4000 predictions for Hong Kong: ", mean(fit_hm$ypred[,4,223]),'\n')
+cat("Mean of 4000 predictions for Hong Kong: ",mean(fit_hm$ypred[,4,223]),'\n')
 cat("Mean of 4000 predictions for Japan: ", mean(fit_hm$ypred[,5,223]),'\n')
 ```
 
 
 We need to be very carefull about the prediction of the vaccination numbers. While it is nice having those predicitions, they are just usefull.  
 
+
+\newpage
 # 11. Sensitivity analysis with respect to prior choices (i.e. checking whether the result changes a lot if prior is changed)
 
 ## Sensitivity analysis for separate model
@@ -919,8 +978,10 @@ for(p in sigma_priors) {
       param3 = 0.5,
       param4 = 1
   )
-  model_separated_parameterized <- rstan::sampling(smp, data = stan_data_parameterized, warmup=3000, iter=4000)
-  fit_smp <- extract(model_separated_parameterized, permuted = TRUE, inc_warmup = FALSE)
+  model_separated_parameterized <- rstan::sampling(smp, 
+            data = stan_data_parameterized, warmup=3000, iter=4000)
+  fit_smp <- extract(model_separated_parameterized, 
+                     permuted = TRUE, inc_warmup = FALSE)
   fit_smps <- rbind(fit_smps, fit_smp)
 }
 ```
@@ -940,7 +1001,7 @@ group <- c(rep(sprintf("%f", sigma_priors[1]), length(fit_smps[1,]$sigma)),
            rep(sprintf("%f", sigma_priors[5]), length(fit_smps[5,]$sigma)))
 data <- data.frame(values = values, group = group)
 
-ggplot(data, aes(x = values, fill = group)) +                       # Draw overlaying histogram
+ggplot(data, aes(x = values, fill = group)) +   # Draw overlaying histogram
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
@@ -973,8 +1034,10 @@ for(p in sigma_priors) {
       param3 = 0.5,
       param4 = 1
   )
-  model_separated_parameterized <- rstan::sampling(smp, data = stan_data_parameterized, warmup=3000, iter=4000)
-  fit_smp <- extract(model_separated_parameterized, permuted = TRUE, inc_warmup = FALSE)
+  model_separated_parameterized <- rstan::sampling(smp, 
+                  data = stan_data_parameterized, warmup=3000, iter=4000)
+  fit_smp <- extract(model_separated_parameterized, 
+                     permuted = TRUE, inc_warmup = FALSE)
   fit_smps <- rbind(fit_smps, fit_smp)
 }
 ```
@@ -994,7 +1057,8 @@ group <- c(rep(sprintf("%f", alpha_priors[1]), length(fit_smps[1,]$alpha[,1])),
            rep(sprintf("%f", alpha_priors[5]), length(fit_smps[5,]$alpha[,1])))
 data <- data.frame(values = values, group = group)
 
-ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different alpha priors for Finland") +
+ggplot(data, aes(x = values, fill = group)) +
+  ggtitle("Plot of different alpha priors for Finland") +
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
@@ -1011,7 +1075,8 @@ group <- c(rep(sprintf("%f", alpha_priors[1]), length(fit_smps[1,]$alpha[,2])),
            rep(sprintf("%f", alpha_priors[5]), length(fit_smps[5,]$alpha[,2])))
 data <- data.frame(values = values, group = group)
 
-ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different alpha priors for Germany") +
+ggplot(data, aes(x = values, fill = group)) + 
+  ggtitle("Plot of different alpha priors for Germany") +
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
@@ -1028,7 +1093,8 @@ group <- c(rep(sprintf("%f", alpha_priors[1]), length(fit_smps[1,]$alpha[,3])),
            rep(sprintf("%f", alpha_priors[5]), length(fit_smps[5,]$alpha[,3])))
 data <- data.frame(values = values, group = group)
 
-ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different alpha priors for Portugal") +
+ggplot(data, aes(x = values, fill = group)) + 
+  ggtitle("Plot of different alpha priors for Portugal") +
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
@@ -1045,7 +1111,8 @@ group <- c(rep(sprintf("%f", alpha_priors[1]), length(fit_smps[1,]$alpha[,4])),
            rep(sprintf("%f", alpha_priors[5]), length(fit_smps[5,]$alpha[,4])))
 data <- data.frame(values = values, group = group)
 
-ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different alpha priors for Hong Kong") +
+ggplot(data, aes(x = values, fill = group)) + 
+  ggtitle("Plot of different alpha priors for Hong Kong") +
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
@@ -1062,7 +1129,8 @@ group <- c(rep(sprintf("%f", alpha_priors[1]), length(fit_smps[1,]$alpha[,5])),
            rep(sprintf("%f", alpha_priors[5]), length(fit_smps[5,]$alpha[,5])))
 data <- data.frame(values = values, group = group)
 
-ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different alpha priors for Japan") +
+ggplot(data, aes(x = values, fill = group)) + 
+  ggtitle("Plot of different alpha priors for Japan") +
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
@@ -1099,8 +1167,10 @@ for(i in seq(1,5)) {
       param3 = beta_priors[i, 1],
       param4 = beta_priors[i, 2]
   )
-  model_separated_parameterized <- rstan::sampling(smp, data = stan_data_parameterized, warmup=3000, iter=4000)
-  fit_smp <- extract(model_separated_parameterized, permuted = TRUE, inc_warmup = FALSE)
+  model_separated_parameterized <- rstan::sampling(smp, 
+              data = stan_data_parameterized, warmup=3000, iter=4000)
+  fit_smp <- extract(model_separated_parameterized, 
+                     permuted = TRUE, inc_warmup = FALSE)
   fit_smps <- rbind(fit_smps, fit_smp)
 }
 ```
@@ -1113,14 +1183,20 @@ values <- c(fit_smps[1,]$beta[,1],
             fit_smps[3,]$beta[,1],
             fit_smps[4,]$beta[,1],
             fit_smps[5,]$beta[,1])
-group <- c(rep(sprintf("%f : %f", beta_priors[1,1], beta_priors[1,2]), length(fit_smps[1,]$beta[,1])),
-           rep(sprintf("%f : %f", beta_priors[2,1], beta_priors[2,2]), length(fit_smps[2,]$beta[,1])),
-           rep(sprintf("%f : %f", beta_priors[3,1], beta_priors[3,2]), length(fit_smps[3,]$beta[,1])),
-           rep(sprintf("%f : %f", beta_priors[4,1], beta_priors[4,2]), length(fit_smps[4,]$beta[,1])),
-           rep(sprintf("%f : %f", beta_priors[5,1], beta_priors[5,2]), length(fit_smps[5,]$beta[,1])))
+group <- c(rep(sprintf("%f : %f", beta_priors[1,1], beta_priors[1,2]), 
+               length(fit_smps[1,]$beta[,1])),
+           rep(sprintf("%f : %f", beta_priors[2,1], beta_priors[2,2]), 
+               length(fit_smps[2,]$beta[,1])),
+           rep(sprintf("%f : %f", beta_priors[3,1], beta_priors[3,2]), 
+               length(fit_smps[3,]$beta[,1])),
+           rep(sprintf("%f : %f", beta_priors[4,1], beta_priors[4,2]), 
+               length(fit_smps[4,]$beta[,1])),
+           rep(sprintf("%f : %f", beta_priors[5,1], beta_priors[5,2]), 
+               length(fit_smps[5,]$beta[,1])))
 data <- data.frame(values = values, group = group)
 
-ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different beta priors for Finland") +
+ggplot(data, aes(x = values, fill = group)) + 
+  ggtitle("Plot of different beta priors for Finland") +
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
@@ -1130,14 +1206,20 @@ values <- c(fit_smps[1,]$beta[,2],
             fit_smps[3,]$beta[,2],
             fit_smps[4,]$beta[,2],
             fit_smps[5,]$beta[,2])
-group <- c(rep(sprintf("%f : %f", beta_priors[1,1], beta_priors[1,2]), length(fit_smps[1,]$beta[,2])),
-           rep(sprintf("%f : %f", beta_priors[2,1], beta_priors[2,2]), length(fit_smps[2,]$beta[,2])),
-           rep(sprintf("%f : %f", beta_priors[3,1], beta_priors[3,2]), length(fit_smps[3,]$beta[,2])),
-           rep(sprintf("%f : %f", beta_priors[4,1], beta_priors[4,2]), length(fit_smps[4,]$beta[,2])),
-           rep(sprintf("%f : %f", beta_priors[5,1], beta_priors[5,2]), length(fit_smps[5,]$beta[,2])))
+group <- c(rep(sprintf("%f : %f", beta_priors[1,1], beta_priors[1,2]), 
+               length(fit_smps[1,]$beta[,2])),
+           rep(sprintf("%f : %f", beta_priors[2,1], beta_priors[2,2]), 
+               length(fit_smps[2,]$beta[,2])),
+           rep(sprintf("%f : %f", beta_priors[3,1], beta_priors[3,2]), 
+               length(fit_smps[3,]$beta[,2])),
+           rep(sprintf("%f : %f", beta_priors[4,1], beta_priors[4,2]), 
+               length(fit_smps[4,]$beta[,2])),
+           rep(sprintf("%f : %f", beta_priors[5,1], beta_priors[5,2]), 
+               length(fit_smps[5,]$beta[,2])))
 data <- data.frame(values = values, group = group)
 
-ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different beta priors for Germany") +
+ggplot(data, aes(x = values, fill = group)) + 
+  ggtitle("Plot of different beta priors for Germany") +
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
@@ -1147,14 +1229,20 @@ values <- c(fit_smps[1,]$beta[,3],
             fit_smps[3,]$beta[,3],
             fit_smps[4,]$beta[,3],
             fit_smps[5,]$beta[,3])
-group <- c(rep(sprintf("%f : %f", beta_priors[1,1], beta_priors[1,2]), length(fit_smps[1,]$beta[,3])),
-           rep(sprintf("%f : %f", beta_priors[2,1], beta_priors[2,2]), length(fit_smps[2,]$beta[,3])),
-           rep(sprintf("%f : %f", beta_priors[3,1], beta_priors[3,2]), length(fit_smps[3,]$beta[,3])),
-           rep(sprintf("%f : %f", beta_priors[4,1], beta_priors[4,2]), length(fit_smps[4,]$beta[,3])),
-           rep(sprintf("%f : %f", beta_priors[5,1], beta_priors[5,2]), length(fit_smps[5,]$beta[,3])))
+group <- c(rep(sprintf("%f : %f", beta_priors[1,1], beta_priors[1,2]), 
+               length(fit_smps[1,]$beta[,3])),
+           rep(sprintf("%f : %f", beta_priors[2,1], beta_priors[2,2]), 
+               length(fit_smps[2,]$beta[,3])),
+           rep(sprintf("%f : %f", beta_priors[3,1], beta_priors[3,2]), 
+               length(fit_smps[3,]$beta[,3])),
+           rep(sprintf("%f : %f", beta_priors[4,1], beta_priors[4,2]), 
+               length(fit_smps[4,]$beta[,3])),
+           rep(sprintf("%f : %f", beta_priors[5,1], beta_priors[5,2]), 
+               length(fit_smps[5,]$beta[,3])))
 data <- data.frame(values = values, group = group)
 
-ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different beta priors for Portugal") +
+ggplot(data, aes(x = values, fill = group)) + 
+  ggtitle("Plot of different beta priors for Portugal") +
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
@@ -1164,14 +1252,20 @@ values <- c(fit_smps[1,]$beta[,4],
             fit_smps[3,]$beta[,4],
             fit_smps[4,]$beta[,4],
             fit_smps[5,]$beta[,4])
-group <- c(rep(sprintf("%f : %f", beta_priors[1,1], beta_priors[1,2]), length(fit_smps[1,]$beta[,4])),
-           rep(sprintf("%f : %f", beta_priors[2,1], beta_priors[2,2]), length(fit_smps[2,]$beta[,4])),
-           rep(sprintf("%f : %f", beta_priors[3,1], beta_priors[3,2]), length(fit_smps[3,]$beta[,4])),
-           rep(sprintf("%f : %f", beta_priors[4,1], beta_priors[4,2]), length(fit_smps[4,]$beta[,4])),
-           rep(sprintf("%f : %f", beta_priors[5,1], beta_priors[5,2]), length(fit_smps[5,]$beta[,4])))
+group <- c(rep(sprintf("%f : %f", beta_priors[1,1], beta_priors[1,2]), 
+               length(fit_smps[1,]$beta[,4])),
+           rep(sprintf("%f : %f", beta_priors[2,1], beta_priors[2,2]), 
+               length(fit_smps[2,]$beta[,4])),
+           rep(sprintf("%f : %f", beta_priors[3,1], beta_priors[3,2]), 
+               length(fit_smps[3,]$beta[,4])),
+           rep(sprintf("%f : %f", beta_priors[4,1], beta_priors[4,2]), 
+               length(fit_smps[4,]$beta[,4])),
+           rep(sprintf("%f : %f", beta_priors[5,1], beta_priors[5,2]), 
+               length(fit_smps[5,]$beta[,4])))
 data <- data.frame(values = values, group = group)
 
-ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different beta priors for Hong Kong") +
+ggplot(data, aes(x = values, fill = group)) + 
+  ggtitle("Plot of different beta priors for Hong Kong") +
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
@@ -1181,14 +1275,20 @@ values <- c(fit_smps[1,]$beta[,5],
             fit_smps[3,]$beta[,5],
             fit_smps[4,]$beta[,5],
             fit_smps[5,]$beta[,5])
-group <- c(rep(sprintf("%f : %f", beta_priors[1,1], beta_priors[1,2]), length(fit_smps[1,]$beta[,5])),
-           rep(sprintf("%f : %f", beta_priors[2,1], beta_priors[2,2]), length(fit_smps[2,]$beta[,5])),
-           rep(sprintf("%f : %f", beta_priors[3,1], beta_priors[3,2]), length(fit_smps[3,]$beta[,5])),
-           rep(sprintf("%f : %f", beta_priors[4,1], beta_priors[4,2]), length(fit_smps[4,]$beta[,5])),
-           rep(sprintf("%f : %f", beta_priors[5,1], beta_priors[5,2]), length(fit_smps[5,]$beta[,5])))
+group <- c(rep(sprintf("%f : %f", beta_priors[1,1], beta_priors[1,2]), 
+               length(fit_smps[1,]$beta[,5])),
+           rep(sprintf("%f : %f", beta_priors[2,1], beta_priors[2,2]), 
+               length(fit_smps[2,]$beta[,5])),
+           rep(sprintf("%f : %f", beta_priors[3,1], beta_priors[3,2]), 
+               length(fit_smps[3,]$beta[,5])),
+           rep(sprintf("%f : %f", beta_priors[4,1], beta_priors[4,2]), 
+               length(fit_smps[4,]$beta[,5])),
+           rep(sprintf("%f : %f", beta_priors[5,1], beta_priors[5,2]), 
+               length(fit_smps[5,]$beta[,5])))
 data <- data.frame(values = values, group = group)
 
-ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different beta priors for Japan") +
+ggplot(data, aes(x = values, fill = group)) + 
+  ggtitle("Plot of different beta priors for Japan") +
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
@@ -1333,8 +1433,10 @@ for(p in sigma_priors) {
       param4 = 10,
       param5 = 10
   )
-  model_hierarchical_parameterized <- rstan::sampling(hmp, data = stan_data_parameterized, warmup=3000, iter=4000)
-  fit_hmp <- extract(model_hierarchical_parameterized, permuted = TRUE, inc_warmup = FALSE)
+  model_hierarchical_parameterized <- rstan::sampling(hmp, 
+              data = stan_data_parameterized, warmup=3000, iter=4000)
+  fit_hmp <- extract(model_hierarchical_parameterized, 
+                     permuted = TRUE, inc_warmup = FALSE)
   fit_hmps <- rbind(fit_hmps, fit_hmp)
 }
 ```
@@ -1354,7 +1456,7 @@ group <- c(rep(sprintf("%f", sigma_priors[1]), length(fit_hmps[1,]$sigma)),
            rep(sprintf("%f", sigma_priors[5]), length(fit_hmps[5,]$sigma)))
 data <- data.frame(values = values, group = group)
 
-ggplot(data, aes(x = values, fill = group)) +                       # Draw overlaying histogram
+ggplot(data, aes(x = values, fill = group)) +  # Draw overlaying histogram
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
@@ -1387,8 +1489,10 @@ for(p in alpha_priors) {
       param4 = 10,
       param5 = p
   )
-  model_hierarchical_parameterized <- rstan::sampling(hmp, data = stan_data_parameterized, warmup=3000, iter=4000)
-  fit_hmp <- extract(model_hierarchical_parameterized, permuted = TRUE, inc_warmup = FALSE)
+  model_hierarchical_parameterized <- rstan::sampling(hmp, 
+                    data = stan_data_parameterized, warmup=3000, iter=4000)
+  fit_hmp <- extract(model_hierarchical_parameterized, 
+                     permuted = TRUE, inc_warmup = FALSE)
   fit_hmps <- rbind(fit_hmps, fit_hmp)
 }
 ```
@@ -1408,7 +1512,8 @@ group <- c(rep(sprintf("%f", alpha_priors[1]), length(fit_hmps[1,]$alpha[,1])),
            rep(sprintf("%f", alpha_priors[5]), length(fit_hmps[5,]$alpha[,1])))
 data <- data.frame(values = values, group = group)
 
-ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different alpha priors for Finland") +
+ggplot(data, aes(x = values, fill = group)) + 
+  ggtitle("Plot of different alpha priors for Finland") +
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
@@ -1425,7 +1530,8 @@ group <- c(rep(sprintf("%f", alpha_priors[1]), length(fit_hmps[1,]$alpha[,2])),
            rep(sprintf("%f", alpha_priors[5]), length(fit_hmps[5,]$alpha[,2])))
 data <- data.frame(values = values, group = group)
 
-ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different alpha priors for Germany") +
+ggplot(data, aes(x = values, fill = group)) + 
+  ggtitle("Plot of different alpha priors for Germany") +
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
@@ -1442,7 +1548,8 @@ group <- c(rep(sprintf("%f", alpha_priors[1]), length(fit_hmps[1,]$alpha[,3])),
            rep(sprintf("%f", alpha_priors[5]), length(fit_hmps[5,]$alpha[,3])))
 data <- data.frame(values = values, group = group)
 
-ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different alpha priors for Portugal") +
+ggplot(data, aes(x = values, fill = group)) + 
+  ggtitle("Plot of different alpha priors for Portugal") +
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
@@ -1459,7 +1566,8 @@ group <- c(rep(sprintf("%f", alpha_priors[1]), length(fit_hmps[1,]$alpha[,4])),
            rep(sprintf("%f", alpha_priors[5]), length(fit_hmps[5,]$alpha[,4])))
 data <- data.frame(values = values, group = group)
 
-ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different alpha priors for Hong Kong") +
+ggplot(data, aes(x = values, fill = group)) +
+  ggtitle("Plot of different alpha priors for Hong Kong") +
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
@@ -1476,7 +1584,8 @@ group <- c(rep(sprintf("%f", alpha_priors[1]), length(fit_hmps[1,]$alpha[,5])),
            rep(sprintf("%f", alpha_priors[5]), length(fit_hmps[5,]$alpha[,5])))
 data <- data.frame(values = values, group = group)
 
-ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different alpha priors for Japan") +
+ggplot(data, aes(x = values, fill = group)) + 
+  ggtitle("Plot of different alpha priors for Japan") +
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
@@ -1513,8 +1622,10 @@ for(i in seq(1,5)) {
       param4 = beta_priors[i, 3],
       param5 = 10
   )
-  model_hierarchical_parameterized <- rstan::sampling(hmp, data = stan_data_parameterized, warmup=3000, iter=4000)
-  fit_hmp <- extract(model_hierarchical_parameterized, permuted = TRUE, inc_warmup = FALSE)
+  model_hierarchical_parameterized <- rstan::sampling(hmp, 
+                data = stan_data_parameterized, warmup=3000, iter=4000)
+  fit_hmp <- extract(model_hierarchical_parameterized, 
+                     permuted = TRUE, inc_warmup = FALSE)
   fit_hmps <- rbind(fit_hmps, fit_hmp)
 }
 ```
@@ -1527,14 +1638,20 @@ values <- c(fit_hmps[1,]$beta[,1],
             fit_hmps[3,]$beta[,1],
             fit_hmps[4,]$beta[,1],
             fit_hmps[5,]$beta[,1])
-group <- c(rep(sprintf("%f : %f : %f", beta_priors[1,1], beta_priors[1,2], beta_priors[1,3]), length(fit_hmps[1,]$beta[,1])),
-           rep(sprintf("%f : %f : %f", beta_priors[2,1], beta_priors[2,2], beta_priors[2,3]), length(fit_hmps[2,]$beta[,1])),
-           rep(sprintf("%f : %f : %f", beta_priors[3,1], beta_priors[3,2], beta_priors[3,3]), length(fit_hmps[3,]$beta[,1])),
-           rep(sprintf("%f : %f : %f", beta_priors[4,1], beta_priors[4,2], beta_priors[4,3]), length(fit_hmps[4,]$beta[,1])),
-           rep(sprintf("%f : %f : %f", beta_priors[5,1], beta_priors[5,2], beta_priors[5,3]), length(fit_hmps[5,]$beta[,1])))
+group <- c(rep(sprintf("%f : %f : %f", beta_priors[1,1], beta_priors[1,2], 
+                       beta_priors[1,3]), length(fit_hmps[1,]$beta[,1])),
+           rep(sprintf("%f : %f : %f", beta_priors[2,1], beta_priors[2,2], 
+                       beta_priors[2,3]), length(fit_hmps[2,]$beta[,1])),
+           rep(sprintf("%f : %f : %f", beta_priors[3,1], beta_priors[3,2], 
+                       beta_priors[3,3]), length(fit_hmps[3,]$beta[,1])),
+           rep(sprintf("%f : %f : %f", beta_priors[4,1], beta_priors[4,2],
+                       beta_priors[4,3]), length(fit_hmps[4,]$beta[,1])),
+           rep(sprintf("%f : %f : %f", beta_priors[5,1], beta_priors[5,2], 
+                       beta_priors[5,3]), length(fit_hmps[5,]$beta[,1])))
 data <- data.frame(values = values, group = group)
 
-ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different beta priors for Finland") +
+ggplot(data, aes(x = values, fill = group)) + 
+  ggtitle("Plot of different beta priors for Finland") +
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
@@ -1544,14 +1661,20 @@ values <- c(fit_hmps[1,]$beta[,2],
             fit_hmps[3,]$beta[,2],
             fit_hmps[4,]$beta[,2],
             fit_hmps[5,]$beta[,2])
-group <- c(rep(sprintf("%f : %f : %f", beta_priors[1,1], beta_priors[1,2], beta_priors[1,3]), length(fit_hmps[1,]$beta[,2])),
-           rep(sprintf("%f : %f : %f", beta_priors[2,1], beta_priors[2,2], beta_priors[2,3]), length(fit_hmps[2,]$beta[,2])),
-           rep(sprintf("%f : %f : %f", beta_priors[3,1], beta_priors[3,2], beta_priors[3,3]), length(fit_hmps[3,]$beta[,2])),
-           rep(sprintf("%f : %f : %f", beta_priors[4,1], beta_priors[4,2], beta_priors[4,3]), length(fit_hmps[4,]$beta[,2])),
-           rep(sprintf("%f : %f : %f", beta_priors[5,1], beta_priors[5,2], beta_priors[5,3]), length(fit_hmps[5,]$beta[,2])))
+group <- c(rep(sprintf("%f : %f : %f", beta_priors[1,1], beta_priors[1,2],
+                       beta_priors[1,3]), length(fit_hmps[1,]$beta[,2])),
+           rep(sprintf("%f : %f : %f", beta_priors[2,1], beta_priors[2,2], 
+                       beta_priors[2,3]), length(fit_hmps[2,]$beta[,2])),
+           rep(sprintf("%f : %f : %f", beta_priors[3,1], beta_priors[3,2], 
+                       beta_priors[3,3]), length(fit_hmps[3,]$beta[,2])),
+           rep(sprintf("%f : %f : %f", beta_priors[4,1], beta_priors[4,2], 
+                       beta_priors[4,3]), length(fit_hmps[4,]$beta[,2])),
+           rep(sprintf("%f : %f : %f", beta_priors[5,1], beta_priors[5,2], 
+                       beta_priors[5,3]), length(fit_hmps[5,]$beta[,2])))
 data <- data.frame(values = values, group = group)
 
-ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different beta priors for Germany") +
+ggplot(data, aes(x = values, fill = group)) + 
+  ggtitle("Plot of different beta priors for Germany") +
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
@@ -1561,14 +1684,20 @@ values <- c(fit_hmps[1,]$beta[,3],
             fit_hmps[3,]$beta[,3],
             fit_hmps[4,]$beta[,3],
             fit_hmps[5,]$beta[,3])
-group <- c(rep(sprintf("%f : %f : %f", beta_priors[1,1], beta_priors[1,2], beta_priors[1,3]), length(fit_hmps[1,]$beta[,3])),
-           rep(sprintf("%f : %f : %f", beta_priors[2,1], beta_priors[2,2], beta_priors[2,3]), length(fit_hmps[2,]$beta[,3])),
-           rep(sprintf("%f : %f : %f", beta_priors[3,1], beta_priors[3,2], beta_priors[3,3]), length(fit_hmps[3,]$beta[,3])),
-           rep(sprintf("%f : %f : %f", beta_priors[4,1], beta_priors[4,2], beta_priors[4,3]), length(fit_hmps[4,]$beta[,3])),
-           rep(sprintf("%f : %f : %f", beta_priors[5,1], beta_priors[5,2], beta_priors[5,3]), length(fit_hmps[5,]$beta[,3])))
+group <- c(rep(sprintf("%f : %f : %f", beta_priors[1,1], beta_priors[1,2], 
+                       beta_priors[1,3]), length(fit_hmps[1,]$beta[,3])),
+           rep(sprintf("%f : %f : %f", beta_priors[2,1], beta_priors[2,2], 
+                       beta_priors[2,3]), length(fit_hmps[2,]$beta[,3])),
+           rep(sprintf("%f : %f : %f", beta_priors[3,1], beta_priors[3,2], 
+                       beta_priors[3,3]), length(fit_hmps[3,]$beta[,3])),
+           rep(sprintf("%f : %f : %f", beta_priors[4,1], beta_priors[4,2], 
+                       beta_priors[4,3]), length(fit_hmps[4,]$beta[,3])),
+           rep(sprintf("%f : %f : %f", beta_priors[5,1], beta_priors[5,2], 
+                       beta_priors[5,3]), length(fit_hmps[5,]$beta[,3])))
 data <- data.frame(values = values, group = group)
 
-ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different beta priors for Portugal") +
+ggplot(data, aes(x = values, fill = group)) + 
+  ggtitle("Plot of different beta priors for Portugal") +
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
@@ -1578,14 +1707,20 @@ values <- c(fit_hmps[1,]$beta[,4],
             fit_hmps[3,]$beta[,4],
             fit_hmps[4,]$beta[,4],
             fit_hmps[5,]$beta[,4])
-group <- c(rep(sprintf("%f : %f : %f", beta_priors[1,1], beta_priors[1,2], beta_priors[1,3]), length(fit_hmps[1,]$beta[,4])),
-           rep(sprintf("%f : %f : %f", beta_priors[2,1], beta_priors[2,2], beta_priors[2,3]), length(fit_hmps[2,]$beta[,4])),
-           rep(sprintf("%f : %f : %f", beta_priors[3,1], beta_priors[3,2], beta_priors[3,3]), length(fit_hmps[3,]$beta[,4])),
-           rep(sprintf("%f : %f : %f", beta_priors[4,1], beta_priors[4,2], beta_priors[4,3]), length(fit_hmps[4,]$beta[,4])),
-           rep(sprintf("%f : %f : %f", beta_priors[5,1], beta_priors[5,2], beta_priors[5,3]), length(fit_hmps[5,]$beta[,4])))
+group <- c(rep(sprintf("%f : %f : %f", beta_priors[1,1], beta_priors[1,2], 
+                       beta_priors[1,3]), length(fit_hmps[1,]$beta[,4])),
+           rep(sprintf("%f : %f : %f", beta_priors[2,1], beta_priors[2,2], 
+                       beta_priors[2,3]), length(fit_hmps[2,]$beta[,4])),
+           rep(sprintf("%f : %f : %f", beta_priors[3,1], beta_priors[3,2], 
+                       beta_priors[3,3]), length(fit_hmps[3,]$beta[,4])),
+           rep(sprintf("%f : %f : %f", beta_priors[4,1], beta_priors[4,2], 
+                       beta_priors[4,3]), length(fit_hmps[4,]$beta[,4])),
+           rep(sprintf("%f : %f : %f", beta_priors[5,1], beta_priors[5,2], 
+                       beta_priors[5,3]), length(fit_hmps[5,]$beta[,4])))
 data <- data.frame(values = values, group = group)
 
-ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different beta priors for Hong Kong") +
+ggplot(data, aes(x = values, fill = group)) + 
+  ggtitle("Plot of different beta priors for Hong Kong") +
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
@@ -1595,17 +1730,25 @@ values <- c(fit_hmps[1,]$beta[,5],
             fit_hmps[3,]$beta[,5],
             fit_hmps[4,]$beta[,5],
             fit_hmps[5,]$beta[,5])
-group <- c(rep(sprintf("%f : %f : %f", beta_priors[1,1], beta_priors[1,2], beta_priors[1,3]), length(fit_hmps[1,]$beta[,5])),
-           rep(sprintf("%f : %f : %f", beta_priors[2,1], beta_priors[2,2], beta_priors[2,3]), length(fit_hmps[2,]$beta[,5])),
-           rep(sprintf("%f : %f : %f", beta_priors[3,1], beta_priors[3,2], beta_priors[3,3]), length(fit_hmps[3,]$beta[,5])),
-           rep(sprintf("%f : %f : %f", beta_priors[4,1], beta_priors[4,2], beta_priors[4,3]), length(fit_hmps[4,]$beta[,5])),
-           rep(sprintf("%f : %f : %f", beta_priors[5,1], beta_priors[5,2], beta_priors[5,3]), length(fit_hmps[5,]$beta[,5])))
+group <- c(rep(sprintf("%f : %f : %f", beta_priors[1,1], beta_priors[1,2], 
+                       beta_priors[1,3]), length(fit_hmps[1,]$beta[,5])),
+           rep(sprintf("%f : %f : %f", beta_priors[2,1], beta_priors[2,2], 
+                       beta_priors[2,3]), length(fit_hmps[2,]$beta[,5])),
+           rep(sprintf("%f : %f : %f", beta_priors[3,1], beta_priors[3,2], 
+                       beta_priors[3,3]), length(fit_hmps[3,]$beta[,5])),
+           rep(sprintf("%f : %f : %f", beta_priors[4,1], beta_priors[4,2], 
+                       beta_priors[4,3]), length(fit_hmps[4,]$beta[,5])),
+           rep(sprintf("%f : %f : %f", beta_priors[5,1], beta_priors[5,2], 
+                       beta_priors[5,3]), length(fit_hmps[5,]$beta[,5])))
 data <- data.frame(values = values, group = group)
 
-ggplot(data, aes(x = values, fill = group)) + ggtitle("Plot of different beta priors for Japan") +
+ggplot(data, aes(x = values, fill = group)) + 
+  ggtitle("Plot of different beta priors for Japan") +
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
+
+\newpage
 # 12. Discussion of issues and potential improvements.
 
 As our raw data contained the number of vaccinated doses given, we made the simplification, that two doses are needed to be counted
@@ -1643,7 +1786,7 @@ Therefore modelling our data $y$ with such a process would be a more realistic o
 
 The last issue, which we have with our modelling is that the standart logistic curve, which we try to fit has an image of $(0,1)$. However we can see in the country data, that their initial value is $0$ and their upper platteau is between $0.7-0.9$. As this domain is significantly smaller than the one of the modelled curve, we get a more flattened curve. One improvement here would be to further parameterize our logit function, in such a way, that the upper platteau is similar to the countries levels.
 
-
+\newpage
 # 13. Conclusion what was learned from the data analysis.
 
 This project explored, how Baysian Dataanalysis can be used to fit functions to given data.
@@ -1662,7 +1805,7 @@ In a nutsheel the main points from our project can be boiled down to the followi
 
 3. The models works best, when a country vaccination follows the logistic curve, which similar platteaus at both ends
 
-
+\newpage
 # 14. Self-reflection of what the group learned while making the project.
 
 During the project we strengthend our knowledge of the different topics, which were discussed in the course.
@@ -1674,3 +1817,4 @@ Those kind of parameter fitting problems are often performed with other Machine 
 Last but by no means least, this project was an good oportunity to familiarize ourselfs further with Stan and R. Before the course started we had little to no knowledge in R and Stan. This open-ended project, with little guides forced us to create code by ourselfs without little guiding and learn more about the details of R and Stan.
 Especially generating nice plots with ggplot and performing data-preprocessing were two points, where we deepened our knowledge.
 In Stan on the other hand we learned, how to design working models fully by ourselfs and what to do, if a model fails on the first try, as all chains won't start sampling as the log-likehood was minus infinity.
+
