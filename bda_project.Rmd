@@ -45,7 +45,7 @@ rstan_options(auto_write = TRUE)
 \newpage
 # 1. Introduction
 
-It's been almost 2 years since the covid-19 started in December 2019, and it's been 1 year since world vaccination has been started December 2020. Even though most of the countries rushing into vaccination and some countries are picking over 80% rate in vaccination, the pandemic seems unstoppable. One of the popular idea to stop the pandemic is that to achieve a 'herd-immunity threshold, which occurs when a large portion of a community (the herd) becomes immune to a disease, making the spread of disease from person to person unlikely. Immune individuals are unlikely to contribute to disease transmission, disrupting chains of infection, which stops or slows the spread of disease @wiki.
+It's been almost 2 years since the covid-19 started in December 2019, and it's been 1 year since world vaccination has been started December 2020. Even though most of the countries rushing into vaccination and some countries are picking over 80% rate in vaccination, the pandemic seems unstoppable. One way to stop the pandemic and convert it to a endemic is to achieve a 'herd-immunity' threshold, which occurs when a large portion of a community (the herd) is immune to a disease. This stops the transmission of the virus as immune individuals are unlikely to contribute to disease transmission, disrupting chains of infection, which stops or slows the spread of disease @wiki.
 It is known that the herd-immunity threshold is achievable only with high vaccination rates, and many scientists had thought that once people started being immunized en masse, herd immunity would permit society to return to normal. Most estimates had placed the threshold at 60–70% of the population gaining immunity, either through vaccinations or past exposure to the virus @nature.
 Down below shows the graph of population fully vaccinated by countries.
 
@@ -53,21 +53,29 @@ Down below shows the graph of population fully vaccinated by countries.
 knitr::include_graphics("./image/share-people-fully-vaccinated-covid_world.png")
 ```
 
-As the high vaccination rate is a big part of ending pandemic by achieving herd-immunity, our group was interested in predicting how much high vaccination rate that countries will achieve in future. As we expect the cumulative vaccination rate graph will follow logit function, we set our model as a logit function. We picked 5 countries,which are Finland, Portugal, Japan, Germany,and Hongkong for our data. The cumulative vaccination graphs in these countries roughly follow the logit function and our main modeling idea is to see find which model the data fits well (seperate model or hierarchical model) and to predict the future vaccination rate.
+As the high vaccination rate is a big part of ending pandemic by achieving herd-immunity, our group was interested in predicting the vaccination rate of countries in future. This might help to model the point, from which a 'herd-imunity' state can be achieved and therefore most of the COVID-restrictions can savely be lifted. As we expect the cumulative vaccination rate graph will follow logit function, we set our model as a logit function:
 
-Down below shows the barplot of population rate who received at least one dose of covid19 vaccine by countries in our interest.
+$$
+f_{k,x_0}(x) = \frac{1}{\operatorname{exp}(-k(x-x_0))}
+$$
+
+The image of the function is $[0,1]$, as we assume, that in the beginning no vaccine doses are given and at most all people get vaccinated. As steadiliy in most contries the vaccine is administerd also for younger children, we assume that every person will get two vacciens. This is a simplified assumption, as many external factors, like big anti-vax movements are ignored in this model, which might lower the maximal upper threshold to 0.7-0.8.
+
+For our model we pick 5 countries: Finland, Portugal, Japan, Germany,and Hong Kong. The cumulative vaccination graphs in these countries roughly follow the logit function and our main modeling idea is to see find which model the data fits well (seperate model or hierarchical model) and to predict the future vaccination rate.
+
+Down below the barplot shows the rate of people who received at least one dose of covid19 vaccine by countries of our interest.
 
 ```{r}
 knitr::include_graphics("./image/share-people-vaccinated-covid.png")
 ```
 
-Down below shows the barplot of population rate of fully vaccinated against covid19 by countries in our interest.
+Down below the barplot shows the population rate of fully vaccinated persons against covid19 by countries of our interest.
 
 ```{r}
 knitr::include_graphics("./image/share-people-fully-vaccinated-covid_bar.png")
 ```
 
-Down below shows the barplot of fully vaccinated population rate by countries in our interest.
+The following barplot shows the fully vaccinated population rate by countries of our interest.
 
 ```{r}
 knitr::include_graphics("./image/share-people-fully-vaccinated-covid_plot.png")
@@ -77,7 +85,7 @@ knitr::include_graphics("./image/share-people-fully-vaccinated-covid_plot.png")
 \newpage
 # 2. Dataset
 
-Datasets down below show cumulative covid vaccinations rate by countries( collected from [linked phrase](https://ourworldindata.org/covid-vaccinations)).Country  column shows the country of this data. X column is originally from the date when the country started vaccination to the recent date of vaccination. We normalized the date column by giving index 0 to number of date and deviding it with the number of date. As the time length of the vaccination differs by country, we uniformly picked the 222 datapoints from the datasets before normalize the X column. Y column shows the covid vaccination rate in the country. With the cumulative covid vaccination number, we devide it by 2 times population because most of the vaccines require 2 doses to be fully vaccinated. Therefore, dimension of all datasets are (222,3).
+Datasets down below show cumulative covid vaccinations rate by countries( collected from [linked phrase](https://ourworldindata.org/covid-vaccinations)). The Country column shows the country of this data. X column is originally from the date when the country started vaccination to the recent date of vaccination. We normalized the date column by giving index 0 to number of date and dividing it with the number of date. As the time length of the vaccination differs by country, we uniformly picked the 222 data-points from the data-sets before normalize the X column. Y column shows the covid vaccination rate in the country. With the cumulative covid vaccination number, we divide it by 2 times population because most of the vaccines require 2 doses to be fully vaccinated. Therefore, dimension of all data-sets are (222,3).
 
 ```{r}
 finland <- read.csv("data/Finland_output.csv")
@@ -295,7 +303,7 @@ generated quantities {
 # 4. Prior selection
 
 For both models we choose to use weakly informative priors.
-We will first present all prior distribuions in plots, to visualize better their properties.
+We will first present all prior distributions in plots, to visualize better their properties.
 
 ```{r}
 x <- seq(from=0.1, to=5, by=0.01)
@@ -315,7 +323,7 @@ plot(x, dnorm(x, 0, 1), ylim=c(0,1), type="l", main="Normal(0,1) PDF",
 
 ## Prior choice of the seperated model
 
-For the seperated model, the $\alpha$ prior needed to fullfill two criteria. First it needed to be a positive number, as we can expect from the vaccination, that the rate is rising and not dropping. Also, as the vaccination should follow roughly a logit function, as it can be observed from the data, we can expect to have a gradient, which is more likely around $1$ than bigger than $50$. Hence the prior of $\operatorname{Inv}-\chi^{2}(1)$ was choosen.
+For the seperated model, the $\alpha$ prior needed to fulfill two criteria. First it needed to be a positive number, as we can expect from the vaccination, that the rate is rising and not dropping. Also, as the vaccination should follow roughly a logit function, as it can be observed from the data, we can expect to have a gradient, which is more likely around $1$ than bigger than $50$. Hence the prior of $\operatorname{Inv}-\chi^{2}(1)$ was choosen.
 
 For our $\beta$ prior estimation we know, that it should be in the range of $[0,1]$, as this is the range of our x-Data. Therefore we choose $N(0.5,1)$.
 
@@ -516,7 +524,7 @@ result_s = data.frame(Country=names,X=rep(total$X[1:222],
                       times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
-    ggtitle("Seperate modeled means and accual data for Finland") +
+    ggtitle("Seperate modeled means and actual data for Finland") +
     xlab("time") + ylab("vaccination rate")
 ```
 
@@ -534,7 +542,7 @@ result_s = data.frame(Country=names,X=rep(total$X[1:222],
                       times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
-    ggtitle("Seperate modeled means and accual data for Germany") +
+    ggtitle("Seperate modeled means and actual data for Germany") +
     xlab("time") + ylab("vaccination rate")
 ```
 
@@ -551,7 +559,7 @@ result_s = data.frame(Country=names,X=rep(total$X[1:222],
                       times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
-    ggtitle("Seperate modeled means and accual data for Portugal") +
+    ggtitle("Seperate modeled means and actual data for Portugal") +
     xlab("time") + ylab("vaccination rate")
 ```
 
@@ -568,7 +576,7 @@ result_s = data.frame(Country=names,X=rep(total$X[1:222],
                       times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
-    ggtitle("Seperate modeled means and accual data for Hongkong") +
+    ggtitle("Seperate modeled means and actual data for Hongkong") +
     xlab("time") + ylab("vaccination rate")
 ```
 
@@ -585,7 +593,7 @@ result_s = data.frame(Country=names,X=rep(total$X[1:222],
                       times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
-    ggtitle("Seperate modeled means and accual data for Japan") +
+    ggtitle("Seperate modeled means and actual data for Japan") +
     xlab("time") + ylab("vaccination rate")
 ```
 
@@ -605,7 +613,7 @@ result_s = data.frame(Country=names,X=rep(total$X[1:222],
                       times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
-    ggtitle("Hierarchical modeled means and accual data for Finland") +
+    ggtitle("Hierarchical modeled means and actual data for Finland") +
     xlab("time") + ylab("vaccination rate")
 ```
 
@@ -623,7 +631,7 @@ result_s = data.frame(Country=names,X=rep(total$X[1:222],
                       times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
-    ggtitle("Hierarchical modeled means and accual data for Germany") +
+    ggtitle("Hierarchical modeled means and actual data for Germany") +
     xlab("time") + ylab("vaccination rate")
 ```
 
@@ -640,7 +648,7 @@ result_s = data.frame(Country=names,X=rep(total$X[1:222],
                       times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
-    ggtitle("Hierarchical modeled means and accual data for Portugal") +
+    ggtitle("Hierarchical modeled means and actual data for Portugal") +
     xlab("time") + ylab("vaccination rate")
 ```
 
@@ -657,7 +665,7 @@ result_s = data.frame(Country=names,X=rep(total$X[1:222],
                       times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
-    ggtitle("Hierarchical modeled means and accual data for Hongkong") +
+    ggtitle("Hierarchical modeled means and actual data for Hongkong") +
     xlab("time") + ylab("vaccination rate")
 ```
 
@@ -674,7 +682,7 @@ result_s = data.frame(Country=names,X=rep(total$X[1:222],
                       times =1001, length.out = NA, each = 1),Y=Y_s)
 ggplot(data = result_s, aes(x =X, y = Y, color = Country)) +
     geom_line() +
-    ggtitle("Hierarchical modeled means and accual data for Japan") +
+    ggtitle("Hierarchical modeled means and actual data for Japan") +
     xlab("time") + ylab("vaccination rate")
 ```
 
@@ -843,7 +851,7 @@ cat("Mean of 4000 predictions for Japan: ", mean(fit_hm$ypred[,5,223]),'\n')
 ```
 
 
-We need to be very carefull about the prediction of the vaccination numbers. While it is nice having those predicitions, they are just usefull.  
+We need to be very carefully about the prediction of the vaccination numbers. While it is nice having those predictions, they are just useful.  
 
 
 \newpage
@@ -1804,7 +1812,7 @@ The last issue, which we have with our modelling is that the standart logistic c
 \newpage
 # 13. Conclusion what was learned from the data analysis.
 
-This project explored, how Baysian Dataanalysis can be used to fit functions to given data.
+This project explored, how Baysian Data analysis can be used to fit functions to given data.
 Our data was the number of administraded vaccines in each country. After observing those plots we figured, that a fitted logit function would be the clossets fit. Therefore we choose:
 $$
 f_{k,x_0}(x) = \frac{1}{\operatorname{exp}(-k(x-x_0))}
@@ -1812,24 +1820,26 @@ $$
 as our function we want to fit and build two Stan models (seperated and hirachical) to find the right parameters $k,x_0$.
 After evaluating, how trustworthy the results of the models are, by performing different convergence analysis like the $\hat{R}$ and $ESS$ analysis as well as comparing those models with each other with LOO-CV, we got reliable samples for $k$ and $x_0$. With those we created the fitted curves, draw some example data and made predictions, what the vaccination rate might look at a certain point in the future.
 
-In a nutsheel the main points from our project can be boiled down to the following three points:
+In a nutshell the main points from our project can be boiled down to the following three points:
 
-1. We can use baysian statistics, to estimate the functional parameters for the logistic function. This can be verified, as our distribution converges and the logistic function is a close fit to the data
+1. We can use bayesian statistics, to estimate the functional parameters for the logistic function. This can be verified, as our distribution converges and the logistic function is a close fit to the data
 
-2. With some restrictions we can make cautious predrictions about the vaccination rate in the future
+2. With some restrictions we can make cautious predictions about the vaccination rate in the future
 
 3. The models works best, when a country vaccination follows the logistic curve, which similar platteaus at both ends
 
 \newpage
 # 14. Self-reflection of what the group learned while making the project.
 
-During the project we strengthend our knowledge of the different topics, which were discussed in the course.
-Over the semester the different topics has been studied seperatly and by combining those together in a bigger final project realy helped us to put the pieces of knowledge together and take it with us for the next masters courses.
-Also applying the learned techniques in a practical project, where everything, including the data mining had to be done by ourself gave us a much deeper sense of the whole idea of Baysian Data Analysis.
+During the project we strengthen our knowledge of the different topics, which were discussed in the course.
+Over the semester the different topics has been studied separately and by combining those together in a bigger final project really helped us to put the pieces of knowledge together and take it with us for the next master's courses.
+Also applying the learned techniques in a practical project, where everything, including the data mining had to be done by ourself gave us a much deeper sense of the whole idea of Bayesian Data Analysis.
 
-Those kind of parameter fitting problems are often performed with other Machine Learning methods like bootstrapping or Deep Learning. To motivate us, we selected an interesting problem from the real world and got some more insights into this topic and modelling choice. However after evaluating our project we can say that for those kind of parameter fitting Stan is also a suitable tool for parameter optimisation and for certain task it should find a wider spread.
+Those kind of parameter fitting problems are often performed with other Machine Learning methods like bootstrapping or Deep Learning. To motivate us, we selected an interesting problem from the real world and got some more insights into this topic and modelling choice. However after evaluating our project we can say that for those kind of parameter fitting Stan is also a suitable tool for parameter optimization and for certain task it should find a wider spread.
 
-Last but by no means least, this project was an good oportunity to familiarize ourselfs further with Stan and R. Before the course started we had little to no knowledge in R and Stan. This open-ended project, with little guides forced us to create code by ourselfs without little guiding and learn more about the details of R and Stan.
+Last but by no means least, this project was an good opportunity to familiarize ourselves further with Stan and R. Before the course started we had little to no knowledge in R and Stan. This open-ended project, with little guides forced us to create code by ourselves without little guiding and learn more about the details of R and Stan.
 Especially generating nice plots with ggplot and performing data-preprocessing were two points, where we deepened our knowledge.
-In Stan on the other hand we learned, how to design working models fully by ourselfs and what to do, if a model fails on the first try, as all chains won't start sampling as the log-likehood was minus infinity.
+In Stan on the other hand we learned, how to design working models fully by ourselves and what to do, if a model fails on the first try, as all chains won't start sampling as the log-likelihood was minus infinity.
 
+\newpage
+# 15. References
