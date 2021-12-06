@@ -341,7 +341,7 @@ The prior of the variance is given by a $\operatorname{Inv}-\chi^{2}(1)$, as her
 \newpage
 # 5. Stan code
 
-The stan code was provided above with the describtion of the model
+The stan code was provided above with the describtion of the model.
 
 
 \newpage
@@ -856,6 +856,8 @@ We need to be very carefully about the prediction of the vaccination numbers. Wh
 \newpage
 # 11. Sensitivity analysis with respect to prior choices (i.e. checking whether the result changes a lot if prior is changed)
 
+We are going to make a sensitivity analysis for different priors in our models because it is important to conclude whether the prior distributions have an undesired influence on the posterior distributions. We can say that if we are able to get similar results with varying priors and their distributions then the model is reliable. For our case, we are going to perform sensitivity analysis for both the Separate and Hierarchical models.
+
 ## Sensitivity analysis for separate model
 
 Lets consider the similar mathematical modeling for the separated model and change some parameter values for the prior.
@@ -870,6 +872,7 @@ y_{i j} \mid \mu_i, \sigma &\sim \operatorname{Normal}\left(\mu_i, \sigma\right)
 \beta_i &\sim N(param_3, param_4) \\
 \end{aligned}
 $$
+
 Here, $param_1$, $param_2$, $param_3$ and $param_4$ are the prior parameters that we are going to vary in our analysis. For the comparison, we have our original values for the parameters as follows:
 
 $$
@@ -880,6 +883,7 @@ $$
 \end{aligned}
 $$
 We will now create a stan model which is parameterized with the above parameters.
+
 
 ```{r}
 seperated_model_parameterized <- "
@@ -956,12 +960,15 @@ generated quantities {
 "
 ```
 
+
 ### Let's fix rest of the parameters so that we can change the $\sigma$ prior and change only $param_1$
 
 * $param_1 = 0.1$
 * $param_1 = 0.5$
 * $param_1 = 10$
 * $param_1 = 100$
+
+
 
 ```{r, results='hide', error=FALSE}
 xData <- rbind(finland$X,germany$X,portugal$X,hongkong$X,japan$X) #(5,222)
@@ -1207,6 +1214,7 @@ ggplot(data, aes(x = values, fill = group)) +
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
+
 ```{r}
 values <- c(fit_smps[1,]$beta[,2],
             fit_smps[2,]$beta[,2],
@@ -1253,6 +1261,7 @@ ggplot(data, aes(x = values, fill = group)) +
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
+
 ```{r}
 values <- c(fit_smps[1,]$beta[,4],
             fit_smps[2,]$beta[,4],
@@ -1276,6 +1285,7 @@ ggplot(data, aes(x = values, fill = group)) +
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
+
 ```{r}
 values <- c(fit_smps[1,]$beta[,5],
             fit_smps[2,]$beta[,5],
@@ -1298,6 +1308,10 @@ ggplot(data, aes(x = values, fill = group)) +
   ggtitle("Plot of different beta priors for Japan") +
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
+
+
+The sensitivity analysis for the separate model infact shows that the model is not heavily influenced by the choice of prior distributions that we tested. We can establish this by the fact that the histograms for the $alpha$, $beta$ and $sigma$ are overlapping in the respective tests.
+
 
 ## Sensitivity analysis for hierarchical model
 
@@ -1754,6 +1768,7 @@ ggplot(data, aes(x = values, fill = group)) +
   geom_histogram(position = "identity", alpha = 0.2, bins = 50)
 ```
 
+The sensitivity analysis for the hierarchical model infact shows that the model is not heavily influenced by the choice of prior distributions that we tested. We can establish this by the fact that the histograms for the $alpha$, $beta$ and $sigma$ are overlapping in the respective tests.
 
 \newpage
 # 12. Discussion of issues and potential improvements.
@@ -1791,13 +1806,13 @@ title("A Poisson process sample path")
 Therefore modelling our data $y$ with such a process would be a more realistic option and improvement.
 
 
-The last issue, which we have with our modelling is that the standart logistic curve, which we try to fit has an image of $(0,1)$. However we can see in the country data, that their initial value is $0$ and their upper platteau is between $0.7-0.9$. As this domain is significantly smaller than the one of the modelled curve, we get a more flattened curve. One improvement here would be to further parameterize our logit function, in such a way, that the upper platteau is similar to the countries levels.
+The last issue, which we have with our modelling is that the standart logistic curve, which we try to fit has an image of $(0,1)$. However we can see in the country data, that their initial value is $0$ and their upper platteau is between $0.7-0.9$. As this domain is significantly smaller than the one of the modeled curve, we get a more flattened curve. One improvement here would be to further parameterize our logit function, in such a way, that the upper platteau is similar to the countries levels.
 
 \newpage
 # 13. Conclusion what was learned from the data analysis.
 
-This project explored, how Baysian Data analysis can be used to fit functions to given data.
-Our data was the number of administraded vaccines in each country. After observing those plots we figured, that a fitted logit function would be the clossets fit. Therefore we choose:
+This project explored, how Bayesian Data analysis can be used to fit functions to given data.
+Our data was the number of administrated vaccines in each country. After observing those plots we figured, that a fitted logit function would be the closest fit. Therefore we choose:
 $$
 f_{k,x_0}(x) = \frac{1}{\operatorname{exp}(-k(x-x_0))}
 $$
