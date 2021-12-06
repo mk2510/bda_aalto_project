@@ -843,7 +843,7 @@ cat("Mean of 4000 predictions for Japan: ", mean(fit_hm$ypred[,5,223]),'\n')
 ```
 
 
-We need to be very carefull about the prediction of the vaccination numbers. While it is nice having those predicitions, they are just usefull.  
+We need to be very carefully about the prediction of the vaccination numbers. While it is nice having those predictions, they are just useful.  
 
 
 \newpage
