@@ -295,7 +295,7 @@ generated quantities {
 # 4. Prior selection
 
 For both models we choose to use weakly informative priors.
-We will first present all prior distribuions in plots, to visualize better their properties.
+We will first present all prior distributions in plots, to visualize better their properties.
 
 ```{r}
 x <- seq(from=0.1, to=5, by=0.01)
