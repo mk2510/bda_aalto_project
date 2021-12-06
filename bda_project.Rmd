@@ -1789,7 +1789,7 @@ The last issue, which we have with our modelling is that the standart logistic c
 \newpage
 # 13. Conclusion what was learned from the data analysis.
 
-This project explored, how Baysian Dataanalysis can be used to fit functions to given data.
+This project explored, how Baysian Data analysis can be used to fit functions to given data.
 Our data was the number of administraded vaccines in each country. After observing those plots we figured, that a fitted logit function would be the clossets fit. Therefore we choose:
 $$
 f_{k,x_0}(x) = \frac{1}{\operatorname{exp}(-k(x-x_0))}
@@ -1797,26 +1797,26 @@ $$
 as our function we want to fit and build two Stan models (seperated and hirachical) to find the right parameters $k,x_0$.
 After evaluating, how trustworthy the results of the models are, by performing different convergence analysis like the $\hat{R}$ and $ESS$ analysis as well as comparing those models with each other with LOO-CV, we got reliable samples for $k$ and $x_0$. With those we created the fitted curves, draw some example data and made predictions, what the vaccination rate might look at a certain point in the future.
 
-In a nutsheel the main points from our project can be boiled down to the following three points:
+In a nutshell the main points from our project can be boiled down to the following three points:
 
-1. We can use baysian statistics, to estimate the functional parameters for the logistic function. This can be verified, as our distribution converges and the logistic function is a close fit to the data
+1. We can use bayesian statistics, to estimate the functional parameters for the logistic function. This can be verified, as our distribution converges and the logistic function is a close fit to the data
 
-2. With some restrictions we can make cautious predrictions about the vaccination rate in the future
+2. With some restrictions we can make cautious predictions about the vaccination rate in the future
 
 3. The models works best, when a country vaccination follows the logistic curve, which similar platteaus at both ends
 
 \newpage
 # 14. Self-reflection of what the group learned while making the project.
 
-During the project we strengthend our knowledge of the different topics, which were discussed in the course.
-Over the semester the different topics has been studied seperatly and by combining those together in a bigger final project realy helped us to put the pieces of knowledge together and take it with us for the next masters courses.
-Also applying the learned techniques in a practical project, where everything, including the data mining had to be done by ourself gave us a much deeper sense of the whole idea of Baysian Data Analysis.
+During the project we strengthen our knowledge of the different topics, which were discussed in the course.
+Over the semester the different topics has been studied separately and by combining those together in a bigger final project really helped us to put the pieces of knowledge together and take it with us for the next master's courses.
+Also applying the learned techniques in a practical project, where everything, including the data mining had to be done by ourself gave us a much deeper sense of the whole idea of Bayesian Data Analysis.
 
-Those kind of parameter fitting problems are often performed with other Machine Learning methods like bootstrapping or Deep Learning. To motivate us, we selected an interesting problem from the real world and got some more insights into this topic and modelling choice. However after evaluating our project we can say that for those kind of parameter fitting Stan is also a suitable tool for parameter optimisation and for certain task it should find a wider spread.
+Those kind of parameter fitting problems are often performed with other Machine Learning methods like bootstrapping or Deep Learning. To motivate us, we selected an interesting problem from the real world and got some more insights into this topic and modelling choice. However after evaluating our project we can say that for those kind of parameter fitting Stan is also a suitable tool for parameter optimization and for certain task it should find a wider spread.
 
-Last but by no means least, this project was an good oportunity to familiarize ourselfs further with Stan and R. Before the course started we had little to no knowledge in R and Stan. This open-ended project, with little guides forced us to create code by ourselfs without little guiding and learn more about the details of R and Stan.
+Last but by no means least, this project was an good opportunity to familiarize ourselves further with Stan and R. Before the course started we had little to no knowledge in R and Stan. This open-ended project, with little guides forced us to create code by ourselves without little guiding and learn more about the details of R and Stan.
 Especially generating nice plots with ggplot and performing data-preprocessing were two points, where we deepened our knowledge.
-In Stan on the other hand we learned, how to design working models fully by ourselfs and what to do, if a model fails on the first try, as all chains won't start sampling as the log-likehood was minus infinity.
+In Stan on the other hand we learned, how to design working models fully by ourselves and what to do, if a model fails on the first try, as all chains won't start sampling as the log-likelihood was minus infinity.
 
 \newpage
 # 15. References
